@@ -1,0 +1,611 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-color: #4a6fa5;
+        --secondary-color: #166088;
+        --accent-color: #ffc107;
+        --dark-bg: #1a1a2e;
+        --light-bg: #f8f9fa;
+    }
+
+    /* Hero Section with Parallax Effect */
+    .hero-section {
+        background: 
+            linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+            url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, 
+            rgba(74, 111, 165, 0.1) 0%,
+            rgba(22, 96, 136, 0.2) 50%,
+            rgba(255, 193, 7, 0.1) 100%);
+        animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .hero-title {
+        font-weight: 800;
+        font-size: 4rem;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(90deg, #fff, var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+        max-width: 600px;
+    }
+
+    /* Feature Cards with Emotional Hover */
+    .features-section {
+        padding: 6rem 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        position: relative;
+    }
+
+    .features-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=20');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.05;
+        transform: translateY(-50%);
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        border: none;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        transition: height 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+        height: 100%;
+        opacity: 0.1;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1) rotate(5deg);
+        color: var(--accent-color);
+    }
+
+    .feature-card:hover .feature-title {
+        color: var(--secondary-color);
+    }
+
+    .feature-card:hover .feature-description {
+        color: #495057;
+    }
+
+    .feature-icon {
+        font-size: 3.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        transition: all 0.4s ease;
+    }
+
+    .feature-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--dark-bg);
+        transition: color 0.3s ease;
+    }
+
+    .feature-description {
+        color: #6c757d;
+        line-height: 1.6;
+        transition: color 0.3s ease;
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+        padding: 6rem 0;
+        background: 
+            linear-gradient(rgba(26, 26, 46, 0.9), rgba(26, 26, 46, 0.95)),
+            url('https://images.unsplash.com/photo-1568992687947-868a62a9f521?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+        position: relative;
+    }
+
+    .step-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        height: 100%;
+    }
+
+    .step-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-5px);
+        border-color: var(--accent-color);
+    }
+
+    .step-number {
+        width: 60px;
+        height: 60px;
+        background: var(--accent-color);
+        color: #000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .step-card:hover .step-number {
+        transform: scale(1.1) rotate(360deg);
+        background: white;
+    }
+
+    /* Stats Section */
+    .stats-section {
+        padding: 5rem 0;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stats-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=1920&q=30');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.1;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--accent-color);
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        padding: 6rem 0;
+        background: 
+            linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9)),
+            url('https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+    }
+
+    .cta-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        height: 80px;
+        background: linear-gradient(90deg, #fff, var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+   
+
+    .cta-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 4rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+   
+
+    .cta-button {
+        padding: 1rem 3rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 50px;
+        background: linear-gradient(90deg, var(--accent-color), #ffd54f);
+        border: none;
+        color: #000;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .cta-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+        color: #000;
+    }
+
+    /* Animations */
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+
+    .floating-element {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .pulse-element {
+        animation: pulse 3s ease-in-out infinite;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .feature-card {
+            padding: 2rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="hero-title">ជំនួយការវិនិច្ឆ័យរថយន្ត</h1>
+                <p class="hero-subtitle">
+                    ប្រព័ន្ធបញ្ញាសិក្សាដែលប្រើបច្ចេកវិទ្យា AI សម្រាប់ការវិនិច្ឆ័យបញ្ហាម៉ាស៊ីនរថយន្ត 
+                    ជាមួយនឹងភាពត្រឹមត្រូវខ្ពស់ និងការផ្តល់ដំណោះស្រាយភ្លាមៗ។
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('infer') }}" class="btn btn-warning btn-lg px-5 rounded-pill pulse-element">
+                        <i class="bi bi-lightning-charge-fill me-2"></i>ចាប់ផ្តើមវិនិច្ឆ័យ
+                    </a>
+                    <a href="#features" class="btn btn-outline-light btn-lg px-4 rounded-pill">
+                        <i class="bi bi-info-circle me-2"></i>ស្វែងយល់បន្ថែម
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center">
+                <i class="bi bi-cpu floating-element" style="font-size: 12rem; color: rgba(255, 255, 255, 0.1);"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="features-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-4 fw-bold mb-3">លក្ខណៈពិសេសនៃប្រព័ន្ធ</h2>
+            <p class="lead text-muted">ប្រព័ន្ធទំនើបសម្រាប់ការវិនិច្ឆ័យរថយន្តដែលមានប្រសិទ្ធភាព</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-cpu-fill"></i>
+                    </div>
+                    <h3 class="feature-title">បញ្ញាសិក្សា AI</h3>
+                    <p class="feature-description">
+                        ប្រើប្រាស់បច្ចេកវិទ្យាបញ្ញាសិក្សាសម្រាប់ការវិភាគបញ្ហាម៉ាស៊ីន 
+                        ដោយមានការទាយដែលមានភាពត្រឹមត្រូវខ្ពស់ជាង 90%។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-diagram-3"></i>
+                    </div>
+                    <h3 class="feature-title">ចំណាត់ថ្នាក់អនុសញ្ញា</h3>
+                    <p class="feature-description">
+                        ប្រព័ន្ធចំណាត់ថ្នាក់ដែលយល់ដឹងពីទំនាក់ទំនងរវាងគ្រឿងផ្សេងៗ 
+                        នៃម៉ាស៊ីនរថយន្តសម្រាប់ការវិភាគជ្រៅជ្រះ។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3 class="feature-title">ការវិនិច្ឆ័យដោយអ្នកជំនាញ</h3>
+                    <p class="feature-description">
+                        ផ្ទុកច្បាប់វិនិច្ឆ័យពីអ្នកជំនាញផ្នែកម៉ាស៊ីនរថយន្ត 
+                        សម្រាប់ការផ្តល់ដំណោះស្រាយដែលអាចទុកចិត្តបាន។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h3 class="feature-title">ភាពជឿជាក់នៃលទ្ធផល</h3>
+                    <p class="feature-description">
+                        ផ្តល់លទ្ធផលជាមួយនឹងកម្រិតភាពជឿជាក់ ដែលអាចជួយ 
+                        អ្នកជំនាញធ្វើការសម្រេចចិត្តបានល្អជាងមុន។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h3 class="feature-title">រហ័ស និងមានប្រសិទ្ធភាព</h3>
+                    <p class="feature-description">
+                        ដំណើរការវិនិច្ឆ័យរហ័សជាងវិធីសាស្ត្រធម្មតា 
+                        ដោយសន្សំពេលវេលាជាង 70%។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-phone"></i>
+                    </div>
+                    <h3 class="feature-title">គាំទ្រគ្រប់ឧបករណ៍</h3>
+                    <p class="feature-description">
+                        អាចប្រើបានលើគ្រប់ឧបករណ៍ តាមរយៈបណ្តាញអ៊ីនធឺណិត 
+                        ដោយគ្មានតម្រូវការដំឡើងកម្មវិធី។
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-4 fw-bold mb-3">របៀបដំណើរការ</h2>
+            <p class="lead opacity-75">ជំហានសាមញ្ញចំនួន ៤ សម្រាប់ការវិនិច្ឆ័យដែលមានប្រសិទ្ធភាព</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card">
+                    <div class="step-number">១</div>
+                    <h4 class="mb-3">ជ្រើសរើសបញ្ហា</h4>
+                    <p class="opacity-75 mb-0">
+                        ជ្រើសរើសបញ្ហាដែលអ្នកបានឃើញពីម៉ាស៊ីនរថយន្ត 
+                        និងកំណត់កម្រិតភាពជឿជាក់។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card">
+                    <div class="step-number">២</div>
+                    <h4 class="mb-3">ការវិភាគ AI</h4>
+                    <p class="opacity-75 mb-0">
+                        ប្រព័ន្ធបញ្ញាសិក្សានឹងវិភាគបញ្ហាទាំងអស់ 
+                        ដោយប្រើច្បាប់អ្នកជំនាញ។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card">
+                    <div class="step-number">៣</div>
+                    <h4 class="mb-3">ការគណនាភាពជឿជាក់</h4>
+                    <p class="opacity-75 mb-0">
+                        គណនាភាពជឿជាក់នៃលទ្ធផលនីមួយៗ 
+                        ដោយផ្អែកលើទិន្នន័យបញ្ចូល។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card">
+                    <div class="step-number">៤</div>
+                    <h4 class="mb-3">ទទួលបានដំណោះស្រាយ</h4>
+                    <p class="opacity-75 mb-0">
+                        ទទួលបានការវិនិច្ឆ័យជាមួយនឹងការពន្យល់ 
+                        និងអនុសាសន៍សម្រាប់ការជួសជុល។
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">{{ facts_count }}</div>
+                    <div class="stat-label">ទិន្នន័យការពិត</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">{{ rules_count }}</div>
+                    <div class="stat-label">ច្បាប់អ្នកជំនាញ</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">{{ (facts_count + rules_count) // 10 }}</div>
+                    <div class="stat-label">កម្រិតបញ្ញាសិក្សា</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">៩០%</div>
+                    <div class="stat-label">ភាពត្រឹមត្រូវ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title   ">ត្រៀមខ្លួនធ្វើការវិនិច្ឆ័យ?</h2>
+        <p class="cta-subtitle">
+            ចាប់ផ្តើមការវិនិច្ឆ័យបញ្ហាម៉ាស៊ីនរថយន្តរបស់អ្នកឥឡូវនេះ 
+            ជាមួយនឹងប្រព័ន្ធបញ្ញាសិក្សាដែលមានប្រសិទ្ធភាព។
+        </p>
+        <a href="{{ url_for('infer') }}" class="cta-button">
+            <i class="bi bi-lightning-charge-fill"></i>ចាប់ផ្តើមវិនិច្ឆ័យឥឡូវនេះ
+        </a>
+    </div>
+</section>
+
+<!-- Scroll to Top Button -->
+<button id="scrollToTop" class="btn btn-primary rounded-circle position-fixed" 
+        style="bottom: 20px; right: 20px; width: 50px; height: 50px; display: none; z-index: 1000;">
+    <i class="bi bi-chevron-up"></i>
+</button>
+
+<script>
+    // Scroll to top button
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+    
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            scrollToTopBtn.style.display = 'block';
+        } else {
+            scrollToTopBtn.style.display = 'none';
+        }
+    });
+    
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Add animation to feature cards on scroll
+    const observerOptions = {
+        threshold: 0.2
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all feature cards
+    document.querySelectorAll('.feature-card, .step-card').forEach(card => {
+        observer.observe(card);
+    });
+    
+    // Add hover sound effect (optional)
+    const featureCards = document.querySelectorAll('.feature-card');
+    featureCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-15px)';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+{% endblock %}

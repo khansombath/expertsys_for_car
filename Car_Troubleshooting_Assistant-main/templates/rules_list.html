@@ -1,0 +1,459 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="h4 mb-1">
+            <i class="bi bi-diagram-3 text-primary me-2"></i>ច្បាប់វិនិច្ឆ័យ ({{ rules | length }})
+        </h2>
+        <p class="text-muted mb-0">
+            ច្បាប់ទាំងអស់សម្រាប់ប្រព័ន្ធអ្នកជំនាញ
+        </p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('rules_new') }}">
+        <i class="bi bi-plus-circle me-1"></i>បន្ថែមច្បាប់ថ្មី
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="d-none d-md-table-cell" style="width: 10%;">
+                            <i class="bi bi-hash me-1"></i>លេខកូដ
+                        </th>
+                        <th scope="col" style="width: 40%;">
+                            <i class="bi bi-list-check me-1"></i>លក្ខខណ្ឌ (បើ)
+                        </th>
+                        <th scope="col" class="d-none d-sm-table-cell" style="width: 25%;">
+                            <i class="bi bi-arrow-right-circle me-1"></i>សេចក្តីសន្និដ្ឋាន (បន្ទាប់មក)
+                        </th>
+                        <th scope="col" class="d-none d-lg-table-cell" style="width: 10%;">
+                            <i class="bi bi-percent me-1"></i>ភាពជឿជាក់
+                        </th>
+                        <th scope="col" style="min-width: 120px;">
+                            <i class="bi bi-gear me-1"></i>សកម្មភាព
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rule in rules %}
+                    <tr class="rule-row" data-rule-id="{{ rule.id }}">
+                        <!-- ID Column - hidden on mobile -->
+                        <td class="d-none d-md-table-cell">
+                            <span class="badge bg-dark">{{ rule.id }}</span>
+                        </td>
+                        
+                        <!-- Conditions Column -->
+                        <td>
+                            <!-- Show ID on mobile -->
+                            <div class="d-md-none mb-2">
+                                <small class="text-muted">លេខកូដ:</small>
+                                <span class="badge bg-dark ms-1">{{ rule.id }}</span>
+                            </div>
+                            
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for cond in rule.conditions %}
+                                    <span class="badge bg-primary">
+                                        <i class="bi bi-check-circle me-1"></i>{{ cond }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Recommendation for mobile -->
+                            {% if rule.recommendation %}
+                            <div class="d-sm-none mt-2">
+                                <small class="text-muted">
+                                    <i class="bi bi-lightbulb"></i> អនុសាសន៍:
+                                </small>
+                                <div class="small text-success mt-1">{{ rule.recommendation|truncate(100) }}</div>
+                            </div>
+                            {% endif %}
+                        </td>
+                        
+                        <!-- Conclusion Column - hidden on mobile -->
+                        <td class="d-none d-sm-table-cell">
+                            <div class="mb-2">
+                                <span class="badge bg-success">
+                                    <i class="bi bi-arrow-right me-1"></i>{{ rule.conclusion }}
+                                </span>
+                            </div>
+                            
+                            <!-- Explanation -->
+                            {% if rule.explain %}
+                            <div class="text-muted small mb-1">
+                                <i class="bi bi-chat-left-text"></i> {{ rule.explain|truncate(80) }}
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Recommendation -->
+                            {% if rule.recommendation %}
+                            <div class="text-success small">
+                                <i class="bi bi-lightbulb"></i> {{ rule.recommendation|truncate(80) }}
+                            </div>
+                            {% endif %}
+                        </td>
+                        
+                        <!-- CF Column - hidden on mobile and tablet -->
+                        <td class="d-none d-lg-table-cell">
+                            <div class="progress" style="height: 20px;" title="ភាពជឿជាក់: {{ (rule.certainty * 100)|round|int }}%">
+                                <div class="progress-bar bg-{% if rule.certainty >= 0.8 %}success{% elif rule.certainty >= 0.5 %}warning{% else %}danger{% endif %}" 
+                                     role="progressbar" 
+                                     style="width: {{ rule.certainty * 100 }}%"
+                                     aria-valuenow="{{ rule.certainty * 100 }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    <span class="fw-bold">{{ (rule.certainty * 100)|round|int }}%</span>
+                                </div>
+                            </div>
+                            <small class="text-center d-block mt-1">{{ rule.certainty|default(1.0) }}</small>
+                        </td>
+                        
+                        <!-- Actions Column -->
+                        <td>
+                            <div class="d-flex flex-nowrap gap-1">
+                                <a href="{{ url_for('rules_edit', rid=rule.id) }}" 
+                                   class="btn btn-sm btn-outline-info d-flex align-items-center">
+                                    <i class="bi bi-pencil d-none d-sm-block me-1"></i>
+                                    <span>កែសម្រួល</span>
+                                </a>
+                                <form method="post" 
+                                      action="{{ url_for('rules_delete', rid=rule.id) }}" 
+                                      class="d-inline"
+                                      onsubmit="return confirm('លុបច្បាប់ {{ rule.id }}?');">
+                                    <button type="submit" 
+                                            class="btn btn-sm btn-outline-danger d-flex align-items-center">
+                                        <i class="bi bi-trash d-none d-sm-block me-1"></i>
+                                        <span>លុប</span>
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <!-- CF for mobile/tablet -->
+                            <div class="d-lg-none mt-2">
+                                <div class="d-flex align-items-center">
+                                    <small class="text-muted me-2">ភាពជឿជាក់:</small>
+                                    <span class="badge bg-{% if rule.certainty >= 0.8 %}success{% elif rule.certainty >= 0.5 %}warning{% else %}danger{% endif %}">
+                                        {{ (rule.certainty * 100)|round|int }}%
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Conclusion for mobile -->
+                            <div class="d-sm-none mt-2">
+                                <div class="d-flex align-items-center">
+                                    <small class="text-muted me-2">សន្និដ្ឋាន:</small>
+                                    <span class="badge bg-success">{{ rule.conclusion }}</span>
+                                </div>
+                                {% if rule.explain %}
+                                <div class="text-muted small mt-1">
+                                    <i>{{ rule.explain|truncate(60) }}</i>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    {% if not rules %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">
+                            <div class="py-4">
+                                <i class="bi bi-diagram-3 display-4 text-muted mb-3 d-block"></i>
+                                <h5 class="mb-2">មិនទាន់មានច្បាប់ទេ</h5>
+                                <p class="mb-0">បន្ថែមច្បាប់ដំបូងដើម្បីសាងសង់តក្កវិជ្ជារបស់អ្នក!</p>
+                                <a href="{{ url_for('rules_new') }}" class="btn btn-primary mt-3">
+                                    <i class="bi bi-plus-circle me-1"></i>បន្ថែមច្បាប់ដំបូង
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="feature-icon bg-primary bg-opacity-10 text-primary mb-3 mx-auto">
+                    <i class="bi bi-diagram-3"></i>
+                </div>
+                <h3 class="mb-0">{{ rules|length }}</h3>
+                <p class="text-muted mb-0">ច្បាប់សរុប</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="feature-icon bg-success bg-opacity-10 text-success mb-3 mx-auto">
+                    <i class="bi bi-lightning"></i>
+                </div>
+                <h3 class="mb-0">
+                    {% set high_cf = rules|selectattr('certainty', '>=', 0.8)|list|length %}
+                    {{ high_cf }}
+                </h3>
+                <p class="text-muted mb-0">ច្បាប់ភាពជឿជាក់ខ្ពស់</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="feature-icon bg-warning bg-opacity-10 text-warning mb-3 mx-auto">
+                    <i class="bi bi-shuffle"></i>
+                </div>
+                <h3 class="mb-0">
+                    {% set avg_conditions = (rules|map(attribute='conditions')|map('length')|sum / rules|length if rules|length > 0 else 0)|round(1) %}
+                    {{ avg_conditions }}
+                </h3>
+                <p class="text-muted mb-0">លក្ខខណ្ឌមធ្យមក្នុង១ច្បាប់</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom styling for Khmer language */
+    :root {
+        --khmer-font-family: 'Battambang', 'Khmer OS', 'Khmer OS Battambang', 'Noto Sans Khmer', sans-serif;
+    }
+    
+    body {
+        font-family: var(--khmer-font-family), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .rule-row {
+        transition: all 0.3s ease;
+    }
+    
+    .rule-row:hover {
+        background-color: rgba(74, 111, 165, 0.05) !important;
+        transform: translateX(5px);
+    }
+    
+    /* Badge styling */
+    .badge {
+        border-radius: 6px;
+        padding: 0.4em 0.8em;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .badge.bg-primary:hover {
+        background-color: #0d6efd !important;
+        transform: scale(1.05);
+    }
+    
+    .badge.bg-success:hover {
+        background-color: #198754 !important;
+        transform: scale(1.05);
+    }
+    
+    /* Progress bar styling */
+    .progress {
+        border-radius: 10px;
+        overflow: hidden;
+        height: 20px;
+    }
+    
+    .progress-bar {
+        transition: width 1s ease;
+    }
+    
+    /* Card hover effects */
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 575.98px) {
+        .table-responsive {
+            border: 0;
+            margin: 0 -1rem;
+            width: calc(100% + 2rem);
+        }
+        
+        .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        
+        .badge {
+            font-size: 0.75em;
+            padding: 0.3em 0.6em !important;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        td, th {
+            padding: 0.75rem 0.5rem !important;
+        }
+        
+        /* Adjust button text for mobile */
+        .btn-sm span {
+            display: none;
+        }
+        
+        .btn-sm i {
+            margin: 0 !important;
+            font-size: 1rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .table td, .table th {
+            padding: 0.75rem;
+        }
+        
+        /* Statistics cards on mobile */
+        .col-md-4 {
+            margin-bottom: 1rem;
+        }
+    }
+    
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        /* Tablet optimizations */
+        td:nth-child(2),
+        th:nth-child(2) {
+            width: 45% !important;
+        }
+        
+        td:nth-child(3),
+        th:nth-child(3) {
+            width: 30% !important;
+        }
+    }
+    
+    /* Prevent text overflow */
+    td:nth-child(2) {
+        word-break: break-word;
+    }
+    
+    /* Empty state styling */
+    .bi-diagram-3 {
+        color: var(--bs-gray-400);
+    }
+</style>
+
+<!-- Add Khmer font support -->
+<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Noto+Sans+Khmer:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script>
+    // Add animations and interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to table rows
+        const tableRows = document.querySelectorAll('.rule-row');
+        tableRows.forEach((row, index) => {
+            row.style.opacity = '0';
+            row.style.transform = 'translateY(20px)';
+            row.style.transition = 'all 0.4s ease';
+            
+            setTimeout(() => {
+                row.style.opacity = '1';
+                row.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+        
+        // Add click effect to rule rows
+        tableRows.forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Don't trigger on button clicks
+                if (!e.target.closest('a') && !e.target.closest('button')) {
+                    const ruleId = this.dataset.ruleId;
+                    console.log('Rule clicked:', ruleId);
+                    // You could add a modal or expand view here
+                }
+            });
+        });
+        
+        // Add tooltips for certainty values
+        const certaintyBadges = document.querySelectorAll('.badge[class*="bg-"]');
+        certaintyBadges.forEach(badge => {
+            const text = badge.textContent.trim();
+            if (text.includes('%')) {
+                const percent = parseInt(text);
+                let level = '';
+                
+                if (percent >= 80) level = 'ភាពជឿជាក់ខ្ពស់';
+                else if (percent >= 50) level = 'ភាពជឿជាក់មធ្យម';
+                else level = 'ភាពជឿជាក់ទាប';
+                
+                badge.title = `${level} (${percent}%)`;
+                
+                // Add pulse animation for high certainty rules
+                if (percent >= 80) {
+                    badge.style.animation = 'pulse 2s infinite';
+                }
+            }
+        });
+        
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                const focusedElement = document.activeElement;
+                const allFocusable = document.querySelectorAll('a, button, [tabindex]:not([tabindex="-1"])');
+                const currentIndex = Array.from(allFocusable).indexOf(focusedElement);
+                
+                if (currentIndex !== -1) {
+                    if (e.key === 'ArrowDown' && currentIndex < allFocusable.length - 1) {
+                        e.preventDefault();
+                        allFocusable[currentIndex + 1].focus();
+                    } else if (e.key === 'ArrowUp' && currentIndex > 0) {
+                        e.preventDefault();
+                        allFocusable[currentIndex - 1].focus();
+                    }
+                }
+            }
+            
+            // Quick add rule with Ctrl+R
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                window.location.href = "{{ url_for('rules_new') }}";
+            }
+        });
+    });
+    
+    // CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+{% endblock %}

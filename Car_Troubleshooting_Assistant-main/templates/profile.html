@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}ព័ត៌មានផ្ទាល់ខ្លួន - ប្រព័ន្ធជំនួយជួសជុលរថយន្ត{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        --dark-bg: #1a1a2e;
+        --card-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    /* Profile Container with Animated Background */
+    .profile-container {
+        min-height: 100vh;
+        background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        padding: 3rem 0;
+        font-family: 'Kantumruy Pro', 'Hanuman', sans-serif;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Profile Card */
+    .profile-card {
+        background: var(--card-bg);
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        transition: transform 0.4s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .profile-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+    }
+
+    /* Profile Header */
+    .profile-header {
+        background: var(--primary-gradient);
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Profile Picture */
+    .profile-picture-container {
+        position: relative;
+        width: 500px; /* កែសម្រួលទំហំឱ្យសមស្រប */
+        height: 500px;
+        margin: 0 auto 1.5rem;
+        z-index: 2;
+    }
+
+    .profile-picture {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transition: all 0.4s ease;
+    }
+
+    .profile-picture-placeholder {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-gradient);
+        color: white;
+        font-size: 4rem;
+        font-weight: bold;
+        border: 5px solid white;
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        border-left: 5px solid #667eea;
+    }
+
+    .info-label {
+        color: #6c757d;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        margin-bottom: 0.3rem;
+        font-weight: bold;
+    }
+
+    .info-value {
+        color: #333;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* Action Buttons */
+    .btn-custom {
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn-primary-custom { background: var(--primary-gradient); color: white; }
+    .btn-danger-custom { background: linear-gradient(135deg, #f5576c, #f093fb); color: white; }
+    .btn-success-custom { background: var(--success-gradient); color: white; }
+
+    .role-badge {
+        padding: 0.4rem 1.2rem;
+        border-radius: 50px;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(5px);
+        font-size: 0.9rem;
+    }
+
+    .status-active { background: #43e97b; color: white; padding: 0.4rem 1.2rem; border-radius: 50px; }
+    .status-inactive { background: #f5576c; color: white; padding: 0.4rem 1.2rem; border-radius: 50px; }
+</style>
+
+<div class="profile-container">
+    <div class="container">
+        <div class="profile-card fade-in-up">
+            <div class="profile-header">
+                <div class="profile-picture-container">
+                    {% if user.profile_picture %}
+                        <img src="data:image/jpeg;base64,{{ user.profile_picture }}"
+                             class="profile-picture"
+                             alt="{{ user.username }}">
+                    {% else %}
+                        <div class="profile-picture-placeholder">
+                            {{ user.username[0]|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <h1 class="display-6 fw-bold mb-2">{{ user.username }}</h1>
+                <p class="lead opacity-75">{{ user.email or 'មិនទាន់មានអ៊ីមែល' }}</p>
+                
+                <div class="d-flex justify-content-center gap-3 mt-3">
+                    <span class="role-badge">
+                        <i class="bi bi-shield-check me-2"></i>តួនាទី៖ {{ 'អ្នកគ្រប់គ្រង' if user.role == 'admin' else 'អ្នកប្រើប្រាស់' }}
+                    </span>
+                    <span class="{% if user.is_active %}status-active{% else %}status-inactive{% endif %}">
+                        <i class="bi bi-{% if user.is_active %}check-circle{% else %}x-circle{% endif %} me-2"></i>
+                        {{ 'កំពុងដំណើរការ' if user.is_active else 'ផ្អាកដំណើរការ' }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="p-4">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h4 class="mb-4"><i class="bi bi-person-badge me-2"></i>ព័ត៌មានផ្ទាល់ខ្លួន</h4>
+                        
+                        <div class="info-card">
+                            <div class="info-label">ឈ្មោះអ្នកប្រើប្រាស់</div>
+                            <div class="info-value">{{ user.username }}</div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <div class="info-label">អាសយដ្ឋានអ៊ីមែល</div>
+                            <div class="info-value">{{ user.email or 'មិនទាន់កំណត់' }}</div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <div class="info-label">លេខសម្គាល់ (ID)</div>
+                            <div class="info-value">
+                                <code class="bg-light p-2 rounded">{{ user.id }}</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <h4 class="mb-4"><i class="bi bi-clock-history me-2"></i>ព័ត៌មានគណនី</h4>
+                        
+                        <div class="info-card">
+                            <div class="info-label">ថ្ងៃបង្កើតគណនី</div>
+                            <div class="info-value">
+                                <i class="bi bi-calendar-plus me-2"></i>
+                                {{ user.created_at.strftime('%Y-%m-%d %H:%M:%S') if user.created_at else 'មិនច្បាស់' }}
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <div class="info-label">កែប្រែចុងក្រោយ</div>
+                            <div class="info-value">
+                                <i class="bi bi-clock me-2"></i>
+                                {{ user.updated_at.strftime('%Y-%m-%d %H:%M:%S') if user.updated_at else 'មិនដែល' }}
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <div class="info-label">ស្ថានភាពគណនី</div>
+                            <div class="info-value">
+                                {% if user.is_active %}
+                                    <span class="text-success"><i class="bi bi-check-circle-fill me-2"></i>កំពុងដំណើរការ</span>
+                                {% else %}
+                                    <span class="text-danger"><i class="bi bi-x-circle-fill me-2"></i>ផ្អាកដំណើរការ</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <button class="btn btn-primary-custom btn-custom" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                        <i class="bi bi-pencil"></i> កែប្រែព័ត៌មាន
+                    </button>
+                    
+                    <button class="btn btn-success-custom btn-custom" data-bs-toggle="modal" data-bs-target="#uploadPictureModal">
+                        <i class="bi bi-camera"></i> ប្តូររូបភាព
+                    </button>
+                    
+                    {% if current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin_users') }}" class="btn btn-primary-custom btn-custom">
+                        <i class="bi bi-shield-lock"></i> គ្រប់គ្រងអ្នកប្រើប្រាស់
+                    </a>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger-custom btn-custom ms-auto">
+                        <i class="bi bi-box-arrow-right"></i> ចាកចេញ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">កែប្រែព័ត៌មានផ្ទាល់ខ្លួន</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('update_profile') }}" id="editProfileForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">ឈ្មោះអ្នកប្រើប្រាស់</label>
+                        <input type="text" class="form-control" name="username" value="{{ user.username }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">អ៊ីមែល</label>
+                        <input type="email" class="form-control" name="email" value="{{ user.email or '' }}">
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label">ពាក្យសម្ងាត់បច្ចុប្បន្ន (តម្រូវឱ្យមាន)</label>
+                        <input type="password" class="form-control" name="current_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ពាក្យសម្ងាត់ថ្មី (បើចង់ប្តូរ)</label>
+                        <input type="password" class="form-control" name="new_password" id="newPassword">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">បញ្ជាក់ពាក្យសម្ងាត់ថ្មី</label>
+                        <input type="password" class="form-control" name="confirm_password" id="confirmPassword">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">បោះបង់</button>
+                    <button type="submit" class="btn btn-primary">រក្សាទុកការផ្លាស់ប្តូរ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadPictureModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">ប្តូររូបភាពកម្រងព័ត៌មាន</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <form method="POST" action="{{ url_for('upload_profile_picture') }}" enctype="multipart/form-data" id="uploadForm">
+                    <div class="file-upload-area p-5 border border-dashed" id="dropArea">
+                        <i class="bi bi-cloud-arrow-up display-4 text-primary"></i>
+                        <h5 class="mt-3">អូសរូបភាពដាក់ទីនេះ ឬ ចុចដើម្បីជ្រើសរើស</h5>
+                        <p class="text-muted">ទំហំអតិបរមា 5MB (JPG, PNG)</p>
+                        <input type="file" class="form-control d-none" id="profile_picture" name="profile_picture" 
+                               accept="image/*" onchange="handleFileSelect(event)">
+                        <label for="profile_picture" class="btn btn-primary">ជ្រើសរើសឯកសារ</label>
+                        <div class="mt-3" id="fileName"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">បោះបង់</button>
+                <button type="submit" form="uploadForm" class="btn btn-success">យល់ព្រមប្តូរ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ការបញ្ជាក់ពាក្យសម្ងាត់ និងសារជាភាសាខ្មែរ
+    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (newPassword && newPassword !== confirmPassword) {
+            e.preventDefault();
+            alert('ពាក្យសម្ងាត់ថ្មីមិនត្រូវគ្នាទេ!');
+        }
+        
+        if (newPassword && newPassword.length < 6) {
+            e.preventDefault();
+            alert('ពាក្យសម្ងាត់ថ្មីត្រូវមានយ៉ាងតិច ៦ តួអក្សរ!');
+        }
+    });
+
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('fileName').innerHTML = `ឯកសារដែលបានជ្រើស៖ <b>${file.name}</b>`;
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="km" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoExpert - ប្រព័ន្ធវិនិច្ឆ័យរថយន្ត</title>
+    <!-- Bootstrap 5 with Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Add this to your base.html head section -->
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .color-change-brand {
+            position: relative;
+            font-weight: 800;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            text-transform: uppercase;
+            padding: 1.5rem 2rem 2rem 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            max-width: 500px;
+        }
+        
+        .color-change-brand:hover {
+            transform: translateY(-5px) scale(1.05);
+        }
+        
+        .brand-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 3D Icon Styles */
+        .icon-3d {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            box-shadow: 
+                0 8px 20px rgba(102, 126, 234, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .spinning-gear {
+            font-size: 1.8rem;
+            color: white;
+            animation: rotate3d 3s linear infinite;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            top: 5px;
+            right: 5px;
+            animation: sparkle 2s ease-in-out infinite;
+            box-shadow: 0 0 10px #fff;
+        }
+        
+        /* Letters Container */
+        .letters-container {
+            position: relative;
+            flex: 1;
+        }
+        
+        .brand-letters {
+            display: flex;
+            gap: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .letter {
+            font-size: 1.1rem;
+            color: #333;
+            transition: all 0.5s ease;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            transform: translateY(0);
+            animation: float 3s ease-in-out infinite;
+            animation-delay: calc(var(--delay) * 1s);
+        }
+        
+        /* Car Track */
+        .car-track {
+            position: relative;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(180deg, #34495e, #2c3e50);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .road-line {
+            position: absolute;
+            top: 50%;
+            left: -50px;
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #f1c40f 10%, 
+                #f1c40f 15%, 
+                transparent 25%,
+                #f1c40f 35%,
+                #f1c40f 40%,
+                transparent 50%,
+                #f1c40f 60%,
+                #f1c40f 65%,
+                transparent 75%,
+                #f1c40f 85%,
+                #f1c40f 90%,
+                transparent 100%);
+            animation: roadMove 4s linear infinite;
+        }
+        
+        /* Running Car */
+        .running-car {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            animation: carDrive 5s ease-in-out infinite;
+        }
+        
+        /* User Profile Dropdown */
+  .user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    overflow: hidden; /* Clips the image into the circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This is the most important part for profile pics */
+}
+        
+        .role-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            border-radius: 8px;
+            margin: 2px 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background: var(--dark-gradient);
+            color: white;
+            border: none;
+            padding: 1.5rem;
+        }
+        
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+        }
+        
+        .btn-success {
+            background: var(--success-gradient);
+        }
+        
+        .btn-warning {
+            background: var(--warning-gradient);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+        
+        .badge {
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-weight: 600;
+        }
+        
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .table th {
+            background: var(--dark-gradient);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+        
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: #e9ecef;
+        }
+        
+        .alert {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .main-content {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        
+        .hero-section {
+            background: var(--dark-gradient);
+            color: white;
+            padding: 4rem 0;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        
+        /* Animations */
+        @keyframes rotate3d {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-2px); }
+        }
+        
+        @keyframes colorWave {
+            0% { 
+                color: #667eea; 
+                transform: translateY(0) scale(1);
+            }
+            25% { 
+                color: #f093fb; 
+                transform: translateY(-3px) scale(1.05);
+            }
+            50% { 
+                color: #f5576c; 
+                transform: translateY(-2px) scale(1.03);
+            }
+            75% { 
+                color: #4facfe; 
+                transform: translateY(-1px) scale(1.01);
+            }
+            100% { 
+                color: #667eea; 
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes roadMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50px); }
+        }
+        
+        @keyframes carDrive {
+            0% { transform: translateY(-50%) translateX(0); }
+            25% { transform: translateY(-50%) translateX(100px); }
+            50% { transform: translateY(-50%) translateX(200px); }
+            75% { transform: translateY(-50%) translateX(300px); }
+            100% { transform: translateY(-50%) translateX(400px); }
+        }
+        
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes headlightBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        @keyframes exhaustPuff {
+            0%, 100% { opacity: 0; transform: translateX(0); }
+            10% { opacity: 1; transform: translateX(-1px); }
+            20% { opacity: 0; transform: translateX(-2px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: var(--dark-gradient);">
+        <div class="container">
+            <!-- Brand Logo -->
+            <a class="navbar-brand color-change-brand" href="{{ url_for('home') }}">
+                <div class="brand-wrapper">
+                    <div class="icon-3d">
+                        <i class="bi bi-gear-fill spinning-gear"></i>
+                        <div class="sparkle"></div>
+                    </div>
+                    <div class="letters-container">
+                        <span class="brand-letters">
+                            <span class="letter" style="--delay: 0">ប្រ</span>
+                            <span class="letter" style="--delay: 0.1">ព័</span>
+                            <span class="letter" style="--delay: 0.2">ន្ធ</span>
+                            <span class="letter" style="--delay: 0.3">វិនិច្ឆ័យ</span>
+                            <span class="letter" style="--delay: 0.4">រថយន្ត</span>
+                        </span>
+                        <div class="car-track">
+                            <div class="road-line"></div>
+                            <div class="running-car">
+                                <div class="car-body">
+                                    <div class="car-top"></div>
+                                    <div class="car-bottom"></div>
+                                    <div class="wheel front-wheel"></div>
+                                    <div class="wheel back-wheel"></div>
+                                    <div class="headlight"></div>
+                                    <div class="exhaust"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ url_for('home') }}">
+                         <i class="bi bi-house-gear-fill me-1"></i>
+                          ទំព័រដំបូង
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ url_for('facts_list') }}">
+                            <i class="bi bi-list-check me-1"></i>
+                          បញ្ហារថយន្ត​ឬសញ្ញាមិនប្រក្រក្តី
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ url_for('rules_list') }}">
+                            <i class="bi bi-diagram-3 me-1"></i>
+                            ច្បាប់
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ url_for('infer') }}">
+                            <i class="bi bi-lightning-charge-fill me-1"></i>
+                            ម៉ាស៊ីនសន្និដ្ឋាន
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ url_for('history_list') }}">
+                            <i class="bi bi-clock-history me-1"></i> ប្រវត្តិ
+                        </a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ url_for('taxonomy_view') }}">
+                            <i class="bi bi-share me-1"></i>
+                            ចំណាត់ថ្នាក់
+                        </a>
+                    </li> -->
+                    {% if current_user.role == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center text-warning" href="{{ url_for('admin_users') }}">
+                            <i class="bi bi-shield-lock me-1"></i>
+                            ផ្ទាំងគ្រប់គ្រង​
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                
+                <!-- User Authentication Section -->
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="" id="userDropdown" role="button" data-bs-toggle="dropdown">
+    <div class="user-avatar me-2">
+        {% if current_user.profile_picture %}
+            <img src="data:image/jpeg;base64,{{ current_user.profile_picture }}" 
+                 alt="Profile" 
+                 class="rounded-circle" 
+                 style="width: 32px; height: 32px; object-fit: cover;">
+        {% else %}
+            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                {{ current_user.username[0]|upper }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="d-flex flex-column">
+        <span class="small">{{ current_user.username }}</span>
+    </div>
+</a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('profile') }}">
+                                    <i class="bi bi-person-circle me-2"></i>ប្រវត្តិរូបខ្ញុំ
+                                </a>
+                            </li>
+                            {% if current_user.role == 'admin' %}
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('admin_users') }}">
+                                    <i class="bi bi-people me-2"></i>គ្រប់គ្រង
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
+                                    <i class="bi bi-box-arrow-right me-2"></i>ចាកចេញ
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ url_for('login') }}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>
+                            ចូលប្រើ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ url_for('register') }}">
+                            <i class="bi bi-person-plus me-1"></i>
+                            ចុះឈ្មោះ
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-triangle{% elif category == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                                    {{ message }}
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Content Block -->
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5" style="min-height: 150px; position: relative;">
+        <div class="container" style="height: 100%;">
+            <!-- Content -->
+            <div style="height: 70%;" class="d-flex flex-column justify-content-center">
+                <div class="row">
+                    <!-- Column 1: Brand & Docs -->
+                    <div class="col-lg-4 text-center text-lg-start mb-3">
+                        <h4 class="mb-2">
+                            <i class="bi bi-gear me-2"></i> ប្រព័ន្ធវិនិច្ឆ័យរថយន្ត
+                        </h4>
+                        <p class="small mb-3">ប្រព័ន្ធវិនិច្ឆ័យរថយន្តដ៏មានជំនាញ</p>
+                        <a href="{{ url_for('readme') }}" class="btn btn-outline-light">
+                            <i class="bi bi-file-text me-1"></i>មើលឯកសារ
+                        </a>
+                    </div>
+                    
+                    <!-- Column 2: Team with Clickable Profiles -->
+                    <div class="col-lg-4 text-center mb-3">
+                        <h6 class="mb-3 border-bottom pb-2">ក្រុមអភិវឌ្ឍន៍</h6>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <button type="button" class="btn btn-outline-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#profileKhan">
+                                    <i class="bi bi-person me-1"></i>ខាន់ ​សម្បត្តិ
+                                </button>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <button type="button" class="btn btn-outline-success btn-sm w-100" data-bs-toggle="modal" data-bs-target="#profilePeach">
+                                    <i class="bi bi-person me-1"></i>ប៉ិច  ពុទ្ធារិទ្ធ
+                                </button>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <button type="button" class="btn btn-outline-warning btn-sm w-100" data-bs-toggle="modal" data-bs-target="#profileChorn">
+                                    <i class="bi bi-person me-1"></i>ឆន​ បញ្ញា
+                                </button>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <button type="button" class="btn btn-outline-info btn-sm w-100" data-bs-toggle="modal" data-bs-target="#profileNin">
+                                    <i class="bi bi-person me-1"></i>និន តេងហ៊ាង
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Column 3: Quick Links as Buttons -->
+                    <div class="col-lg-4 text-center text-lg-end">
+                        <h6 class="mb-3 border-bottom pb-2">ចំណុចភ្ជាប់រហ័ស</h6>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('home') }}" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-speedometer2 me-1"></i>ផ្ទាំងគ្រប់គ្រង
+                            </a>
+                            <a href="{{ url_for('infer') }}" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-gear me-1"></i>ឧបករណ៍វិនិច្ឆ័យ
+                            </a>
+                            <a href="{{ url_for('facts_list') }}" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-list-check me-1"></i>គ្រប់គ្រងការពិត
+                            </a>
+                            <a href="{{ url_for('rules_list') }}" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-diagram-3 me-1"></i>គ្រប់គ្រងច្បាប់
+                            </a>
+                            {% if not current_user.is_authenticated %}
+                            <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>ចូលប្រើ
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div style="height: 30%; display: flex; align-items: end; justify-content: center;">
+                <p class="mb-0 text-muted text-center small">
+                    &copy; 2025 EngineExpert. រក្សាសិទ្ធិគ្រប់យ៉ាង។
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Team Member Profile Modals -->
+    <!-- Khan Sombath Modal -->
+    <div class="modal fade" id="profileKhan" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-badge me-2"></i>ខាន់ សំបាត
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <img src="/static/images/sombath.jpg" 
+                             class="img-fluid rounded-circle border border-4 border-primary" 
+                             alt="Khan Sombath" 
+                             style="width: 300px; height: 300px; object-fit: cover;"
+                             onerror="this.style.display='none';">
+                    </div>
+                    <h6 class="text-primary">មេគម្រោង</h6>
+                    <p class="mb-3">អ្នកអភិវឌ្ឍន៍កម្មវិធីនិងស្ថាបត្យករប្រព័ន្ធ</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">បិទ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Peach Puthearith Modal -->
+    <div class="modal fade" id="profilePeach" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-badge me-2"></i>ពេជ្រ ប៊ុតធារិទ្ធ
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <img src="/static/images/thearith.jpg" 
+                             class="img-fluid rounded-circle border border-4 border-success" 
+                             alt="Peach Puthearith" 
+                             style="width: 300px; height: 300px; object-fit: cover;"
+                             onerror="this.style.display='none';">
+                    </div>
+                    <h6 class="text-success">ស្ថាបត្យករប្រព័ន្ធ</h6>
+                    <p class="mb-3">ការអភិវឌ្ឍ Backend និងម៉ាស៊ីន AI</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">បិទ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chorn Panha Modal -->
+    <div class="modal fade" id="profileChorn" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-badge me-2"></i>ជន ប៉ាញ់ណា
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <img src="/static/images/panha.png" 
+                             class="img-fluid rounded-circle border border-4 border-warning" 
+                             alt="Chorn Panha" 
+                             style="width: 300px; height: 300px; object-fit: cover;"
+                             onerror="this.style.display='none';">
+                    </div>
+                    <h6 class="text-warning">វិស្វករ AI</h6>
+                    <p class="mb-3">ប្រព័ន្ធអ្នកជំនាញនិងម៉ាស៊ីនសន្និដ្ឋាន</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal">បិទ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nin Teangheang Modal -->
+    <div class="modal fade" id="profileNin" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-badge me-2"></i>និន ទីងហ៊ាង
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <img src="/static/images/teangheang.png" 
+                             class="img-fluid rounded-circle border border-4 border-info" 
+                             alt="Nin Teangheang" 
+                             style="width: 300px; height: 300px; object-fit: cover;"
+                             onerror="this.style.display='none';">
+                    </div>
+                    <h6 class="text-info">អ្នកអភិវឌ្ឍ Frontend</h6>
+                    <p class="mb-3">ការរចនា UI/UX និងការអភិវឌ្ឍ Frontend</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">បិទ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Hover effect for brand letters -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const brand = document.querySelector('.color-change-brand');
+            const letters = document.querySelectorAll('.letter');
+            
+            if (brand) {
+                brand.addEventListener('mouseenter', function() {
+                    letters.forEach((letter, index) => {
+                        setTimeout(() => {
+                            letter.style.animation = 'colorWave 1s ease-in-out';
+                            letter.style.animationFillMode = 'both';
+                            letter.style.animationDelay = `${index * 0.1}s`;
+                            
+                            // Reset animation after completion
+                            setTimeout(() => {
+                                letter.style.animation = '';
+                            }, 1000);
+                        }, 100);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

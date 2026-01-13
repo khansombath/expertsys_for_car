@@ -1,0 +1,710 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, #4a6fa5, #166088);">
+                    <i class="bi bi-diagram-3 text-white"></i>
+                </div>
+                <h2 class="h3 mb-2">
+                    {% if mode == 'new' %}
+                        <i class="bi bi-plus-circle text-primary me-2"></i>បន្ថែមច្បាប់ថ្មី
+                    {% else %}
+                        <i class="bi bi-pencil-square text-warning me-2"></i>កែសម្រួលច្បាប់ {{ rule.id }}
+                    {% endif %}
+                </h2>
+                <p class="text-muted">
+                    {% if mode == 'new' %}
+                        បង្កើតច្បាប់ថ្មីសម្រាប់ប្រព័ន្ធអ្នកជំនាញ
+                    {% else %}
+                        កែប្រែច្បាប់ដែលមានស្រាប់
+                    {% endif %}
+                </p>
+                <a href="{{ url_for('rules_list') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>ត្រឡប់ទៅច្បាប់ទាំងអស់
+                </a>
+            </div>
+
+            <!-- Rule Form Card -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4">
+                    <form method="post" id="ruleForm">
+                        <div class="row g-4">
+                            <!-- Rule ID -->
+                            <div class="col-md-6">
+                                <label for="id" class="form-label fw-bold">
+                                    <i class="bi bi-hash text-primary me-2"></i>លេខកូដច្បាប់ *
+                                </label>
+                                <input type="text" class="form-control" id="id" name="id" 
+                                       value="{{ rule.id if rule else '' }}" 
+                                       {% if mode == 'edit' %}readonly{% endif %} 
+                                       required
+                                       placeholder="ឧទាហរណ៍: r1, r2, r3">
+                                <div class="form-text text-muted mt-2">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    លេខសម្គាល់តែមួយគត់សម្រាប់ច្បាប់នេះ
+                                </div>
+                            </div>
+
+                            <!-- Certainty Factor -->
+                            <div class="col-md-6">
+                                <label for="certainty" class="form-label fw-bold">
+                                    <i class="bi bi-percent text-warning me-2"></i>កម្រិតភាពជឿជាក់ *
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="certainty" name="certainty" 
+                                           min="0" max="100" step="1"
+                                           value="{{ (rule.certainty * 100)|int if rule and rule.certainty is defined else '80' }}">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <div class="form-text text-muted mt-2">
+                                    <i class="bi bi-speedometer2 me-1"></i>
+                                    កម្រិតជឿជាក់រវាង ០% ដល់ ១០០% (លំនាំដើម: ៨០%)
+                                </div>
+                                <div class="mt-2">
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-warning" 
+                                             id="certaintyProgress"
+                                             style="width: {{ (rule.certainty * 100)|int if rule and rule.certainty is defined else '80' }}%">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Quick Percentage Buttons -->
+                                <div class="mt-3">
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Quick percentage buttons">
+                                        <small class="text-muted me-2">កំណត់រហ័ស:</small>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setCertainty(100)">100%</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setCertainty(90)">90%</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setCertainty(80)">80%</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setCertainty(70)">70%</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setCertainty(50)">50%</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setCertainty(30)">30%</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setCertainty(0)">0%</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Conditions -->
+                            <div class="col-12">
+                                <label for="conditions" class="form-label fw-bold">
+                                    <i class="bi bi-list-check text-success me-2"></i>លក្ខខណ្ឌ (បើ) *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-if"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="conditions" name="conditions" 
+                                           value="{{ rule.conditions | join(', ') if rule and rule.conditions else '' }}" 
+                                           required
+                                           placeholder="ឧទាហរណ៍: f1, f2, f3">
+                                </div>
+                                <div class="form-text text-muted mt-2">
+                                    <i class="bi bi-card-checklist me-1"></i>
+                                    បញ្ជីលេខកូដការពិតដែលត្រូវចែកចេញដោយសញ្ញាក្បៀស
+                                </div>
+                            </div>
+
+                            <!-- Conclusion -->
+                            <div class="col-12">
+                                <label for="conclusion" class="form-label fw-bold">
+                                    <i class="bi bi-arrow-right-circle text-danger me-2"></i>សេចក្តីសន្និដ្ឋាន (បន្ទាប់មក) *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-then"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="conclusion" name="conclusion" 
+                                           value="{{ rule.conclusion if rule else '' }}" 
+                                           required
+                                           placeholder="ឧទាហរណ៍: d1, d2, d3">
+                                </div>
+                                <div class="form-text text-muted mt-2">
+                                    <i class="bi bi-bullseye me-1"></i>
+                                    លេខកូដការពិតដែលនឹងត្រូវបានសន្និដ្ឋាននៅពេលលក្ខខណ្ឌពេញចិត្ត
+                                </div>
+                            </div>
+
+                            <!-- Explanation -->
+                            <div class="col-12">
+                                <label for="explain" class="form-label fw-bold">
+                                    <i class="bi bi-chat-left-text text-info me-2"></i>ការពន្យល់
+                                </label>
+                                <textarea class="form-control" id="explain" name="explain" 
+                                          rows="3" 
+                                          placeholder="សរសេរការពន្យល់អំពីតក្កវិជ្ជានៃច្បាប់នេះ...">{{ rule.explain if rule else '' }}</textarea>
+                                <div class="form-text text-muted mt-2">
+                                    <i class="bi bi-journal-text me-1"></i>
+                                    ការពន្យល់ស្មើរសម្រាប់ច្បាប់នេះ (ស្រេចចិត្ត)
+                                </div>
+                            </div>
+
+                            <!-- Recommendation -->
+                            <div class="col-12">
+                                <label for="recommendation" class="form-label fw-bold">
+                                    <i class="bi bi-lightbulb text-warning me-2"></i>អនុសាសន៍សម្រាប់ការជួសជុល
+                                </label>
+                                <textarea class="form-control" id="recommendation" name="recommendation" 
+                                          rows="3" 
+                                          placeholder="សរសេរអនុសាសន៍សម្រាប់ការជួសជុល ដូចជា: 
+🔋 សាកថ្ម
+🔧 ត្រួតពិនិត្យម៉ាស៊ីន
+🛠️ ជំនួសផ្នែកខូច...">{{ rule.recommendation if rule and rule.recommendation else '' }}</textarea>
+                                <div class="form-text text-muted mt-2">
+                                    <i class="bi bi-tools me-1"></i>
+                                    បន្ថែមអនុសាសន៍ជាមួយនិមិត្តសញ្ញា (ឧទាហរណ៍: 🔋 សាកថ្ម...)
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="col-12 mt-4 pt-4 border-top">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ url_for('rules_list') }}" class="btn btn-outline-secondary">
+                                        <i class="bi bi-x-circle me-1"></i>បោះបង់
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        {% if mode == 'new' %}
+                                            <i class="bi bi-plus-circle me-1"></i>បង្កើតច្បាប់
+                                        {% else %}
+                                            <i class="bi bi-check-circle me-1"></i>រក្សាទុកការផ្លាស់ប្តូរ
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-eye me-2"></i>ការមើលជាមុនច្បាប់
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="rule-preview p-3 bg-light rounded">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <span class="badge bg-dark" id="preview-id">
+                                    {% if rule %}{{ rule.id }}{% else %}r1{% endif %}
+                                </span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="text-muted small">ច្បាប់</div>
+                            </div>
+                            <div>
+                                <span class="badge bg-warning text-dark" id="preview-cf">
+                                    {% if rule and rule.certainty %}{{ (rule.certainty * 100)|round|int }}{% else %}80{% endif %}%
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="rule-logic mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="conditions-section flex-grow-1">
+                                    <div class="text-muted small mb-1">បើ</div>
+                                    <div class="d-flex flex-wrap gap-1" id="preview-conditions">
+                                        {% if rule and rule.conditions %}
+                                            {% for cond in rule.conditions %}
+                                                <span class="badge bg-success">{{ cond }}</span>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="badge bg-success">f1</span>
+                                            <span class="badge bg-success">f2</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="mx-3">
+                                    <i class="bi bi-arrow-right text-primary fs-4"></i>
+                                </div>
+                                <div class="conclusion-section">
+                                    <div class="text-muted small mb-1">បន្ទាប់មក</div>
+                                    <div id="preview-conclusion">
+                                        {% if rule %}
+                                            <span class="badge bg-danger">{{ rule.conclusion }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">d1</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if rule and rule.explain %}
+                        <div class="explanation-section mb-3">
+                            <div class="text-muted small mb-1">
+                                <i class="bi bi-info-circle"></i> ការពន្យល់
+                            </div>
+                            <div class="small" id="preview-explain">{{ rule.explain }}</div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if rule and rule.recommendation %}
+                        <div class="recommendation-section">
+                            <div class="text-muted small mb-1">
+                                <i class="bi bi-lightbulb text-warning"></i> អនុសាសន៍
+                            </div>
+                            <div class="small text-success" id="preview-recommendation">{{ rule.recommendation }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom styling for Khmer language */
+    :root {
+        --khmer-font-family: 'Battambang', 'Khmer OS', 'Khmer OS Battambang', 'Noto Sans Khmer', sans-serif;
+    }
+    
+    body {
+        font-family: var(--khmer-font-family), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        box-shadow: 0 10px 20px rgba(74, 111, 165, 0.2);
+    }
+    
+    /* Form styling */
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+        padding: 0.75rem 1rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #4a6fa5;
+        box-shadow: 0 0 0 0.25rem rgba(74, 111, 165, 0.25);
+        transform: translateY(-2px);
+    }
+    
+    .input-group-text {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border: 2px solid #e9ecef;
+        font-weight: 600;
+    }
+    
+    .form-label {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-text {
+        font-size: 0.85rem;
+    }
+    
+    /* Button styling */
+    .btn {
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #4a6fa5, #166088);
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(74, 111, 165, 0.3);
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+    }
+    
+    /* Progress bar styling */
+    .progress {
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: #e9ecef;
+    }
+    
+    .progress-bar {
+        transition: width 0.3s ease, background-color 0.3s ease;
+    }
+    
+    /* Preview styling */
+    .rule-preview {
+        border-left: 4px solid #4a6fa5;
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    }
+    
+    .rule-logic {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .conditions-section, .conclusion-section {
+        flex: 1;
+    }
+    
+    /* Badge styling */
+    .badge {
+        border-radius: 6px;
+        padding: 0.5em 0.8em;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .badge:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Quick percentage buttons */
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Animation */
+    .card {
+        animation: fadeInUp 0.5s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .form-control, .form-select {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.95rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.25rem;
+            font-size: 0.95rem;
+        }
+        
+        .rule-logic {
+            flex-direction: column;
+        }
+        
+        .rule-logic .mx-3 {
+            margin: 1rem 0;
+            transform: rotate(90deg);
+        }
+        
+        .btn-group-sm .btn {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.7rem;
+        }
+    }
+</style>
+
+<!-- Add Khmer font support -->
+<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Noto+Sans+Khmer:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script>
+    // Real-time preview functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const idInput = document.getElementById('id');
+        const conditionsInput = document.getElementById('conditions');
+        const conclusionInput = document.getElementById('conclusion');
+        const certaintyInput = document.getElementById('certainty');
+        const explainInput = document.getElementById('explain');
+        const recommendationInput = document.getElementById('recommendation');
+        const certaintyProgress = document.getElementById('certaintyProgress');
+        
+        // Get preview elements
+        const previewId = document.getElementById('preview-id');
+        const previewConditions = document.getElementById('preview-conditions');
+        const previewConclusion = document.getElementById('preview-conclusion');
+        const previewCf = document.getElementById('preview-cf');
+        const previewExplain = document.getElementById('preview-explain');
+        const previewRecommendation = document.getElementById('preview-recommendation');
+        
+        // Update preview function
+        function updatePreview() {
+            // Update ID
+            previewId.textContent = idInput.value || 'r1';
+            
+            // Update conditions
+            const conditions = conditionsInput.value.split(',').map(c => c.trim()).filter(c => c);
+            previewConditions.innerHTML = '';
+            conditions.forEach(cond => {
+                if (cond) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge bg-success';
+                    badge.textContent = cond;
+                    previewConditions.appendChild(badge);
+                }
+            });
+            
+            // Update conclusion
+            previewConclusion.innerHTML = '';
+            if (conclusionInput.value) {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-danger';
+                badge.textContent = conclusionInput.value;
+                previewConclusion.appendChild(badge);
+            }
+            
+            // Update certainty with proper validation
+            const certainty = parseFloat(certaintyInput.value);
+            if (!isNaN(certainty)) {
+                const certaintyPercent = Math.min(100, Math.max(0, Math.round(certainty)));
+                previewCf.textContent = certaintyPercent + '%';
+                certaintyProgress.style.width = certaintyPercent + '%';
+                
+                // Change progress bar color based on value
+                if (certaintyPercent >= 80) {
+                    certaintyProgress.className = 'progress-bar bg-success';
+                } else if (certaintyPercent >= 60) {
+                    certaintyProgress.className = 'progress-bar bg-warning';
+                } else if (certaintyPercent >= 40) {
+                    certaintyProgress.className = 'progress-bar bg-info';
+                } else if (certaintyPercent >= 20) {
+                    certaintyProgress.className = 'progress-bar bg-primary';
+                } else {
+                    certaintyProgress.className = 'progress-bar bg-danger';
+                }
+            } else {
+                previewCf.textContent = '80%';
+                certaintyProgress.style.width = '80%';
+                certaintyProgress.className = 'progress-bar bg-warning';
+            }
+            
+            // Update explanation
+            if (explainInput && explainInput.value) {
+                if (!document.querySelector('.explanation-section')) {
+                    const explanationDiv = document.createElement('div');
+                    explanationDiv.className = 'explanation-section mb-3';
+                    explanationDiv.innerHTML = `
+                        <div class="text-muted small mb-1">
+                            <i class="bi bi-info-circle"></i> ការពន្យល់
+                        </div>
+                        <div class="small" id="preview-explain">${explainInput.value}</div>
+                    `;
+                    document.querySelector('.rule-preview').appendChild(explanationDiv);
+                } else {
+                    document.getElementById('preview-explain').textContent = explainInput.value;
+                }
+            }
+            
+            // Update recommendation
+            if (recommendationInput && recommendationInput.value) {
+                if (!document.querySelector('.recommendation-section')) {
+                    const recommendationDiv = document.createElement('div');
+                    recommendationDiv.className = 'recommendation-section';
+                    recommendationDiv.innerHTML = `
+                        <div class="text-muted small mb-1">
+                            <i class="bi bi-lightbulb text-warning"></i> អនុសាសន៍
+                        </div>
+                        <div class="small text-success" id="preview-recommendation">${recommendationInput.value}</div>
+                    `;
+                    document.querySelector('.rule-preview').appendChild(recommendationDiv);
+                } else {
+                    document.getElementById('preview-recommendation').textContent = recommendationInput.value;
+                }
+            }
+        }
+        
+        // Function to handle certainty input
+        function handleCertaintyInput() {
+            let value = parseFloat(certaintyInput.value);
+            
+            // If value is empty or NaN, set to default 80
+            if (isNaN(value)) {
+                certaintyInput.value = 80;
+                value = 80;
+            }
+            
+            // Ensure value is between 0 and 100
+            if (value < 0) {
+                certaintyInput.value = 0;
+            } else if (value > 100) {
+                certaintyInput.value = 100;
+            } else {
+                // Round to nearest integer
+                certaintyInput.value = Math.round(value);
+            }
+            
+            updatePreview();
+        }
+        
+        // Add event listeners
+        idInput.addEventListener('input', updatePreview);
+        conditionsInput.addEventListener('input', updatePreview);
+        conclusionInput.addEventListener('input', updatePreview);
+        certaintyInput.addEventListener('input', handleCertaintyInput);
+        certaintyInput.addEventListener('blur', handleCertaintyInput);
+        explainInput.addEventListener('input', updatePreview);
+        recommendationInput.addEventListener('input', updatePreview);
+        
+        // Keyboard shortcuts for certainty field
+        certaintyInput.addEventListener('keydown', function(e) {
+            // Ctrl+ArrowUp to increase by 5
+            if (e.ctrlKey && e.key === 'ArrowUp') {
+                e.preventDefault();
+                let value = parseFloat(this.value) || 0;
+                value = Math.min(100, value + 5);
+                this.value = Math.round(value);
+                updatePreview();
+            }
+            
+            // Ctrl+ArrowDown to decrease by 5
+            if (e.ctrlKey && e.key === 'ArrowDown') {
+                e.preventDefault();
+                let value = parseFloat(this.value) || 0;
+                value = Math.max(0, value - 5);
+                this.value = Math.round(value);
+                updatePreview();
+            }
+            
+            // Common percentage shortcuts
+            if (e.key === '1' && e.ctrlKey) {
+                e.preventDefault();
+                this.value = '100';
+                updatePreview();
+            }
+            if (e.key === '8' && e.ctrlKey) {
+                e.preventDefault();
+                this.value = '80';
+                updatePreview();
+            }
+            if (e.key === '5' && e.ctrlKey) {
+                e.preventDefault();
+                this.value = '50';
+                updatePreview();
+            }
+        });
+        
+        // Initial preview update
+        updatePreview();
+        
+        // Form validation
+        const form = document.getElementById('ruleForm');
+        form.addEventListener('submit', function(e) {
+            // ID validation
+            const idValue = idInput.value.trim();
+            if (!/^[a-z][a-z0-9_]*$/.test(idValue)) {
+                e.preventDefault();
+                alert('លេខកូដច្បាប់មិនត្រឹមត្រូវទេ។ ត្រូវចាប់ផ្តើមដោយអក្សរតូច និងអាចមានលេខ ឬសញ្ញាពិន្ទុប៉ុណ្ណោះ។');
+                idInput.focus();
+                return false;
+            }
+            
+            // Conditions validation
+            const conditions = conditionsInput.value.split(',').map(c => c.trim()).filter(c => c);
+            if (conditions.length === 0) {
+                e.preventDefault();
+                alert('សូមបញ្ជូលយ៉ាងហោចណាស់មួយលក្ខខណ្ឌ។');
+                conditionsInput.focus();
+                return false;
+            }
+            
+            // Certainty validation
+            const certainty = parseFloat(certaintyInput.value);
+            if (isNaN(certainty) || certainty < 0 || certainty > 100) {
+                e.preventDefault();
+                alert('កម្រិតភាពជឿជាក់ត្រូវតែរវាង ០% និង ១០០%។\nConfidence level must be between 0% and 100%.');
+                certaintyInput.focus();
+                return false;
+            }
+            
+            return true;
+        });
+        
+        // Auto-generate ID for new rules
+        if (idInput && !idInput.readonly && !idInput.value && mode == 'new') {
+            // Listen for conclusion input to generate ID
+            conclusionInput.addEventListener('blur', function() {
+                if (!idInput.value && conclusionInput.value) {
+                    // Generate ID from conclusion
+                    let generatedId = 'r_' + conclusionInput.value.toLowerCase();
+                    generatedId = generatedId.replace(/[^a-z0-9_]/g, '');
+                    idInput.value = generatedId;
+                    updatePreview();
+                }
+            });
+        }
+        
+        // Character counters
+        function createCounter(textarea, maxLength = 500) {
+            const counter = document.createElement('div');
+            counter.className = 'form-text text-end';
+            counter.style.marginTop = '0.25rem';
+            textarea.parentNode.appendChild(counter);
+            
+            function updateCounter() {
+                const count = textarea.value.length;
+                counter.textContent = `${count} / ${maxLength} តួអក្សរ`;
+                
+                if (count > maxLength) {
+                    counter.classList.add('text-danger');
+                } else {
+                    counter.classList.remove('text-danger');
+                }
+            }
+            
+            textarea.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+        
+        // Add counters to text areas
+        createCounter(explainInput, 500);
+        createCounter(recommendationInput, 500);
+        
+        // Show/hide sections based on input
+        function toggleSection(sectionClass, inputElement) {
+            const section = document.querySelector(sectionClass);
+            if (inputElement.value.trim()) {
+                if (!section) {
+                    // Section will be created in updatePreview
+                }
+            } else if (section) {
+                section.remove();
+            }
+        }
+        
+        explainInput.addEventListener('input', () => toggleSection('.explanation-section', explainInput));
+        recommendationInput.addEventListener('input', () => toggleSection('.recommendation-section', recommendationInput));
+    });
+    
+    // Global function for quick percentage buttons
+    window.setCertainty = function(value) {
+        const certaintyInput = document.getElementById('certainty');
+        if (certaintyInput) {
+            certaintyInput.value = value;
+            
+            // Trigger the input event to update preview
+            certaintyInput.dispatchEvent(new Event('input'));
+            certaintyInput.focus();
+        }
+    };
+</script>
+
+{% endblock %}

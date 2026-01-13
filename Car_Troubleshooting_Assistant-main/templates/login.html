@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}ចូលប្រើប្រាស់ - ប្រព័ន្ធជំនួយជួសជុលរថយន្ត{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0" style="border-radius: 15px;">
+            <div class="card-header bg-primary text-white text-center py-3" style="border-radius: 15px 15px 0 0;">
+                <h4 class="mb-0"><i class="bi bi-box-arrow-in-right me-2"></i>ចូលប្រើប្រាស់គណនី</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-bold">ឈ្មោះអ្នកប្រើប្រាស់ (Username)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់របស់អ្នក" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-bold">ពាក្យសម្ងាត់ (Password)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="បញ្ចូលពាក្យសម្ងាត់" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary py-2 fw-bold">ចូលប្រើប្រាស់</button>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <span class="text-muted">មិនទាន់មានគណនីមែនទេ?</span>
+                        <a href="{{ url_for('register') }}" class="btn btn-link fw-bold text-decoration-none">ចុះឈ្មោះគណនីថ្មីទីនេះ</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

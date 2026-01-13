@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">ការពិត ({{ facts | length }})</h2>
+    <a class="btn btn-primary" href="{{ url_for('facts_new') }}">
+        <i class="bi bi-plus-circle me-1"></i>បន្ថែមការពិតថ្មី
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-light table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th scope="col" class="d-none d-md-table-cell" style="width: 10%;">លេខកូដ</th>
+                <th scope="col" style="width: 40%;">ការពិពណ៌នា</th>
+                <th scope="col" style="width: 15%;">តម្លៃ</th>
+                <th scope="col" class="d-none d-sm-table-cell" style="width: 25%;">ស្លាក</th>
+                <th scope="col" style="min-width: 130px;">សកម្មភាព</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fact in facts %}
+            <tr>
+                <!-- ID Column - hidden on mobile -->
+                <td class="d-none d-md-table-cell">
+                    <strong>{{ fact.id }}</strong>
+                </td>
+                
+                <!-- Description Column -->
+                <td>
+                    <!-- Show ID on mobile -->
+                    <div class="d-md-none mb-1">
+                        <small class="text-muted">លេខកូដ:</small>
+                        <strong>{{ fact.id }}</strong>
+                    </div>
+                    {{ fact.description }}
+                    
+                    <!-- Show tags on mobile -->
+                    <div class="d-sm-none mt-2">
+                        {% for tag in fact.tags %}
+                            <span class="badge bg-info me-1 mb-1">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </td>
+                
+                <!-- Value Column -->
+           <!-- Value Column -->
+<td>
+    <form method="POST" action="{{ url_for('facts_toggle', fid=fact.id) }}" 
+          class="d-inline-block" 
+          onsubmit="return confirm('ប្តូរតម្លៃការពិត {{ fact.id }}?');">
+        {% if fact.value %}
+            <button type="submit" 
+                    class="badge bg-success border-0" 
+                    style="cursor: pointer; padding: 0.5em 0.8em; min-width: 60px;">
+                ពិត
+            </button>
+        {% else %}
+            <button type="submit" 
+                    class="badge bg-secondary border-0" 
+                    style="cursor: pointer; padding: 0.5em 0.8em; min-width: 60px;">
+                មិនពិត
+            </button>
+        {% endif %}
+    </form>
+</td>
+                
+                <!-- Tags Column - hidden on mobile -->
+                <td class="d-none d-sm-table-cell">
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for tag in fact.tags %}
+                            <span class="badge bg-info">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </td>
+                
+                <!-- Actions Column -->
+                <td>
+                    <div class="d-flex flex-nowrap gap-1">
+                        <a href="{{ url_for('facts_edit', fid=fact.id) }}" 
+                           class="btn btn-sm btn-outline-info d-flex align-items-center">
+                            <i class="bi bi-pencil d-none d-sm-block me-1"></i>
+                            <span>កែសម្រួល</span>
+                        </a>
+                        <form method="post" 
+                              action="{{ url_for('facts_delete', fid=fact.id) }}"
+                              class="d-inline"
+                              onsubmit="return confirm('លុបការពិត {{ fact.id }}?');">
+                            <button type="submit" 
+                                    class="btn btn-sm btn-outline-danger d-flex align-items-center">
+                                <i class="bi bi-trash d-none d-sm-block me-1"></i>
+                                <span>លុប</span>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% if not facts %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox display-4 d-block mb-3 opacity-50"></i>
+                    មិនទាន់មានការពិតទេ។ បន្ថែមការពិតដើម្បីចាប់ផ្តើម!
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+
+<style>
+    /* Custom styling for Khmer language */
+    :root {
+        --khmer-font-family: 'Battambang', 'Khmer OS', 'Khmer OS Battambang', 'Noto Sans Khmer', sans-serif;
+    }
+    
+    body {
+        font-family: var(--khmer-font-family), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 575.98px) {
+        .table-responsive {
+            border: 0;
+            margin: 0 -1rem;
+            width: calc(100% + 2rem);
+        }
+        
+        .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        
+        .badge {
+            font-size: 0.75em;
+            padding: 0.4em 0.6em !important;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        td, th {
+            padding: 0.75rem 0.5rem !important;
+        }
+        
+        /* Ensure toggle button is touch-friendly on mobile */
+        .badge[style*="cursor: pointer"] {
+            padding: 0.6em 1em !important;
+            font-size: 0.85em;
+        }
+        
+        /* Adjust button text for mobile */
+        .btn-sm span {
+            display: none;
+        }
+        
+        .btn-sm i {
+            margin: 0 !important;
+            font-size: 1rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .table td, .table th {
+            padding: 0.75rem;
+        }
+        
+        /* Adjust column widths for tablet */
+        td:nth-child(2), /* Description */
+        th:nth-child(2) {
+            width: 50% !important;
+        }
+        
+        td:nth-child(3), /* Value */
+        th:nth-child(3) {
+            width: 20% !important;
+        }
+        
+        /* Statistics cards on mobile */
+        .col-md-4 {
+            margin-bottom: 1rem;
+        }
+    }
+    
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        /* Tablet optimizations */
+        td:nth-child(2), /* Description */
+        th:nth-child(2) {
+            width: 35% !important;
+        }
+        
+        td:nth-child(4), /* Tags */
+        th:nth-child(4) {
+            width: 30% !important;
+        }
+    }
+    
+    /* Prevent long text from breaking layout */
+    td:nth-child(2) {
+        word-break: break-word;
+    }
+    
+    /* Make badges wrap nicely */
+    .badge {
+        white-space: normal;
+        word-break: break-word;
+        max-width: 100%;
+    }
+    
+    /* Ensure toggle buttons maintain consistent size */
+    .badge[style*="cursor: pointer"] {
+        min-width: 60px;
+        text-align: center;
+        display: inline-block;
+        transition: all 0.2s ease;
+    }
+    
+    .badge[style*="cursor: pointer"]:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Card hover effects */
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    /* Empty state styling */
+    .bi-inbox {
+        color: var(--bs-gray-400);
+    }
+</style>
+
+<!-- Add Khmer font support -->
+<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Noto+Sans+Khmer:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script>
+    // Add animations and interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to table rows
+        const tableRows = document.querySelectorAll('tbody tr');
+        tableRows.forEach((row, index) => {
+            row.style.opacity = '0';
+            row.style.transform = 'translateY(20px)';
+            row.style.transition = 'all 0.4s ease';
+            
+            setTimeout(() => {
+                row.style.opacity = '1';
+                row.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+        
+        // Add click effect to toggle buttons
+        const toggleButtons = document.querySelectorAll('.badge[style*="cursor: pointer"]');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Add ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.4);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    pointer-events: none;
+                `;
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+        
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                const focusedElement = document.activeElement;
+                const allFocusable = document.querySelectorAll('a, button, [tabindex]:not([tabindex="-1"])');
+                const currentIndex = Array.from(allFocusable).indexOf(focusedElement);
+                
+                if (currentIndex !== -1) {
+                    if (e.key === 'ArrowDown' && currentIndex < allFocusable.length - 1) {
+                        e.preventDefault();
+                        allFocusable[currentIndex + 1].focus();
+                    } else if (e.key === 'ArrowUp' && currentIndex > 0) {
+                        e.preventDefault();
+                        allFocusable[currentIndex - 1].focus();
+                    }
+                }
+            }
+        });
+    });
+    
+    // CSS for ripple effect
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+{% endblock %}

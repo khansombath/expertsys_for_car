@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0"><i class="bi bi-gear me-2"></i>ម៉ាស៊ីនវិភាគ (Inference Engine)</h3>
+                <p class="mb-0">កំណត់កម្រិតទំនុកចិត្តលើការសង្កេត និងដំណើរការរោគវិនិច្ឆ័យឆ្លាតវៃ</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- {% if results or obs_conf %}
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-info d-flex align-items-center">
+            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+            <div>
+                <strong>ទិន្នន័យត្រូវបានរក្សាទុក៖</strong> តម្លៃទំនុកចិត្ត និងលទ្ធផលរបស់អ្នកត្រូវបានរក្សាទុកដោយស្វ័យប្រវត្តិ។ 
+                ទិន្នន័យនឹងនៅតែមាន ទោះបីជាអ្នកចាកចេញទៅកាន់ទំព័រផ្សេងទៀតក៏ដោយ។
+                {% if results %}
+                <span class="badge bg-success ms-2">បានរក្សាទុកលទ្ធផលចំនួន {{ results|length }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %} -->
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clipboard-data me-2"></i>ការសង្កេត 
+                    <span class="badge bg-light text-dark ms-2">អង្គហេតុសកម្មចំនួន {{ facts|length }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="inferenceForm">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">កំណត់កម្រិតទំនុកចិត្ត (0.0 ដល់ 1.0)៖</label>
+                        <p class="text-muted small">0.0 = មិនបានសង្កេតឃើញ, 1.0 = សង្កេតឃើញច្បាស់លាស់</p>
+                        
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 80px;">លេខសម្គាល់</th>
+                                        <th>ការពិពណ៌នា</th>
+                                        <th style="width: 120px;">កម្រិតទំនុកចិត្ត</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for fact in facts %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge bg-primary">{{ fact.id }}</span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ fact.description }}</small>
+                                        </td>
+                                        <td>
+                                            <input type="number" 
+                                                   class="form-control form-control-sm confidence-input" 
+                                                   name="conf_{{ fact.id }}" 
+                                                   min="0" max="1" step="0.1"
+                                                   value="{{ obs_conf.get(fact.id, '0.0') }}"
+                                                   placeholder="0.0">
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex">
+                        <button type="submit" class="btn btn-warning btn-lg flex-fill">
+                            <i class="bi bi-lightning-charge me-2"></i>ដំណើរការរោគវិនិច្ឆ័យ
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-lg" id="resetFormBtn">
+                            <i class="bi bi-arrow-clockwise me-2"></i>កំណត់ឡើងវិញ
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-3 pt-3 border-top">
+                    <form method="POST" action="{{ url_for('reset_inference') }}" class="d-grid">
+                        <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                onclick="return confirm('សកម្មភាពនេះនឹងលុបទិន្នន័យដែលបានរក្សាទុកទាំងអស់។ តើអ្នកចង់បន្តដែរឬទេ?')">
+                            <i class="bi bi-eraser me-2"></i>សម្អាតទិន្នន័យដែលបានរក្សាទុកទាំងអស់
+                        </button>
+                        <small class="text-muted text-center mt-1">ប្រើប៊ូតុងនេះដើម្បីកំណត់អ្វីៗគ្រប់យ៉ាងឡើងវិញ</small>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-graph-up-arrow me-2"></i>លទ្ធផលរោគវិនិច្ឆ័យ
+                    {% if results %}
+                    <span class="badge bg-light text-dark ms-2">រកឃើញចំនួន {{ results|length }}</span>
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if results %}
+                <div class="mb-4">
+                    <h6 class="fw-semibold mb-3"><i class="bi bi-eye me-2"></i>ការសង្កេតសកម្ម៖</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for fid, conf in expanded_obs.items() %}
+                            {% if conf > 0 %}
+                            <span class="badge bg-primary">
+                                {{ fid }}: {{ "%.2f"|format(conf) }}
+                            </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <h6 class="fw-semibold mb-3"><i class="bi bi-clipboard-check me-2"></i>ការរកឃើញ៖</h6>
+                <div class="results-container" style="max-height: 400px; overflow-y: auto;">
+                    {% for result in results %}
+                    <div class="card mb-3 border-0 {% if loop.first %}bg-light{% endif %}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="card-title mb-0 text-success">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    {{ result.conclusion | replace('_', ' ') | title }}
+                                </h6>
+                                <span class="badge {% if result.confidence > 0.7 %}bg-success{% elif result.confidence > 0.4 %}bg-warning{% else %}bg-secondary{% endif %} fs-6">
+                                    {{ "%.0f"|format(result.confidence * 100) }}%
+                                </span>
+                            </div>
+                            
+                            {% if result.explanation %}
+                            <p class="card-text text-muted small mb-2">
+                                <i class="bi bi-chat-quote me-1"></i>
+                                {{ result.explanation }}
+                            </p>
+                            {% endif %}
+                            
+                            {% if result.recommendation %}
+                            <div class="alert alert-warning py-2 mb-2">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-tools text-warning fs-5 me-2 mt-1"></i>
+                                    <div>
+                                        <strong class="small">សកម្មភាពដែលគួរអនុវត្ត៖</strong>
+                                        <p class="mb-0 small">{{ result.recommendation }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="small text-muted">
+                                <span class="fw-semibold"><i class="bi bi-link me-1"></i>លក្ខខណ្ឌ (Rule):</span> 
+                                <code>{{ result.rule_id }}</code>
+                                <span class="fw-semibold ms-2"><i class="bi bi-lightning me-1"></i>មូលហេតុបង្ក៖</span>
+                                {% for cond in result.triggered_conditions %}
+                                <span class="badge bg-info me-1">{{ cond }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="row mb-3 mt-5">
+                        <div class="col-12">
+                            <a href="{{ url_for('history_list') }}" class="btn btn-info">
+                                <i class="bi bi-clock-history me-2"></i>មើលប្រវត្តិនៃការធ្វើរោគវិនិច្ឆ័យ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="text-muted mb-3" style="font-size: 3rem;">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h5 class="text-muted">មិនទាន់មានលទ្ធផលរោគវិនិច្ឆ័យ</h5>
+                    <p class="text-muted">សូមកំណត់តម្លៃទំនុកចិត្តលើការសង្កេត និងចុចដំណើរការដើម្បីមើលលទ្ធផលនៅទីនេះ។</p>
+                    
+                    {% if obs_conf %}
+                    <div class="alert alert-warning mt-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        អ្នកមានតម្លៃទំនុកចិត្តដែលបានរក្សាទុក ប៉ុន្តែមិនទាន់បានធ្វើរោគវិនិច្ឆ័យទេ។ 
+                        សូមចុច "ដំណើរការរោគវិនិច្ឆ័យ" ដើម្បីវិភាគ។
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle me-2"></i>របៀបប្រើប្រាស់ម៉ាស៊ីនវិភាគរោគវិនិច្ឆ័យ
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="text-primary mb-2" style="font-size: 2rem;">
+                            <i class="bi bi-sliders"></i>
+                        </div>
+                        <h6>កំណត់ទំនុកចិត្ត</h6>
+                        <p class="small text-muted">បញ្ចូលតម្លៃចន្លោះពី 0.0 ដល់ 1.0 សម្រាប់រោគសញ្ញាដែលបានសង្កេត</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="text-warning mb-2" style="font-size: 2rem;">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <h6>ដំណើរការវិភាគ</h6>
+                        <p class="small text-muted">ចុចដើម្បីវិភាគជាមួយម៉ាស៊ីនវិភាគ</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="text-success mb-2" style="font-size: 2rem;">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h6>ពិនិត្យលទ្ធផល</h6>
+                        <p class="small text-muted">ទទួលបានលទ្ធផលរោគវិនិច្ឆ័យដែលរៀបតាមចំណាត់ថ្នាក់ទំនុកចិត្ត</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="text-info mb-2" style="font-size: 2rem;">
+                            <i class="bi bi-cloud-check"></i>
+                        </div>
+                        <h6>រក្សាទុកស្វ័យប្រវត្តិ</h6>
+                        <p class="small text-muted">ការងាររបស់អ្នកត្រូវបានរក្សាទុកដោយស្វ័យប្រវត្តិជានិច្ច</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function resetFormValues() {
+    const inputs = document.querySelectorAll('.confidence-input');
+    inputs.forEach(input => {
+        input.value = '0.0';
+    });
+    
+    const resetBtn = document.getElementById('resetFormBtn');
+    const originalHTML = resetBtn.innerHTML;
+    const originalClass = resetBtn.className;
+    
+    resetBtn.innerHTML = '<i class="bi bi-check me-2"></i>បានកំណត់ឡើងវិញ!';
+    resetBtn.className = 'btn btn-success btn-lg flex-fill';
+    
+    setTimeout(() => {
+        resetBtn.innerHTML = originalHTML;
+        resetBtn.className = originalClass;
+    }, 1500);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const resetBtn = document.getElementById('resetFormBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetFormValues);
+    }
+    
+    const inputs = document.querySelectorAll('.confidence-input');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            let value = parseFloat(this.value);
+            if (isNaN(value) || value < 0) {
+                this.value = '0.0';
+            } else if (value > 1) {
+                this.value = '1.0';
+            } else {
+                this.value = Math.round(value * 10) / 10;
+            }
+        });
+        
+        input.addEventListener('focus', function() {
+            this.select();
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,495 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="h4 mb-1">
+            {% if mode == 'new' %}បន្ថែមការពិតថ្មី{% else %}កែសម្រួលការពិត {{ fact.id }}{% endif %}
+        </h2>
+        <p class="text-muted mb-0">
+            {% if mode == 'new' %}បង្កើតការពិតថ្មីសម្រាប់ប្រព័ន្ធអ្នកជំនាញ{% else %}កែប្រែការពិតដែលមានស្រាប់{% endif %}
+        </p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('facts_list') }}">
+        <i class="bi bi-arrow-left me-1"></i>ត្រឡប់ទៅការពិត
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            <div class="row g-3">
+                <!-- Fact ID -->
+                <div class="col-md-6">
+                    <label for="id" class="form-label fw-bold">
+                        <i class="bi bi-hash me-1"></i>លេខកូដការពិត
+                    </label>
+                    <input type="text" class="form-control form-control-lg" id="id" name="id" 
+                           value="{{ fact.id if fact else '' }}" 
+                           {% if mode == 'edit' %}readonly{% endif %} 
+                           required
+                           placeholder="ឧទាហរណ៍: f1, f2, f3">
+                    <div class="form-text text-muted">
+                        លេខសម្គាល់តែមួយគត់សម្រាប់ការពិត។ ត្រូវតែជាអក្សរតូច លេខ ឬសញ្ញាពិន្ទុ។
+                    </div>
+                </div>
+                
+                <!-- Value (True/False) -->
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-toggle-on me-1"></i>តម្លៃការពិត
+                    </label>
+                    <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" id="value" name="value" 
+                               {% if fact and fact.value %}checked{% endif %}
+                               style="width: 3em; height: 1.5em;">
+                        <label class="form-check-label ms-2" for="value">
+                            {% if fact and fact.value %}
+                                <span class="text-success fw-bold">ពិត</span> (ការពិតនេះត្រូវបានសង្កេតឃើញ)
+                            {% else %}
+                                <span class="text-secondary fw-bold">មិនពិត</span> (ការពិតនេះមិនទាន់ត្រូវបានសង្កេតឃើញ)
+                            {% endif %}
+                        </label>
+                    </div>
+                    <div class="form-text text-muted">
+                        ប្តូរស្ថានភាពការពិតរវាង "ពិត" និង "មិនពិត"
+                    </div>
+                </div>
+                
+                <!-- Description -->
+                <div class="col-12">
+                    <label for="description" class="form-label fw-bold">
+                        <i class="bi bi-card-text me-1"></i>ការពិពណ៌នា
+                    </label>
+                    <textarea class="form-control" id="description" name="description" 
+                              rows="4" required
+                              placeholder="សរសេរការពិពណ៌នាអំពីបញ្ហា ឬរោគសញ្ញា...">{{ fact.description if fact else '' }}</textarea>
+                    <div class="form-text text-muted">
+                        សរសេរការពិពណ៌នាច្បាស់លាស់អំពីរោគសញ្ញា ឬបរិស្ថាន
+                    </div>
+                </div>
+                
+                <!-- Category -->
+                <div class="col-md-6">
+                    <label for="category" class="form-label fw-bold">
+                        <i class="bi bi-diagram-3 me-1"></i>តំបន់វិនិច្ឆ័យ
+                    </label>
+                    <select id="category" name="category" class="form-control" required>
+    <option value="electrical_symptom">⚡electrical_symptom - រោគសញ្ញាប្រព័ន្ធអគ្គិសនី</option>
+    <option value="starting_symptom">🔑starting_symptom - រោគសញ្ញាការចាប់ផ្តើម</option>
+    <option value="running_symptom">🚗 running_symptom - រោគសញ្ញាការដំណើរការ</option>
+    <option value="fuel_symptom">⛽ fuel_symptom - រោគសញ្ញាប្រព័ន្ធឥន្ធនៈ</option>
+    <option value="environment_context">🌡️ environment_context - បរិស្ថាននិងស្ថានភាព</option>
+    <option value="transmission_symptom">🔄 transmission_symptom - រោគសញ្ញាប្រព័ន្ធបញ្ជូនថាមពល</option>
+    <option value="braking_symptom">🛑 braking_symptom - រោគសញ្ញាប្រព័ន្ធហ្វ្រាំង</option>
+    <option value="exhaust_symptom">💨 exhaust_symptom - រោគសញ្ញាប្រព័ន្ធផ្សែងចេញ</option>
+    <option value="cooling_symptom">❄️ cooling_symptom - រោគសញ្ញាប្រព័ន្ធត្រជាក់</option>
+    <option value="engine_indicator">🚨 engine_indicator - សញ្ញាបង្ហាញម៉ាស៊ីន</option>
+    <option value="lighting_symptom">💡 lighting_symptom - រោគសញ្ញាប្រព័ន្ធភ្លើង</option>
+    <option value="fuel_leak_symptom">⚠️ fuel_leak_symptom - រោគសញ្ញាប្រេងរលួយ</option>
+    <option value="engine_temperature">🌡️ engine_temperature - សីតុណ្ហភាពម៉ាស៊ីន</option>
+    <option value="engine_noise">🔊 engine_noise - សំឡេងម៉ាស៊ីន</option>
+    <option value="engine_performance">⚙️ engine_performance - សមត្ថភាពម៉ាស៊ីន</option>
+    <option value="brake_indicator">🛑 brake_indicator - សញ្ញាហ្វ្រាំង</option>
+    <option value="engine_symptom">🚗 engine_symptom - រោគសញ្ញាម៉ាស៊ីន</option>
+    <option value="fuel_system">⛽ fuel_system - ប្រព័ន្ធឥន្ធនៈ</option>
+    <option value="fuel_injection">💉 fuel_injection - ប្រព័ន្ធចាក់ប្រេង</option>
+    <option value="uncategorized" selected>📦 មិនទាន់ចាត់ថ្នាក់</option>
+</select>
+                    <div class="form-text text-muted">
+                        ជ្រើសរើសប្រភេទត្រឹមត្រូវសម្រាប់ចំណាត់ថ្នាក់នៃការពិត
+                    </div>
+                </div>
+                
+                <!-- Tags -->
+                <div class="col-md-6">
+                    <label for="tags" class="form-label fw-bold">
+                        <i class="bi bi-tags me-1"></i>ស្លាក
+                    </label>
+                    <input type="text" class="form-control" id="tags" name="tags" 
+                           value="{{ fact.tags | join(', ') if fact and fact.tags else '' }}"
+                           placeholder="ឧទាហរណ៍: សញ្ញា, ចាប់ផ្តើម, អគ្គិសនី">
+                    <div class="form-text text-muted">
+                        ស្លាកដែលបំបែកដោយសញ្ញាក្បៀស (ឧទាហរណ៍: សញ្ញា, ចាប់ផ្តើម, អគ្គិសនី)
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="col-12 mt-4 pt-3 border-top">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('facts_list') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i>បោះបង់
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            {% if mode == 'new' %}
+                                <i class="bi bi-plus-circle me-1"></i>បង្កើតការពិត
+                            {% else %}
+                                <i class="bi bi-check-circle me-1"></i>រក្សាទុកការផ្លាស់ប្តូរ
+                            {% endif %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Preview Card -->
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">
+            <i class="bi bi-eye me-2"></i>ការមើលជាមុនការពិត
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="text-center p-3 border rounded">
+                    <div class="text-muted small">លេខកូដ</div>
+                    <div class="fw-bold" id="preview-id">{% if fact %}{{ fact.id }}{% else %}f1{% endif %}</div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="p-3 border rounded">
+                    <div class="text-muted small">ការពិពណ៌នា</div>
+                    <div id="preview-description">{% if fact %}{{ fact.description }}{% else %}ការពិពណ៌នានឹងបង្ហាញនៅទីនេះ{% endif %}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="p-3 border rounded">
+                    <div class="text-muted small">តម្លៃ</div>
+                    <div>
+                        <span class="badge {% if fact and fact.value %}bg-success{% else %}bg-secondary{% endif %}" id="preview-value">
+                            {% if fact and fact.value %}ពិត{% else %}មិនពិត{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded">
+                    <div class="text-muted small">ប្រភេទ</div>
+                  <div id="preview-category">
+    {% if fact and fact.category == 'electrical_symptom' %}
+        ⚡ រោគសញ្ញាប្រព័ន្ធអគ្គិសនី
+    {% elif fact and fact.category == 'starting_symptom' %}
+        🔑 រោគសញ្ញាការចាប់ផ្តើម
+    {% elif fact and fact.category == 'running_symptom' %}
+        🚗 រោគសញ្ញាការដំណើរការ
+    {% elif fact and fact.category == 'fuel_symptom' %}
+        ⛽ រោគសញ្ញាប្រព័ន្ធឥន្ធនៈ
+    {% elif fact and fact.category == 'environment_context' %}
+        🌡️ បរិស្ថាននិងស្ថានភាព
+    {% elif fact and fact.category == 'transmission_symptom' %}
+        🔄 រោគសញ្ញាប្រព័ន្ធបញ្ជូនថាមពល
+    {% elif fact and fact.category == 'braking_symptom' %}
+        🛑 រោគសញ្ញាប្រព័ន្ធហ្វ្រាំង
+    {% elif fact and fact.category == 'exhaust_symptom' %}
+        💨 រោគសញ្ញាប្រព័ន្ធផ្សែងចេញ
+    {% elif fact and fact.category == 'cooling_symptom' %}
+        ❄️ រោគសញ្ញាប្រព័ន្ធត្រជាក់
+    {% elif fact and fact.category == 'engine_indicator' %}
+        🚨 សញ្ញាបង្ហាញម៉ាស៊ីន
+    {% elif fact and fact.category == 'lighting_symptom' %}
+        💡 រោគសញ្ញាប្រព័ន្ធភ្លើង
+    {% elif fact and fact.category == 'fuel_leak_symptom' %}
+        ⚠️ រោគសញ្ញាប្រេងរលួយ
+    {% elif fact and fact.category == 'engine_temperature' %}
+        🌡️ សីតុណ្ហភាពម៉ាស៊ីន
+    {% elif fact and fact.category == 'engine_noise' %}
+        🔊 សំឡេងម៉ាស៊ីន
+    {% elif fact and fact.category == 'engine_performance' %}
+        ⚙️ សមត្ថភាពម៉ាស៊ីន
+    {% elif fact and fact.category == 'brake_indicator' %}
+        🛑 សញ្ញាហ្វ្រាំង
+    {% elif fact and fact.category == 'engine_symptom' %}
+        🚗 រោគសញ្ញាម៉ាស៊ីន
+    {% elif fact and fact.category == 'fuel_system' %}
+        ⛽ ប្រព័ន្ធឥន្ធនៈ
+    {% elif fact and fact.category == 'fuel_injection' %}
+        💉 ប្រព័ន្ធចាក់ប្រេង
+    {% else %}
+        📦 មិនទាន់ចាត់ថ្នាក់
+    {% endif %}
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom styling for Khmer language */
+    :root {
+        --khmer-font-family: 'Battambang', 'Khmer OS', 'Khmer OS Battambang', 'Noto Sans Khmer', sans-serif;
+    }
+    
+    body {
+        font-family: var(--khmer-font-family), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+        padding: 0.75rem 1rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #4a6fa5;
+        box-shadow: 0 0 0 0.25rem rgba(74, 111, 165, 0.25);
+        transform: translateY(-2px);
+    }
+    
+    .form-label {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-text {
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    
+    .btn {
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #4a6fa5, #166088);
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(74, 111, 165, 0.3);
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+    }
+    
+    /* Form switch custom styling */
+    .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+    
+    /* Preview card styling */
+    .preview-card {
+        background: #f8f9fa;
+        border-left: 4px solid #4a6fa5;
+    }
+    
+    /* Animation for form */
+    .card {
+        animation: fadeInUp 0.5s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Placeholder styling */
+    ::placeholder {
+        color: #adb5bd;
+        font-style: italic;
+    }
+    
+    /* Required field indicator */
+    .form-control:required {
+        background-image: linear-gradient(45deg, transparent 50%, #ffc107 50%);
+        background-position: right 10px center;
+        background-repeat: no-repeat;
+        background-size: 8px 8px;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .form-control, .form-select {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.95rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.25rem;
+            font-size: 0.95rem;
+        }
+        
+        .preview-card .row {
+            flex-direction: column;
+        }
+        
+        .preview-card .col-md-3,
+        .preview-card .col-md-6,
+        .preview-card .col-md-9 {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+
+<!-- Add Khmer font support -->
+<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Noto+Sans+Khmer:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script>
+    // Real-time preview functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const idInput = document.getElementById('id');
+        const descriptionInput = document.getElementById('description');
+        const valueCheckbox = document.getElementById('value');
+        const categorySelect = document.getElementById('category');
+        const tagsInput = document.getElementById('tags');
+        
+        // Get preview elements
+        const previewId = document.getElementById('preview-id');
+        const previewDescription = document.getElementById('preview-description');
+        const previewValue = document.getElementById('preview-value');
+        const previewCategory = document.getElementById('preview-category');
+        
+        // Update preview functions
+        function updatePreview() {
+            // Update ID
+            previewId.textContent = idInput.value || 'f1';
+            
+            // Update description
+            previewDescription.textContent = descriptionInput.value || 'ការពិពណ៌នានឹងបង្ហាញនៅទីនេះ';
+            
+            // Update value
+            if (valueCheckbox.checked) {
+                previewValue.textContent = 'ពិត';
+                previewValue.className = 'badge bg-success';
+            } else {
+                previewValue.textContent = 'មិនពិត';
+                previewValue.className = 'badge bg-secondary';
+            }
+            
+            // Update category
+           // Update category
+const categoryMap = {
+    'electrical_symptom': '⚡ រោគសញ្ញាប្រព័ន្ធអគ្គិសនី',
+    'starting_symptom': '🔑 រោគសញ្ញាការចាប់ផ្តើម',
+    'running_symptom': '🚗 រោគសញ្ញាការដំណើរការ',
+    'fuel_symptom': '⛽ រោគសញ្ញាប្រព័ន្ធឥន្ធនៈ',
+    'environment_context': '🌡️ បរិស្ថាននិងស្ថានភាព',
+    'transmission_symptom': '🔄 រោគសញ្ញាប្រព័ន្ធបញ្ជូនថាមពល',
+    'braking_symptom': '🛑 រោគសញ្ញាប្រព័ន្ធហ្វ្រាំង',
+    'exhaust_symptom': '💨 រោគសញ្ញាប្រព័ន្ធផ្សែងចេញ',
+    'cooling_symptom': '❄️ រោគសញ្ញាប្រព័ន្ធត្រជាក់',
+    'engine_indicator': '🚨 សញ្ញាបង្ហាញម៉ាស៊ីន',
+    'lighting_symptom': '💡 រោគសញ្ញាប្រព័ន្ធភ្លើង',
+    'fuel_leak_symptom': '⚠️ រោគសញ្ញាប្រេងរលួយ',
+    'engine_temperature': '🌡️ សីតុណ្ហភាពម៉ាស៊ីន',
+    'engine_noise': '🔊 សំឡេងម៉ាស៊ីន',
+    'engine_performance': '⚙️ សមត្ថភាពម៉ាស៊ីន',
+    'brake_indicator': '🛑 សញ្ញាហ្វ្រាំង',
+    'engine_symptom': '🚗 រោគសញ្ញាម៉ាស៊ីន',
+    'fuel_system': '⛽ ប្រព័ន្ធឥន្ធនៈ',
+    'fuel_injection': '💉 ប្រព័ន្ធចាក់ប្រេង',
+    'uncategorized': '📦 មិនទាន់ចាត់ថ្នាក់'
+};
+            
+            previewCategory.textContent = categoryMap[categorySelect.value] || '📦 មិនទាន់ចាត់ថ្នាក់';
+            
+            // Update value label
+            const valueLabel = document.querySelector('label[for="value"]');
+            if (valueCheckbox.checked) {
+                valueLabel.innerHTML = '<span class="text-success fw-bold">ពិត</span> (ការពិតនេះត្រូវបានសង្កេតឃើញ)';
+            } else {
+                valueLabel.innerHTML = '<span class="text-secondary fw-bold">មិនពិត</span> (ការពិតនេះមិនទាន់ត្រូវបានសង្កេតឃើញ)';
+            }
+        }
+        
+        // Add event listeners
+        idInput.addEventListener('input', updatePreview);
+        descriptionInput.addEventListener('input', updatePreview);
+        valueCheckbox.addEventListener('change', updatePreview);
+        categorySelect.addEventListener('change', updatePreview);
+        tagsInput.addEventListener('input', function() {
+            // Tags preview could be added here if needed
+        });
+        
+        // Initial preview update
+        updatePreview();
+        
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            // ID validation
+            const idValue = idInput.value.trim();
+            if (!/^[a-z][a-z0-9_]*$/.test(idValue)) {
+                e.preventDefault();
+                alert('លេខកូដការពិតមិនត្រឹមត្រូវទេ។ ត្រូវចាប់ផ្តើមដោយអក្សរតូច និងអាចមានលេខ ឬសញ្ញាពិន្ទុប៉ុណ្ណោះ។');
+                idInput.focus();
+                return false;
+            }
+            
+            // Description validation
+            if (descriptionInput.value.trim().length < 5) {
+                e.preventDefault();
+                alert('ការពិពណ៌នាត្រូវតែមានយ៉ាងហោចណាស់ ៥ តួអក្សរ។');
+                descriptionInput.focus();
+                return false;
+            }
+            
+            return true;
+        });
+        
+        // Auto-generate ID for new facts
+        if (idInput && !idInput.readonly && !idInput.value) {
+            idInput.addEventListener('blur', function() {
+                if (!this.value) {
+                    // Generate ID from description
+                    const description = descriptionInput.value;
+                    if (description.length > 0) {
+                        const words = description.toLowerCase().split(' ');
+                        let generatedId = 'f_' + words[0].substring(0, 3);
+                        if (words.length > 1) {
+                            generatedId += '_' + words[1].substring(0, 3);
+                        }
+                        generatedId = generatedId.replace(/[^a-z0-9_]/g, '');
+                        this.value = generatedId;
+                        updatePreview();
+                    }
+                }
+            });
+        }
+        
+        // Add character counter for description
+        const descriptionCounter = document.createElement('div');
+        descriptionCounter.className = 'form-text text-end';
+        descriptionCounter.id = 'description-counter';
+        descriptionInput.parentNode.appendChild(descriptionCounter);
+        
+        function updateCounter() {
+            const count = descriptionInput.value.length;
+            descriptionCounter.textContent = `${count} តួអក្សរ`;
+            
+            if (count > 500) {
+                descriptionCounter.classList.add('text-danger');
+            } else {
+                descriptionCounter.classList.remove('text-danger');
+            }
+        }
+        
+        descriptionInput.addEventListener('input', updateCounter);
+        updateCounter();
+    });
+</script>
+{% endblock %}

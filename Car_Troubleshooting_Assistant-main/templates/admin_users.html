@@ -1,0 +1,2041 @@
+{% extends 'base.html' %}
+
+{% block title %}ផ្ទាំងគ្រប់គ្រង - ជំនួយការដោះស្រាយបញ្ហារថយន្ត{% endblock %}
+
+{% block content %}
+<style>
+     .table-hover tbody tr:hover {
+        background-color: rgba(52, 152, 219, 0.05);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #d0dce4 0%, #d9e4eb 100%) !important;
+        color: white !important;
+    }
+    
+    .text-purple {
+        color: #9b59b6 !important;
+    }
+    
+    .btn-group .btn {
+        border-radius: 6px !important;
+        margin: 0 2px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-group .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .badge {
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+    
+    .avatar-md {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .empty-state {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .empty-state-icon {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    
+    /* Avatar Smaller */
+    .avatar-sm {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .avatar-title {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .audit-row:hover {
+        background-color: rgba(0, 123, 255, 0.05) !important;
+    }
+    
+    .action-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35em 0.65em;
+    }
+    
+    pre {
+        font-size: 0.85rem;
+        font-family: 'Courier New', monospace;
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+    
+    .form-control.bg-light {
+        border: 1px solid #dee2e6;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+    }
+    
+    .admin-hero {
+        background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+        color: white;
+        padding: 3rem 0;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .nav-tabs .nav-link {
+        font-weight: 500;
+    }
+    
+    .log-pre {
+        font-size: 0.8rem;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .user-id-badge {
+        font-family: 'Courier New', monospace;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: bold;
+    }
+    
+    .current-user-badge {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+    
+    /* Timeline Styles */
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, #667eea, #764ba2);
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .timeline-item:last-child {
+        border-bottom: none;
+    }
+    
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -20px;
+        top: 10px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #667eea;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #667eea;
+    }
+    
+    .timeline-date {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-block;
+    }
+    
+    .audit-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .badge-create {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        color: white;
+    }
+    
+    .badge-update {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        color: white;
+    }
+    
+    .badge-delete {
+        background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+        color: white;
+    }
+    
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: white;
+    }
+    
+    .audit-log-entry {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .audit-log-entry:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+        border-width: 0.2em;
+    }
+</style>
+
+<!-- Admin Header -->
+<div class="admin-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 mb-2">
+                    <i class="bi bi-shield-lock me-2"></i>ផ្ទាំងគ្រប់គ្រង
+                </h1>
+                <p class="mb-0 opacity-90">
+                    គ្រប់គ្រងអ្នកប្រើប្រាស់ និងតាមដានប្រសិទ្ធភាពប្រព័ន្ធ
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="alert alert-light d-inline-block mb-0">
+                    <i class="bi bi-person-circle me-2"></i>
+                    <strong>{{ current_user.username }}</strong>
+                    <span class="badge bg-warning ms-2">{{ current_user.role|title }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">
+                <i class="bi bi-speedometer2 me-1"></i> ផ្ទាំងគ្រប់គ្រង
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">
+                <i class="bi bi-people me-1"></i> គ្រប់គ្រងអ្នកប្រើប្រាស់
+                <span class="badge bg-primary ms-1">{{ users|length }}</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit" type="button" role="tab">
+                <i class="bi bi-journal-text me-1"></i> កំណត់ហេតុស្វែងរក
+                <span class="badge bg-danger ms-1">{{ audit_logs|length }}</span>
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="adminTabsContent">
+        <!-- Dashboard Tab -->
+        <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+            <!-- Quick Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ users|length }}</div>
+                        <div class="stat-label">
+                            <i class="bi bi-people me-1"></i> អ្នកប្រើប្រាស់សរុប
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ facts_count }}</div>
+                        <div class="stat-label">
+                            <i class="bi bi-database me-1"></i> ការពិត
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ rules_count }}</div>
+                        <div class="stat-label">
+                            <i class="bi bi-journal-text me-1"></i> ច្បាប់
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <div class="stat-number">
+                            {% if facts_count and rules_count %}
+                                {{ (facts_count + rules_count) // 10 }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">
+                            <i class="bi bi-cpu me-1"></i> កម្រិត AI
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-lightning me-2"></i>សកម្មភាពរហ័ស
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 col-6 mb-3">
+                                    <a href="{{ url_for('facts_new') }}" class="card text-decoration-none text-center h-100">
+                                        <div class="card-body">
+                                            <i class="bi bi-plus-circle fs-1 text-primary mb-2"></i>
+                                            <h6>បន្ថែមបញ្ហារថយន្ត</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <a href="{{ url_for('rules_new') }}" class="card text-decoration-none text-center h-100">
+                                        <div class="card-body">
+                                            <i class="bi bi-journal-plus fs-1 text-success mb-2"></i>
+                                            <h6>បន្ថែមច្បាប់</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <a href="{{ url_for('infer') }}" class="card text-decoration-none text-center h-100">
+                                        <div class="card-body">
+                                            <i class="bi bi-search fs-1 text-warning mb-2"></i>
+                                            <h6>ធ្វើការវិនិច្ឆ័យ</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <a href="{{ url_for('taxonomy_view') }}" class="card text-decoration-none text-center h-100">
+                                        <div class="card-body">
+                                            <i class="bi bi-diagram-2 fs-1 text-info mb-2"></i>
+                                            <h6>ចំណាត់ថ្នាក់</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div class="tab-pane fade" id="users" role="tabpanel">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge me-2"></i>គ្រប់គ្រងអ្នកប្រើប្រាស់ ({{ users|length }} នាក់)
+                    </h5>
+                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <i class="bi bi-person-plus"></i> បន្ថែមអ្នកប្រើប្រាស់
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>លេខសម្គាល់</th>
+                                    <th>ឈ្មោះអ្នកប្រើប្រាស់</th>
+                                    <th>អ៊ីមែល</th>
+                                    <th>តួនាទី</th>
+                                    <th>ស្ថានភាព</th>
+                                    <th>សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {# Sort users by ID in ascending order #}
+                                {% set sorted_users = users|sort(attribute='id') %}
+                                {% for user in sorted_users %}
+                                <tr>
+                                    <td>
+                                        <span class="user-id-badge {% if user.id == current_user.id %}current-user-badge{% endif %}">
+                                            {{ loop.index }}
+                                        </span>
+                                        {% if user.id == current_user.id %}
+                                            <br><small class="text-success fw-bold">(បច្ចុប្បន្ន)</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ user.username }}</strong>
+                                    </td>
+                                    <td>{{ user.email or '-' }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('admin_update_user_role', user_id=user.id) }}" class="d-inline">
+                                            <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                <option value="user" {% if user.role == 'user' %}selected{% endif %}>អ្នកប្រើប្រាស់</option>
+                                                <option value="expert" {% if user.role == 'expert' %}selected{% endif %}>អ្នកជំនាញ</option>
+                                                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>អ្នកគ្រប់គ្រង</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        {% if user.is_active %}
+                                            <span class="badge bg-success">សកម្ម</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">អសកម្ម</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            {% if user.id != current_user.id %}
+                                                <!-- Toggle Active/Inactive -->
+                                                <form method="POST" action="{{ url_for('admin_toggle_user_status', user_id=user.id) }}" class="d-inline">
+                                                    {% if user.is_active %}
+                                                        <button type="submit" class="btn btn-warning" title="បិទអ្នកប្រើប្រាស់" onclick="return confirm('តើអ្នកពិតជាចង់បិទអ្នកប្រើប្រាស់នេះមែនទេ?')">
+                                                            <i class="bi bi-person-slash"></i>
+                                                        </button>
+                                                    {% else %}
+                                                        <button type="submit" class="btn btn-success" title="បើកអ្នកប្រើប្រាស់" onclick="return confirm('តើអ្នកពិតជាចង់បើកអ្នកប្រើប្រាស់នេះមែនទេ?')">
+                                                            <i class="bi bi-person-check"></i>
+                                                        </button>
+                                                    {% endif %}
+                                                </form>
+                                                
+                                                <!-- Edit User -->
+                                                <button type="button" class="btn btn-primary edit-user-btn" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#editUserModal"
+                                                        data-user-id="{{ user.id }}"
+                                                        data-username="{{ user.username }}"
+                                                        data-email="{{ user.email or '' }}"
+                                                        title="កែសម្រួលអ្នកប្រើប្រាស់">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                
+                                                <!-- Delete User -->
+                                                <button type="button" class="btn btn-danger delete-user-btn" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#deleteUserModal"
+                                                        data-user-id="{{ user.id }}"
+                                                        data-username="{{ user.username }}"
+                                                        title="លុបអ្នកប្រើប្រាស់">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            {% else %}
+                                                <span class="text-muted small">អ្នកប្រើប្រាស់បច្ចុប្បន្ន</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit Logs Tab -->
+        <div class="tab-pane fade" id="audit" role="tabpanel">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0">
+                            <i class="bi bi-shield-check me-2"></i>កំណត់ហេតុស្វែងរក
+                        </h5>
+                        <p class="text-muted mb-0 small">
+                            <i class="bi bi-info-circle me-1"></i>កំណត់ហេតុសកម្មភាពអ្នកប្រើប្រាស់ទាំងអស់
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-primary me-3">
+                            <i class="bi bi-clock-history me-1"></i>កំណត់ហេតុសុវត្ថិភាព
+                        </span>
+                        <button class="btn btn-sm btn-outline-danger" id="clearAuditLogs" data-bs-toggle="modal" data-bs-target="#confirmClearLogs">
+                            <i class="bi bi-trash me-1"></i>សម្អាតកំណត់ហេតុ
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filter Controls -->
+                <div class="card-body border-bottom">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">
+                                <i class="bi bi-filter me-1"></i>សកម្មភាព
+                            </label>
+                            <select class="form-select form-select-sm" id="auditActionFilter">
+                                <option value="all">ទាំងអស់</option>
+                                <option value="CREATE">បង្កើត</option>
+                                <option value="UPDATE">កែសម្រួល</option>
+                                <option value="DELETE">លុប</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">
+                                <i class="bi bi-table me-1"></i>តារាង
+                            </label>
+                            <select class="form-select form-select-sm" id="auditTableFilter">
+                                <option value="all">ទាំងអស់</option>
+                                <option value="users">អ្នកប្រើប្រាស់</option>
+                                <option value="facts">ការពិត</option>
+                                <option value="rules">ច្បាប់</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">
+                                <i class="bi bi-search me-1"></i>ស្វែងរក
+                            </label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" id="auditSearch" placeholder="ស្វែងរកឈ្មោះអ្នកប្រើ...">
+                                <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-light text-dark border">
+                                    <i class="bi bi-journal-text me-1"></i>សរុប: <span id="totalLogs">{{ audit_logs|length }}</span>
+                                </span>
+                                <span class="badge bg-success">
+                                    <i class="bi bi-plus-circle me-1"></i>បង្កើត: <span id="createCount">0</span>
+                                </span>
+                                <span class="badge bg-primary">
+                                    <i class="bi bi-pencil me-1"></i>កែសម្រួល: <span id="updateCount">0</span>
+                                </span>
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-trash me-1"></i>លុប: <span id="deleteCount">0</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Audit Logs Table -->
+                <div class="card-body p-0">
+                    <div class="timeline p-4" id="auditTimeline">
+                        {% if audit_logs %}
+                            {% for log in audit_logs|sort(attribute='created_at', reverse=true) %}
+                            <div class="timeline-item audit-log-entry" 
+                                 data-action="{{ log.action }}" 
+                                 data-username="{{ log.username|default('', true)|lower }}"
+                                 data-table="{{ log.table_name }}"
+                                 data-search="{{ (log.username or '') ~ ' ' ~ log.action ~ ' ' ~ log.table_name }}">
+                                <div class="timeline-date">
+                                    <i class="bi bi-calendar3 me-2"></i>
+                                    {% if log.created_at %}
+                                        {{ log.created_at.strftime('%d/%m/%Y %H:%M') }}
+                                    {% else %}
+                                        មិនស្គាល់
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex align-items-start justify-content-between">
+                                    <div style="flex: 1;">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="user-avatar bg-dark">
+                                                {{ (log.username or 'N')[0]|upper }}
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-0 fw-bold">{{ log.username or 'មិនស្គាល់' }}</h5>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-hash me-1"></i>
+                                                    លេខសម្គាល់កំណត់ហេតុ: #{{ loop.index }}
+                                                    {% if log.user_id %}
+                                                        • លេខសម្គាល់អ្នកប្រើ: #{{ log.user_id }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-3 mb-3">
+                                            <span class="audit-badge {% if log.action == 'CREATE' %}badge-create{% elif log.action == 'UPDATE' %}badge-update{% else %}badge-delete{% endif %}">
+                                                <i class="bi 
+                                                    {% if log.action == 'CREATE' %}bi-plus-circle
+                                                    {% elif log.action == 'UPDATE' %}bi-pencil
+                                                    {% else %}bi-trash{% endif %} me-1">
+                                                </i>
+                                                {% if log.action == 'CREATE' %}បង្កើត
+                                                {% elif log.action == 'UPDATE' %}កែសម្រួល
+                                                {% elif log.action == 'DELETE' %}លុប
+                                                {% else %}{{ log.action }}{% endif %}
+                                            </span>
+                                            <span class="badge bg-info bg-opacity-10 text-info border border-info px-3 py-2">
+                                                <i class="bi bi-table me-2"></i>
+                                                {{ log.table_name }}
+                                            </span>
+                                        </div>
+                                        {% if log.old_value or log.new_value %}
+                                        <div class="bg-light p-3 rounded">
+                                            <small class="text-muted d-block mb-1">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                បានកែប្រែទិន្នន័យ៖
+                                            </small>
+                                            {% if log.old_value %}
+                                            <div class="mb-2">
+                                                <small class="text-danger fw-bold">ចាស់៖</small>
+                                                <div class="small bg-white p-2 rounded" style="max-height: 100px; overflow: auto;">
+                                                    {{ log.old_value|tojson|truncate(200) }}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            
+                                            {% if log.new_value %}
+                                            <div>
+                                                <small class="text-success fw-bold">ថ្មី៖</small>
+                                                <div class="small bg-white p-2 rounded" style="max-height: 100px; overflow: auto;">
+                                                    {{ log.new_value|tojson|truncate(200) }}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="btn-group btn-group-sm ms-3" style="flex-shrink: 0;">
+                                       <!-- In the audit log entry template, update the button: -->
+<!-- In your audit log entry template, make sure data is properly escaped -->
+<button class="btn btn-outline-primary view-details-btn" 
+        data-log-id="{{ log.id }}"
+        data-log-username="{{ log.username|default('មិនស្គាល់', true) }}"
+        data-log-action="{{ log.action|default('មិនស្គាល់', true) }}"
+        data-log-table="{{ log.table_name|default('មិនស្គាល់', true) }}"
+        data-log-record="{{ log.record_id|default('មិនមាន', true) }}"
+        data-log-useragent="{{ log.user_agent|default('មិនស្គាល់', true) }}"
+        data-log-oldvalue="{{ log.old_value|tojson|safe if log.old_value else 'null' }}"
+        data-log-newvalue="{{ log.new_value|tojson|safe if log.new_value else 'null' }}"
+        data-log-time="{% if log.created_at %}{{ log.created_at.isoformat() }}{% else %}null{% endif %}"
+        title="មើលលម្អិត">
+    <i class="bi bi-eye"></i>
+</button>
+                                        <button class="btn btn-outline-danger delete-log-btn" 
+                                                data-log-id="{{ log.id }}"
+                                                data-log-username="{{ log.username }}"
+                                                title="លុប">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <div class="text-center py-5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon bg-light rounded-circle p-4 d-inline-block mb-4">
+                                    <i class="bi bi-journal-x display-4 text-muted"></i>
+                                </div>
+                                <h4 class="fw-bold text-muted mb-3">មិនមានកំណត់ហេតុ</h4>
+                                <p class="text-muted mb-4">មិនទាន់មានសកម្មភាពណាមួយត្រូវបានកត់ត្រា</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if audit_logs %}
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small">
+                                <i class="bi bi-info-circle me-1"></i>បង្ហាញ <span id="showingCount">{{ audit_logs|length }}</span> កំណត់ហេតុ
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Log Details Modal -->
+<!-- Log Details Modal -->
+<div class="modal fade" id="logDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-journal-text me-2"></i>ព័ត៌មានលម្អិតកំណត់ហេតុ
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">អ្នកប្រើប្រាស់</label>
+                            <div class="form-control bg-light" id="detailUsername">-</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">សកម្មភាព</label>
+                            <div class="form-control bg-light" id="detailAction">-</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">តារាង</label>
+                            <div class="form-control bg-light" id="detailTable">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">លេខសម្គាល់កំណត់ត្រា</label>
+                            <div class="form-control bg-light" id="detailRecordId">-</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">ពេលវេលា</label>
+                            <div class="form-control bg-light" id="detailTime">-</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">ប្រភេទសកម្មភាព</label>
+                            <div class="form-control bg-light" id="detailActionType">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Old/New Values Section - Initially hidden -->
+                <div id="dataChangesSection" style="display: none;">
+                    <div class="row mt-3">
+                        <div class="col-md-6" id="oldValueSection">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <i class="bi bi-arrow-left text-danger me-2"></i>តម្លៃចាស់
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="mb-0 log-pre" id="detailOldValue">មិនមានទិន្នន័យ</pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" id="newValueSection">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <i class="bi bi-arrow-right text-success me-2"></i>តម្លៃថ្មី
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="mb-0 log-pre" id="detailNewValue">មិនមានទិន្នន័យ</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Show message for other actions -->
+                <div id="noDataChangesSection" style="display: none;">
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        សកម្មភាពនេះមិនមានការផ្លាស់ប្តូរទិន្នន័យ
+                    </div>
+                </div>
+                
+                <div class="mt-3" id="detailUserAgentSection" style="display: none;">
+                    <label class="form-label small text-muted">ឧបករណ៍ប្រើប្រាស់</label>
+                    <div class="form-control bg-light" id="detailUserAgent" style="font-size: 0.85rem;">-</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>បិទ
+                </button>
+                <button type="button" class="btn btn-primary" id="exportCurrentLogBtn">
+                    <i class="bi bi-download me-1"></i>នាំចេញ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal fade" id="confirmDeleteLogModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">
+                    <i class="bi bi-exclamation-triangle me-2"></i>បញ្ជាក់ការលុប
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteLogMessage">តើអ្នកពិតជាចង់លុបកំណត់ហេតុនេះមែនទេ?</p>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-info-circle me-1"></i>សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x me-1"></i>បោះបង់
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteLogBtn">
+                    <i class="bi bi-trash me-1"></i>លុប
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Clear All Logs Modal -->
+<div class="modal fade" id="confirmClearLogs" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">
+                    <i class="bi bi-exclamation-triangle me-2"></i>សម្អាតកំណត់ហេតុទាំងអស់
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>តើអ្នកពិតជាចង់លុបកំណត់ហេតុទាំងអស់មែនទេ?</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-octagon me-2"></i>
+                    សកម្មភាពនេះនឹងលុបកំណត់ហេតុសុវត្ថិភាពទាំងអស់ ហើយមិនអាចត្រឡប់វិញបានទេ។
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x me-1"></i>បោះបង់
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmClearAllBtn">
+                    <i class="bi bi-trash me-1"></i>លុបទាំងអស់
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">បន្ថែមអ្នកប្រើប្រាស់ថ្មី</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin_add_user') }}" id="addUserForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">ឈ្មោះអ្នកប្រើប្រាស់ *</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">អ៊ីមែល</label>
+                        <input type="email" name="email" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ពាក្យសម្ងាត់ *</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">បញ្ជាក់ពាក្យសម្ងាត់ *</label>
+                        <input type="password" name="confirm_password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">តួនាទី *</label>
+                        <select name="role" class="form-control" required>
+                            <option value="user">អ្នកប្រើប្រាស់</option>
+                            <option value="expert">អ្នកជំនាញ</option>
+                            <option value="admin">អ្នកគ្រប់គ្រង</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">បោះបង់</button>
+                    <button type="submit" class="btn btn-success">បន្ថែមអ្នកប្រើប្រាស់</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">កែសម្រួលអ្នកប្រើប្រាស់</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin_edit_user') }}" id="editUserForm">
+                <input type="hidden" id="edit_user_id" name="user_id">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">លេខសម្គាល់អ្នកប្រើ</label>
+                            <input type="text" id="edit_user_id_display" class="form-control" readonly disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">ឈ្មោះអ្នកប្រើប្រាស់ *</label>
+                            <input type="text" id="edit_username" name="username" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">អ៊ីមែល</label>
+                        <input type="email" id="edit_email" name="email" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ពាក្យសម្ងាត់ថ្មី (ទុកទទេដើម្បីរក្សាពាក្យសម្ងាត់បច្ចុប្បន្ន)</label>
+                        <input type="password" name="password" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">បញ្ជាក់ពាក្យសម្ងាត់ថ្មី</label>
+                        <input type="password" name="confirm_password" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">បោះបង់</button>
+                    <button type="submit" class="btn btn-primary">រក្សាទុកការផ្លាស់ប្តូរ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">លុបអ្នកប្រើប្រាស់</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin_delete_user') }}" id="deleteUserForm">
+                <input type="hidden" id="delete_user_id" name="user_id">
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>ការព្រមាន: សកម្មភាពនេះមិនអាចត្រឡប់មកវិញបានទេ!</strong>
+                    </div>
+                    <p>តើអ្នកប្រាកដជាចង់លុបអ្នកប្រើប្រាស់នេះទេ?</p>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p><strong>លេខសម្គាល់អ្នកប្រើ:</strong> #<span id="delete_user_id_display"></span></p>
+                            <p><strong>ឈ្មោះអ្នកប្រើប្រាស់:</strong> <span id="delete_username"></span></p>
+                            <p class="text-danger mb-0">
+                                <i class="bi bi-info-circle me-1"></i>
+                                ទិន្នន័យទាំងអស់ដែលទាក់ទងនឹងអ្នកប្រើប្រាស់នេះនឹងត្រូវបានលុបជាអចិន្ត្រៃយ៍។
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">បោះបង់</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i>លុបអ្នកប្រើប្រាស់ជាអចិន្ត្រៃយ៍
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Edit User Modal
+    const editUserModal = document.getElementById('editUserModal');
+    if (editUserModal) {
+        editUserModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const userId = button.getAttribute('data-user-id');
+            const username = button.getAttribute('data-username');
+            const email = button.getAttribute('data-email');
+            
+            document.getElementById('edit_user_id').value = userId;
+            document.getElementById('edit_user_id_display').value = '#' + userId;
+            document.getElementById('edit_username').value = username;
+            document.getElementById('edit_email').value = email;
+        });
+    }
+    
+    // Delete User Modal
+    const deleteUserModal = document.getElementById('deleteUserModal');
+    if (deleteUserModal) {
+        deleteUserModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const userId = button.getAttribute('data-user-id');
+            const username = button.getAttribute('data-username');
+            
+            document.getElementById('delete_user_id').value = userId;
+            document.getElementById('delete_user_id_display').textContent = userId;
+            document.getElementById('delete_username').textContent = username;
+        });
+    }
+    
+    // Password confirmation validation
+    const addUserForm = document.getElementById('addUserForm');
+    if (addUserForm) {
+        addUserForm.addEventListener('submit', function(event) {
+            const password = this.querySelector('[name="password"]').value;
+            const confirmPassword = this.querySelector('[name="confirm_password"]').value;
+            
+            if (password !== confirmPassword) {
+                event.preventDefault();
+                showNotification('ពាក្យសម្ងាត់មិនដូចគ្នា!', 'error');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                event.preventDefault();
+                showNotification('ពាក្យសម្ងាត់ត្រូវតែមានយ៉ាងហោចណាស់ ៦ តួអក្សរ!', 'error');
+                return false;
+            }
+        });
+    }
+    
+    // Edit form validation
+    const editUserForm = document.getElementById('editUserForm');
+    if (editUserForm) {
+        editUserForm.addEventListener('submit', function(event) {
+            const password = this.querySelector('[name="password"]').value;
+            const confirmPassword = this.querySelector('[name="confirm_password"]').value;
+            
+            if (password && password !== confirmPassword) {
+                event.preventDefault();
+                showNotification('ពាក្យសម្ងាត់ថ្មីមិនដូចគ្នា!', 'error');
+                return false;
+            }
+            
+            if (password && password.length < 6) {
+                event.preventDefault();
+                showNotification('ពាក្យសម្ងាត់ថ្មីត្រូវតែមានយ៉ាងហោចណាស់ ៦ តួអក្សរ!', 'error');
+                return false;
+            }
+        });
+    }
+    
+    // Delete form confirmation
+    const deleteUserForm = document.getElementById('deleteUserForm');
+    if (deleteUserForm) {
+        deleteUserForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            if (confirm('តើអ្នកពិតជាចង់លុបអ្នកប្រើប្រាស់នេះជាអចិន្ត្រៃយ៍មែនទេ?')) {
+                this.submit();
+            }
+        });
+    }
+    
+    // Tab persistence
+    const hash = window.location.hash;
+    if (hash) {
+        const tab = document.querySelector(`[data-bs-target="${hash}"]`);
+        if (tab) {
+            new bootstrap.Tab(tab).show();
+        }
+    }
+    
+    // Update URL when tab changes
+    document.querySelectorAll('#adminTabs button').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(event) {
+            window.location.hash = event.target.getAttribute('data-bs-target');
+        });
+    });
+    
+    // ==================== AUDIT LOGS FUNCTIONALITY ====================
+    // ==================== AUDIT LOGS FUNCTIONALITY ====================
+
+// View Details for Audit Logs
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.view-details-btn')) {
+        const button = e.target.closest('.view-details-btn');
+        showLogDetails(button);
+    }
+    
+    if (e.target.closest('.delete-log-btn')) {
+        const button = e.target.closest('.delete-log-btn');
+        confirmDeleteLog(button);
+    }
+});
+
+function showLogDetails(button) {
+    // Get data from button attributes
+    const username = button.getAttribute('data-log-username');
+    const action = button.getAttribute('data-log-action');
+    const table = button.getAttribute('data-log-table');
+    const recordId = button.getAttribute('data-log-record');
+    const time = button.getAttribute('data-log-time');
+    const userAgent = button.getAttribute('data-log-useragent');
+    
+    // Parse JSON data - IMPORTANT: Use safe parsing
+    let oldValue = null;
+    let newValue = null;
+    
+    try {
+        const oldValueStr = button.getAttribute('data-log-oldvalue');
+        const newValueStr = button.getAttribute('data-log-newvalue');
+        
+        // Check if the strings are not null/undefined and not empty objects
+        if (oldValueStr && oldValueStr !== '{}' && oldValueStr !== 'null') {
+            oldValue = JSON.parse(oldValueStr);
+        }
+        
+        if (newValueStr && newValueStr !== '{}' && newValueStr !== 'null') {
+            newValue = JSON.parse(newValueStr);
+        }
+    } catch (e) {
+        console.error('Error parsing JSON:', e);
+        oldValue = null;
+        newValue = null;
+    }
+    
+    // Translate action and table names to Khmer
+    const actionTranslations = {
+        'CREATE': 'បង្កើត',
+        'UPDATE': 'កែសម្រួល',
+        'DELETE': 'លុប',
+        'LOGIN': 'ចូលប្រើ',
+        'LOGOUT': 'ចាកចេញ',
+        'READ': 'អាន'
+    };
+    
+    const tableTranslations = {
+        'users': 'អ្នកប្រើប្រាស់',
+        'facts': 'ការពិត',
+        'rules': 'ច្បាប់',
+        'audit_logs': 'កំណត់ហេតុ',
+        'sessions': 'វដ្តសកម្មភាព'
+    };
+    
+    const translatedAction = actionTranslations[action] || action;
+    const translatedTable = tableTranslations[table] || table;
+    
+    // Populate basic information
+    document.getElementById('detailUsername').textContent = username || 'មិនស្គាល់';
+    document.getElementById('detailAction').textContent = translatedAction || 'មិនស្គាល់';
+    document.getElementById('detailTable').textContent = translatedTable || 'មិនមាន';
+    document.getElementById('detailRecordId').textContent = recordId || 'មិនមាន';
+    document.getElementById('detailActionType').textContent = translatedAction || 'មិនស្គាល់';
+    
+    // Format and display time
+    if (time) {
+        try {
+            const date = new Date(time);
+            if (!isNaN(date.getTime())) {
+                const options = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false 
+                };
+                document.getElementById('detailTime').textContent = date.toLocaleDateString('km-KH', options);
+            } else {
+                document.getElementById('detailTime').textContent = time;
+            }
+        } catch (e) {
+            document.getElementById('detailTime').textContent = time;
+        }
+    } else {
+        document.getElementById('detailTime').textContent = 'មិនស្គាល់';
+    }
+    
+    // Show/hide data changes section based on action type
+    const dataChangesSection = document.getElementById('dataChangesSection');
+    const noDataChangesSection = document.getElementById('noDataChangesSection');
+    
+    // Actions that should show data changes
+    const dataChangeActions = ['CREATE', 'UPDATE', 'DELETE'];
+    
+    if (dataChangeActions.includes(action) && (oldValue || newValue)) {
+        // Show data changes section
+        dataChangesSection.style.display = 'block';
+        noDataChangesSection.style.display = 'none';
+        
+        // Format and display data
+        const formattedOldValue = formatDataForDisplay(oldValue);
+        const formattedNewValue = formatDataForDisplay(newValue);
+        
+        // Show/hide sections based on data availability
+        const oldValueSection = document.getElementById('oldValueSection');
+        const newValueSection = document.getElementById('newValueSection');
+        
+        if (oldValue && Object.keys(oldValue).length > 0) {
+            oldValueSection.style.display = 'block';
+            document.getElementById('detailOldValue').textContent = formattedOldValue;
+        } else {
+            oldValueSection.style.display = 'none';
+        }
+        
+        if (newValue && Object.keys(newValue).length > 0) {
+            newValueSection.style.display = 'block';
+            document.getElementById('detailNewValue').textContent = formattedNewValue;
+        } else {
+            newValueSection.style.display = 'none';
+        }
+        
+        // If no data at all, show message
+        if ((!oldValue || Object.keys(oldValue).length === 0) && 
+            (!newValue || Object.keys(newValue).length === 0)) {
+            dataChangesSection.style.display = 'none';
+            noDataChangesSection.style.display = 'block';
+        }
+    } else {
+        // Hide data changes section for other actions
+        dataChangesSection.style.display = 'none';
+        noDataChangesSection.style.display = 'block';
+    }
+    
+    // User Agent (Browser information)
+    const userAgentSection = document.getElementById('detailUserAgentSection');
+    if (userAgent && userAgent !== 'null' && userAgent !== 'undefined' && userAgent !== '') {
+        userAgentSection.style.display = 'block';
+        
+        // Try to parse user agent for better display
+        let userAgentText = userAgent;
+        if (userAgent.includes('Chrome')) userAgentText = 'Google Chrome';
+        else if (userAgent.includes('Firefox')) userAgentText = 'Mozilla Firefox';
+        else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) userAgentText = 'Safari';
+        else if (userAgent.includes('Edge')) userAgentText = 'Microsoft Edge';
+        else if (userAgent.includes('Opera')) userAgentText = 'Opera';
+        
+        document.getElementById('detailUserAgent').textContent = userAgentText;
+    } else {
+        userAgentSection.style.display = 'none';
+    }
+    
+    // Set export button
+    const logId = button.getAttribute('data-log-id');
+    const exportBtn = document.getElementById('exportCurrentLogBtn');
+    if (exportBtn) {
+        exportBtn.onclick = function() {
+            exportLog(logId);
+        };
+    }
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('logDetailsModal'));
+    modal.show();
+}
+
+// Helper function to format data for display
+// Helper function to format data for display with Khmer translations
+function formatDataForDisplay(data) {
+    if (!data || Object.keys(data).length === 0) {
+        return 'មិនមានទិន្នន័យ';
+    }
+    
+    const translations = {
+        'id': 'លេខសម្គាល់',
+        'username': 'ឈ្មោះអ្នកប្រើប្រាស់',
+        'email': 'អ៊ីមែល',
+        'role': 'តួនាទី',
+        'is_active': 'ស្ថានភាព',
+        'password_hash': 'ពាក្យសម្ងាត់',
+        'created_at': 'កាលបរិច្ឆេទបង្កើត',
+        'updated_at': 'កាលបរិច្ឆេទកែសម្រួល',
+        'car_problem': 'បញ្ហារថយន្ត',
+        'symptoms': 'រោគសញ្ញា',
+        'causes': 'មូលហេតុ',
+        'solutions': 'ដំណោះស្រាយ',
+        'conclusion': 'សេចក្តីសន្និដ្ឋាន',
+        'condition': 'លក្ខខណ្ឌ',
+        'result': 'លទ្ធផល',
+        'description': 'ការពិពណ៌នា',
+        'fact_id': 'លេខសម្គាល់ការពិត',
+        'rule_id': 'លេខសម្គាល់ច្បាប់',
+        'user_id': 'លេខសម្គាល់អ្នកប្រើប្រាស់',
+        'name': 'ឈ្មោះ',
+        'content': 'មាតិកា',
+        'ip_address': 'អាសយដ្ឋាន IP',
+        'user_agent': 'ឧបករណ៍ប្រើប្រាស់',
+        'table_name': 'តារាង',
+        'action': 'សកម្មភាព',
+        'record_id': 'លេខសម្គាល់កំណត់ត្រា',
+        'old_value': 'តម្លៃចាស់',
+        'new_value': 'តម្លៃថ្មី'
+    };
+    
+    // Special value translations
+    const valueTranslations = {
+        // Boolean translations for is_active
+        'true': 'សកម្ម',
+        'false': 'អសកម្ម',
+        '1': 'សកម្ម',
+        '0': 'អសកម្ម',
+        
+        // Role translations
+        'user': 'អ្នកប្រើប្រាស់',
+        'admin': 'អ្នកគ្រប់គ្រង',
+        'expert': 'អ្នកជំនាញ',
+        
+        // General boolean translations
+        'yes': 'បាទ/ចាស៎',
+        'no': 'ទេ'
+    };
+    
+    // Create formatted output
+    const formatted = {};
+    for (const [key, value] of Object.entries(data)) {
+        const translatedKey = translations[key] || key;
+        
+        // Skip sensitive data
+        if (key === 'password_hash' || key === 'password') {
+            formatted[translatedKey] = '********';
+            continue;
+        }
+        
+        // Special handling for specific fields
+        if (key === 'is_active') {
+            // Convert various boolean formats to Khmer
+            if (value === true || value === 'true' || value === 1 || value === '1') {
+                formatted[translatedKey] = 'សកម្ម';
+            } else if (value === false || value === 'false' || value === 0 || value === '0') {
+                formatted[translatedKey] = 'អសកម្ម';
+            } else if (value === null || value === undefined) {
+                formatted[translatedKey] = 'ទទេ';
+            } else {
+                // Check if it's a string that needs translation
+                const strValue = String(value);
+                formatted[translatedKey] = valueTranslations[strValue.toLowerCase()] || strValue;
+            }
+            continue;
+        }
+        
+        // Special handling for role field
+        if (key === 'role') {
+            if (value) {
+                const strValue = String(value).toLowerCase();
+                formatted[translatedKey] = valueTranslations[strValue] || strValue;
+                continue;
+            }
+        }
+        
+        // Handle string values
+        if (typeof value === 'string') {
+            // Check if the string looks like JSON
+            if ((value.trim().startsWith('{') && value.trim().endsWith('}')) ||
+                (value.trim().startsWith('[') && value.trim().endsWith(']'))) {
+                try {
+                    const parsed = JSON.parse(value);
+                    formatted[translatedKey] = JSON.stringify(parsed, null, 2);
+                    continue;
+                } catch (e) {
+                    // Not valid JSON, continue with normal processing
+                }
+            }
+            
+            // Check for special value translations
+            const lowerValue = value.toLowerCase();
+            if (valueTranslations[lowerValue]) {
+                formatted[translatedKey] = valueTranslations[lowerValue];
+                continue;
+            }
+        }
+        
+        // Format boolean values
+        if (value === true) {
+            formatted[translatedKey] = 'បាទ/ចាស៎';
+        } else if (value === false) {
+            formatted[translatedKey] = 'ទេ';
+        }
+        // Format numeric values
+        else if (value === 1 || value === '1') {
+            formatted[translatedKey] = '១';
+        } else if (value === 0 || value === '0') {
+            formatted[translatedKey] = '០';
+        }
+        // Format dates
+        else if ((key.includes('_at') || key.includes('date') || key.includes('time')) && value) {
+            try {
+                const date = new Date(value);
+                if (!isNaN(date.getTime())) {
+                    const options = { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false 
+                    };
+                    formatted[translatedKey] = date.toLocaleDateString('km-KH', options);
+                } else {
+                    formatted[translatedKey] = value;
+                }
+            } catch (e) {
+                formatted[translatedKey] = value;
+            }
+        }
+        // Handle null values
+        else if (value === null) {
+            formatted[translatedKey] = 'ទទេ';
+        }
+        // Handle undefined values
+        else if (value === undefined) {
+            formatted[translatedKey] = 'មិនកំណត់';
+        }
+        // For arrays or objects, try to format them
+        else if (Array.isArray(value) || typeof value === 'object') {
+            formatted[translatedKey] = JSON.stringify(value, null, 2);
+        }
+        // Simple values
+        else {
+            formatted[translatedKey] = value;
+        }
+    }
+    
+    return JSON.stringify(formatted, null, 2);
+}
+
+// Updated JSON parsing function
+function parseAuditValue(valueStr) {
+    if (!valueStr || valueStr === '{}' || valueStr === 'null' || valueStr === '' || valueStr.trim() === '') {
+        return null;
+    }
+    
+    console.log('Parsing:', valueStr);
+    
+    // Remove the tojson filter if it's there
+    let cleanStr = valueStr;
+    
+    // If it starts with a quote and ends with a quote, remove them
+    if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
+        cleanStr = cleanStr.slice(1, -1);
+    }
+    
+    // Handle escaped quotes
+    if (cleanStr.includes('\\"')) {
+        cleanStr = cleanStr.replace(/\\"/g, '"');
+    }
+    
+    // Remove any other escaping
+    cleanStr = cleanStr.replace(/\\\\/g, '\\');
+    
+    console.log('Cleaned:', cleanStr);
+    
+    try {
+        // Try to parse as JSON
+        const parsed = JSON.parse(cleanStr);
+        console.log('Successfully parsed:', parsed);
+        return parsed;
+    } catch (e) {
+        console.error('Parse error:', e);
+        
+        // Try to handle malformed JSON
+        try {
+            // Try to fix common issues
+            let fixed = cleanStr
+                .replace(/'/g, '"') // Single to double quotes
+                .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Quote property names
+                .replace(/:\s*([^"][^,}]*)(?=,|})/g, ': "$1"'); // Quote unquoted values
+            
+            const parsed = JSON.parse(fixed);
+            console.log('Parsed after fixing:', parsed);
+            return parsed;
+        } catch (e2) {
+            console.error('Final parse error:', e2);
+            return { error: 'Could not parse', raw: cleanStr };
+        }
+    }
+}
+
+// Update the showLogDetails function to use the new parser
+function showLogDetails(button) {
+    // Get data from button attributes
+    const username = button.getAttribute('data-log-username');
+    const action = button.getAttribute('data-log-action');
+    const table = button.getAttribute('data-log-table');
+    const recordId = button.getAttribute('data-log-record');
+    const time = button.getAttribute('data-log-time');
+    const userAgent = button.getAttribute('data-log-useragent');
+    
+    // Parse JSON data using our new function
+    let oldValue = null;
+    let newValue = null;
+    
+    try {
+        const oldValueStr = button.getAttribute('data-log-oldvalue');
+        const newValueStr = button.getAttribute('data-log-newvalue');
+        
+        console.log('=== PARSING AUDIT VALUES ===');
+        console.log('Raw old value:', oldValueStr);
+        console.log('Raw new value:', newValueStr);
+        
+        oldValue = parseAuditValue(oldValueStr);
+        newValue = parseAuditValue(newValueStr);
+        
+        console.log('Parsed old value:', oldValue);
+        console.log('Parsed new value:', newValue);
+        
+    } catch (e) {
+        console.error('Error parsing JSON:', e);
+        oldValue = null;
+        newValue = null;
+    }
+    
+    // Rest of the function remains the same...
+    const actionTranslations = {
+        'CREATE': 'បង្កើត',
+        'UPDATE': 'កែសម្រួល',
+        'DELETE': 'លុប',
+        'LOGIN': 'ចូលប្រើ',
+        'LOGOUT': 'ចាកចេញ',
+        'READ': 'អាន'
+    };
+    
+    const tableTranslations = {
+        'users': 'អ្នកប្រើប្រាស់',
+        'facts': 'ការពិត',
+        'rules': 'ច្បាប់',
+        'audit_logs': 'កំណត់ហេតុ',
+        'sessions': 'វដ្តសកម្មភាព'
+    };
+    
+    const translatedAction = actionTranslations[action] || action;
+    const translatedTable = tableTranslations[table] || table;
+    
+    // Populate basic information
+    document.getElementById('detailUsername').textContent = username || 'មិនស្គាល់';
+    document.getElementById('detailAction').textContent = translatedAction || 'មិនស្គាល់';
+    document.getElementById('detailTable').textContent = translatedTable || 'មិនមាន';
+    document.getElementById('detailRecordId').textContent = recordId || 'មិនមាន';
+    document.getElementById('detailActionType').textContent = translatedAction || 'មិនស្គាល់';
+    
+    // Format and display time
+    if (time) {
+        try {
+            const date = new Date(time);
+            if (!isNaN(date.getTime())) {
+                const options = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false 
+                };
+                document.getElementById('detailTime').textContent = date.toLocaleDateString('km-KH', options);
+            } else {
+                document.getElementById('detailTime').textContent = time;
+            }
+        } catch (e) {
+            document.getElementById('detailTime').textContent = time;
+        }
+    } else {
+        document.getElementById('detailTime').textContent = 'មិនស្គាល់';
+    }
+    
+    // Show/hide data changes section based on action type
+    const dataChangesSection = document.getElementById('dataChangesSection');
+    const noDataChangesSection = document.getElementById('noDataChangesSection');
+    
+    // Actions that should show data changes
+    const dataChangeActions = ['CREATE', 'UPDATE', 'DELETE'];
+    
+    if (dataChangeActions.includes(action) && (oldValue || newValue)) {
+        // Show data changes section
+        dataChangesSection.style.display = 'block';
+        noDataChangesSection.style.display = 'none';
+        
+        // Format and display data
+        const formattedOldValue = formatDataForDisplay(oldValue);
+        const formattedNewValue = formatDataForDisplay(newValue);
+        
+        // Show/hide sections based on data availability
+        const oldValueSection = document.getElementById('oldValueSection');
+        const newValueSection = document.getElementById('newValueSection');
+        
+        if (oldValue && Object.keys(oldValue).length > 0) {
+            oldValueSection.style.display = 'block';
+            document.getElementById('detailOldValue').textContent = formattedOldValue;
+        } else {
+            oldValueSection.style.display = 'none';
+        }
+        
+        if (newValue && Object.keys(newValue).length > 0) {
+            newValueSection.style.display = 'block';
+            document.getElementById('detailNewValue').textContent = formattedNewValue;
+        } else {
+            newValueSection.style.display = 'none';
+        }
+        
+        // If no data at all, show message
+        if ((!oldValue || Object.keys(oldValue).length === 0) && 
+            (!newValue || Object.keys(newValue).length === 0)) {
+            dataChangesSection.style.display = 'none';
+            noDataChangesSection.style.display = 'block';
+        }
+    } else {
+        // Hide data changes section for other actions
+        dataChangesSection.style.display = 'none';
+        noDataChangesSection.style.display = 'block';
+    }
+    
+    // User Agent (Browser information)
+    const userAgentSection = document.getElementById('detailUserAgentSection');
+    if (userAgent && userAgent !== 'null' && userAgent !== 'undefined' && userAgent !== '') {
+        userAgentSection.style.display = 'block';
+        
+        // Try to parse user agent for better display
+        let userAgentText = userAgent;
+        if (userAgent.includes('Chrome')) userAgentText = 'Google Chrome';
+        else if (userAgent.includes('Firefox')) userAgentText = 'Mozilla Firefox';
+        else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) userAgentText = 'Safari';
+        else if (userAgent.includes('Edge')) userAgentText = 'Microsoft Edge';
+        else if (userAgent.includes('Opera')) userAgentText = 'Opera';
+        
+        document.getElementById('detailUserAgent').textContent = userAgentText;
+    } else {
+        userAgentSection.style.display = 'none';
+    }
+    
+    // Set export button
+    const logId = button.getAttribute('data-log-id');
+    const exportBtn = document.getElementById('exportCurrentLogBtn');
+    if (exportBtn) {
+        exportBtn.onclick = function() {
+            exportLog(logId);
+        };
+    }
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('logDetailsModal'));
+    modal.show();
+}
+
+let currentLogToDelete = null;
+let currentDeleteButton = null;
+
+function confirmDeleteLog(button) {
+    const logId = button.getAttribute('data-log-id');
+    const username = button.getAttribute('data-log-username');
+    
+    currentLogToDelete = logId;
+    currentDeleteButton = button;
+    
+    document.getElementById('deleteLogMessage').textContent = 
+        `តើអ្នកពិតជាចង់លុបកំណត់ហេតុរបស់ "${username || 'មិនស្គាល់'}" មែនទេ?`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('confirmDeleteLogModal'));
+    modal.show();
+}
+
+// Confirm delete log
+document.getElementById('confirmDeleteLogBtn').addEventListener('click', function() {
+    if (currentLogToDelete && currentDeleteButton) {
+        deleteLog(currentLogToDelete, currentDeleteButton);
+        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteLogModal'));
+        modal.hide();
+    }
+});
+
+function deleteLog(logId, button) {
+    // Show loading state
+    const originalHTML = button.innerHTML;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>កំពុងលុប...';
+    button.disabled = true;
+    
+    // Send POST request (CHANGED FROM DELETE TO POST)
+    fetch(`/admin/audit/delete/${logId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Remove the log entry from DOM
+            const logEntry = button.closest('.audit-log-entry');
+            if (logEntry) {
+                logEntry.style.opacity = '0.5';
+                setTimeout(() => {
+                    logEntry.remove();
+                    showNotification('កំណត់ហេតុត្រូវបានលុបដោយជោគជ័យ', 'success');
+                    updateAuditStats();
+                }, 300);
+            }
+        } else {
+            showNotification('មិនអាចលុបកំណត់ហេតុបាន: ' + (data.error || ''), 'error');
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('មានបញ្ហាក្នុងការលុបកំណត់ហេតុ', 'error');
+        button.innerHTML = originalHTML;
+        button.disabled = false;
+    });
+}
+
+// Clear all logs
+document.getElementById('confirmClearAllBtn').addEventListener('click', function() {
+    fetch('/admin/audit/clear-all', {
+        method: 'POST', // ឬ DELETE ប្រសិនបើអ្នកមាន route នេះ
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remove all log entries
+            document.querySelectorAll('.audit-log-entry').forEach(entry => {
+                entry.remove();
+            });
+            
+            // Show empty state
+            const timeline = document.getElementById('auditTimeline');
+            timeline.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="empty-state">
+                        <div class="empty-state-icon bg-light rounded-circle p-4 d-inline-block mb-4">
+                            <i class="bi bi-journal-x display-4 text-muted"></i>
+                        </div>
+                        <h4 class="fw-bold text-muted mb-3">មិនមានកំណត់ហេតុ</h4>
+                        <p class="text-muted mb-4">កំណត់ហេតុទាំងអស់ត្រូវបានសម្អាត</p>
+                    </div>
+                </div>
+            `;
+            
+            // Hide footer
+            const cardFooter = document.querySelector('.card-footer');
+            if (cardFooter) {
+                cardFooter.style.display = 'none';
+            }
+            
+            showNotification('កំណត់ហេតុទាំងអស់ត្រូវបានលុបដោយជោគជ័យ', 'success');
+            updateAuditStats();
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmClearLogs'));
+            modal.hide();
+        } else {
+            showNotification('មិនអាចសម្អាតកំណត់ហេតុបាន: ' + (data.error || ''), 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('មានបញ្ហាក្នុងការសម្អាតកំណត់ហេតុ', 'error');
+    });
+});
+
+// Export function
+function exportLog(logId) {
+    window.open(`/admin/audit/export/${logId}`, '_blank');
+}
+
+// Export Selected Logs
+document.getElementById('exportSelected')?.addEventListener('click', function() {
+    const selected = document.querySelectorAll('.log-checkbox:checked');
+    if (selected.length === 0) {
+        showNotification('សូមជ្រើសរើសកំណត់ហេតុដើម្បីនាំចេញ', 'warning');
+        return;
+    }
+    
+    const logIds = Array.from(selected).map(cb => cb.value);
+    const url = `/admin/audit/export-batch?ids=${logIds.join(',')}`;
+    window.open(url, '_blank');
+});
+
+// Delete Selected Logs
+document.getElementById('deleteSelected')?.addEventListener('click', function() {
+    const selected = document.querySelectorAll('.log-checkbox:checked');
+    if (selected.length === 0) {
+        showNotification('សូមជ្រើសរើសកំណត់ហេតុដើម្បីលុប', 'warning');
+        return;
+    }
+    
+    document.getElementById('deleteCountText').textContent = selected.length;
+    
+    // Show confirmation modal
+    const modal = new bootstrap.Modal(document.getElementById('confirmDeleteSelected'));
+    modal.show();
+    
+    // Set up confirm button
+    const confirmBtn = document.getElementById('confirmDeleteSelectedBtn');
+    confirmBtn.onclick = function() {
+        const logIds = Array.from(selected).map(cb => cb.value);
+        deleteLogsBatch(logIds);
+        const modalInstance = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteSelected'));
+        modalInstance.hide();
+    };
+});
+
+function deleteLogsBatch(logIds) {
+    // Send POST request
+    fetch('/admin/audit/delete-batch', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({ log_ids: logIds })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remove selected log entries
+            logIds.forEach(logId => {
+                const row = document.querySelector(`.audit-log-entry [data-log-id="${logId}"]`);
+                if (row) {
+                    const logEntry = row.closest('.audit-log-entry');
+                    if (logEntry) {
+                        logEntry.style.opacity = '0.5';
+                        setTimeout(() => {
+                            logEntry.remove();
+                        }, 300);
+                    }
+                }
+            });
+            
+            // Reset checkboxes
+            document.getElementById('selectAllLogs').checked = false;
+            
+            showNotification(`${data.deleted || logIds.length} កំណត់ហេតុត្រូវបានលុបដោយជោគជ័យ`, 'success');
+            updateAuditStats();
+        } else {
+            showNotification('មិនអាចលុបកំណត់ហេតុបាន: ' + (data.error || ''), 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('មានបញ្ហាក្នុងការលុបកំណត់ហេតុ', 'error');
+    });
+}
+
+// Select All Checkbox
+document.getElementById('selectAllLogs')?.addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.log-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+    updateSelectedCount();
+});
+
+// Update selected count
+function updateSelectedCount() {
+    const selected = document.querySelectorAll('.log-checkbox:checked');
+    const selectedCount = document.getElementById('selectedCount');
+    if (selectedCount) {
+        selectedCount.querySelector('span.fw-bold').textContent = selected.length;
+    }
+}
+
+// Event listener for individual checkboxes
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('log-checkbox')) {
+        updateSelectedCount();
+    }
+});
+
+// Filter functionality for audit logs
+const auditSearch = document.getElementById('auditSearch');
+const auditActionFilter = document.getElementById('auditActionFilter');
+const auditTableFilter = document.getElementById('auditTableFilter');
+const clearSearchBtn = document.getElementById('clearSearch');
+
+if (auditSearch) {
+    auditSearch.addEventListener('input', filterAuditLogs);
+}
+
+if (auditActionFilter) {
+    auditActionFilter.addEventListener('change', filterAuditLogs);
+}
+
+if (auditTableFilter) {
+    auditTableFilter.addEventListener('change', filterAuditLogs);
+}
+
+if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', function() {
+        auditSearch.value = '';
+        filterAuditLogs();
+    });
+}
+
+function filterAuditLogs() {
+    const searchTerm = auditSearch.value.toLowerCase();
+    const actionFilter = auditActionFilter.value;
+    const tableFilter = auditTableFilter.value;
+    
+    const logEntries = document.querySelectorAll('.audit-log-entry');
+    let visibleCount = 0;
+    let createCount = 0, updateCount = 0, deleteCount = 0;
+    
+    logEntries.forEach(entry => {
+        const action = entry.getAttribute('data-action');
+        const table = entry.getAttribute('data-table');
+        const username = entry.getAttribute('data-username');
+        const searchData = entry.getAttribute('data-search');
+        
+        let shouldShow = true;
+        
+        // Apply filters
+        if (actionFilter !== 'all' && action !== actionFilter) {
+            shouldShow = false;
+        }
+        
+        if (tableFilter !== 'all' && table !== tableFilter) {
+            shouldShow = false;
+        }
+        
+        if (searchTerm && !searchData.toLowerCase().includes(searchTerm)) {
+            shouldShow = false;
+        }
+        
+        if (shouldShow) {
+            entry.style.display = 'block';
+            visibleCount++;
+            
+            // Count actions
+            if (action === 'CREATE') createCount++;
+            else if (action === 'UPDATE') updateCount++;
+            else if (action === 'DELETE') deleteCount++;
+        } else {
+            entry.style.display = 'none';
+        }
+    });
+    
+    // Update counts
+    document.getElementById('showingCount').textContent = visibleCount;
+    document.getElementById('createCount').textContent = createCount;
+    document.getElementById('updateCount').textContent = updateCount;
+    document.getElementById('deleteCount').textContent = deleteCount;
+}
+
+// Initialize stats on load
+function updateAuditStats() {
+    const logEntries = document.querySelectorAll('.audit-log-entry');
+    let createCount = 0, updateCount = 0, deleteCount = 0;
+    
+    logEntries.forEach(entry => {
+        const action = entry.getAttribute('data-action');
+        if (action === 'CREATE') createCount++;
+        else if (action === 'UPDATE') updateCount++;
+        else if (action === 'DELETE') deleteCount++;
+    });
+    
+    document.getElementById('createCount').textContent = createCount;
+    document.getElementById('updateCount').textContent = updateCount;
+    document.getElementById('deleteCount').textContent = deleteCount;
+    document.getElementById('totalLogs').textContent = logEntries.length;
+    document.getElementById('showingCount').textContent = logEntries.length;
+}
+
+// Initialize stats on load
+updateAuditStats();
+    // Helper functions
+    function getCSRFToken() {
+        return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    }
+    
+    function showNotification(message, type = 'success') {
+        const alertClass = type === 'error' ? 'alert-danger' : 'alert-success';
+        const icon = type === 'error' ? 'bi-x-circle-fill' : 'bi-check-circle-fill';
+        
+        const notification = document.createElement('div');
+        notification.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = `
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        `;
+        notification.innerHTML = `
+            <i class="bi ${icon} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }
+    
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

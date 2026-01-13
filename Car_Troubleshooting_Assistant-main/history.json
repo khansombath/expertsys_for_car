@@ -1,0 +1,35 @@
+[
+  {
+    "timestamp": "2025-11-24T01:31:18",
+    "observations": {
+      "f1": 1.0,
+      "f2": 1.0,
+      "f4": 1.0
+    },
+    "expanded_obs": {
+      "f1": 1.0,
+      "f2": 1.0,
+      "f4": 1.0,
+      "electrical_symptom": 1.0,
+      "electrical_issue": 1.0,
+      "engine_problem": 1.0,
+      "starting_symptom": 1.0,
+      "starting_issue": 1.0
+    },
+    "results": [
+      {
+        "rule_id": "r2",
+        "conclusion": "complete_power_loss",
+        "confidence": 0.9,
+        "explanation": "No cranking with dead dashboard suggests main power interruption - check battery connections, main fuses, or ignition switch.",
+        "triggered_conditions": [
+          "f4",
+          "f2"
+        ],
+        "recommendation": "\u26a1 Check battery terminals, main fuse box, and ignition switch wiring.",
+        "severity": "medium"
+      }
+    ],
+    "id": 1
+  }
+]

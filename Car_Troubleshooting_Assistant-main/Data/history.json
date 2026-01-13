@@ -1,0 +1,139 @@
+[
+  {
+    "timestamp": "2025-11-24T01:56:51",
+    "observations": {
+      "f1": 1.0,
+      "f2": 1.0,
+      "f4": 1.0
+    },
+    "expanded_obs": {
+      "f1": 1.0,
+      "f2": 1.0,
+      "f4": 1.0,
+      "electrical_symptom": 1.0,
+      "electrical_issue": 1.0,
+      "engine_problem": 1.0,
+      "starting_symptom": 1.0,
+      "starting_issue": 1.0
+    },
+    "results": [
+      {
+        "rule_id": "r2",
+        "conclusion": "complete_power_loss",
+        "confidence": 0.9,
+        "explanation": "No cranking with dead dashboard suggests main power interruption - check battery connections, main fuses, or ignition switch.",
+        "triggered_conditions": [
+          "f4",
+          "f2"
+        ],
+        "recommendation": "⚡ Check battery terminals, main fuse box, and ignition switch wiring.",
+        "severity": "medium"
+      }
+    ],
+    "id": 1
+  },
+  {
+    "timestamp": "2025-11-24T02:13:24",
+    "observations": {
+      "f2": 1.0,
+      "f3": 1.0,
+      "f17": 1.0
+    },
+    "expanded_obs": {
+      "f2": 1.0,
+      "f3": 1.0,
+      "f17": 1.0,
+      "electrical_symptom": 1.0,
+      "electrical_issue": 1.0,
+      "engine_problem": 1.0
+    },
+    "results": [
+      {
+        "rule_id": "r1",
+        "conclusion": "battery_dead_or_severe_drain",
+        "confidence": 0.9,
+        "explanation": "Complete electrical failure with rapid clicking and dim lights indicates severely discharged or dead battery.",
+        "triggered_conditions": [
+          "f2",
+          "f3",
+          "f17"
+        ],
+        "recommendation": "🔋 Charge or replace battery. Check for parasitic drain. Test alternator output.",
+        "severity": "medium"
+      }
+    ],
+    "id": 2
+  },
+  {
+    "timestamp": "2025-11-24T15:42:17",
+    "observations": {
+      "f1": 1.0,
+      "f8": 1.0,
+      "f20": 1.0
+    },
+    "expanded_obs": {
+      "f1": 1.0,
+      "f8": 1.0,
+      "f20": 1.0,
+      "starting_symptom": 1.0,
+      "starting_issue": 1.0,
+      "engine_problem": 1.0,
+      "electrical_symptom": 1.0,
+      "electrical_issue": 1.0
+    },
+    "results": [
+      {
+        "rule_id": "r16",
+        "conclusion": "critical_sensor_failure",
+        "confidence": 0.75,
+        "explanation": "Cranks but won't start with Check Engine Light suggests failure of critical engine management sensor.",
+        "triggered_conditions": [
+          "f1",
+          "f20",
+          "f8"
+        ],
+        "recommendation": "📟 Scan for diagnostic codes. Check crankshaft position sensor, camshaft sensor, fuel pump relay.",
+        "severity": "medium"
+      }
+    ],
+    "id": 3
+  },
+  {
+    "timestamp": "2025-11-24T18:07:58",
+    "observations": {
+      "f1": 1.0,
+      "f5": 1.0,
+      "f8": 0.0,
+      "f20": 1.0
+    },
+    "expanded_obs": {
+      "f1": 1.0,
+      "f5": 1.0,
+      "f8": 0.0,
+      "f20": 1.0,
+      "starting_symptom": 1.0,
+      "starting_issue": 1.0,
+      "engine_problem": 1.0,
+      "fuel_symptom": 1.0,
+      "fuel_issue": 1.0,
+      "electrical_symptom": 0.0,
+      "electrical_issue": 0.0
+    },
+    "results": [
+      {
+        "rule_id": "r4",
+        "conclusion": "fuel_empty",
+        "confidence": 0.95,
+        "explanation": "Engine cranks but won't start with empty fuel gauge strongly suggests out of fuel condition.",
+        "triggered_conditions": [
+          "f1",
+          "f20",
+          "f5"
+        ],
+        "recommendation": "🛢️ Add fuel immediately. Check for fuel system damage from running dry.",
+        "severity": "medium"
+      }
+    ],
+    "id": 5
+  }
+]

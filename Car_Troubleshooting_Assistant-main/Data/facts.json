@@ -1,0 +1,225 @@
+[
+  {
+    "id": "f1",
+    "description": "Engine cranks normally but fails to start (turning over without combustion)",
+    "value": false,
+    "tags": [
+      "primary",
+      "starting",
+      "crank_no_start"
+    ],
+    "category": "starting_symptom"
+  },
+  {
+    "id": "f2",
+    "description": "No electrical power - dashboard remains completely dead with key in ON position",
+    "value": true,
+    "tags": [
+      "symptom",
+      "electrical",
+      "no_power"
+    ],
+    "category": "electrical_symptom"
+  },
+  {
+    "id": "f3",
+    "description": "Rapid repetitive clicking from starter relay/solenoid when attempting to start",
+    "value": true,
+    "tags": [
+      "electrical",
+      "sound",
+      "battery"
+    ],
+    "category": "electrical_symptom"
+  },
+  {
+    "id": "f4",
+    "description": "Complete silence - no engine cranking sound when turning key to start",
+    "value": false,
+    "tags": [
+      "symptom",
+      "starting",
+      "no_crank"
+    ],
+    "category": "starting_symptom"
+  },
+  {
+    "id": "f5",
+    "description": "Fuel gauge indicates empty or near-empty fuel level",
+    "value": false,
+    "tags": [
+      "symptom",
+      "fuel",
+      "gauge"
+    ],
+    "category": "fuel_symptom"
+  },
+  {
+    "id": "f6",
+    "description": "Engine starts successfully but dies within 1-3 seconds",
+    "value": false,
+    "tags": [
+      "symptom",
+      "running",
+      "stalling"
+    ],
+    "category": "running_symptom"
+  },
+  {
+    "id": "f7",
+    "description": "Engine idles unevenly with noticeable vibration and RPM fluctuation",
+    "value": false,
+    "tags": [
+      "symptom",
+      "running",
+      "idle"
+    ],
+    "category": "running_symptom"
+  },
+  {
+    "id": "f8",
+    "description": "Check Engine Light remains illuminated with engine running",
+    "value": false,
+    "tags": [
+      "symptom",
+      "warning_light",
+      "diagnostic"
+    ],
+    "category": "warning_symptom"
+  },
+  {
+    "id": "f9",
+    "description": "Problem began immediately after exposure to heavy rain or underhood washing",
+    "value": false,
+    "tags": [
+      "context",
+      "environment",
+      "moisture"
+    ],
+    "category": "environment_context"
+  },
+  {
+    "id": "f10",
+    "description": "Visible corrosion, damage, or looseness at battery cable connections",
+    "value": false,
+    "tags": [
+      "symptom",
+      "electrical",
+      "battery"
+    ],
+    "category": "electrical_symptom"
+  },
+  {
+    "id": "f11",
+    "description": "Engine cranks at abnormally slow speed with labored effort",
+    "value": false,
+    "tags": [
+      "symptom",
+      "starting",
+      "slow_crank"
+    ],
+    "category": "starting_symptom"
+  },
+  {
+    "id": "f12",
+    "description": "Recent battery replacement, alternator repair, or other electrical service",
+    "value": false,
+    "tags": [
+      "context",
+      "maintenance",
+      "electrical"
+    ],
+    "category": "maintenance_context"
+  },
+  {
+    "id": "f13",
+    "description": "Metal-on-metal grinding noise during cranking attempt",
+    "value": false,
+    "tags": [
+      "symptom",
+      "starting",
+      "sound",
+      "mechanical"
+    ],
+    "category": "starting_symptom"
+  },
+  {
+    "id": "f14",
+    "description": "White smoke emitted from exhaust pipe during starting attempt",
+    "value": false,
+    "tags": [
+      "symptom",
+      "exhaust",
+      "smoke",
+      "coolant"
+    ],
+    "category": "running_symptom"
+  },
+  {
+    "id": "f15",
+    "description": "Strong raw gasoline odor around vehicle during starting attempts",
+    "value": false,
+    "tags": [
+      "symptom",
+      "fuel",
+      "smell",
+      "flooding"
+    ],
+    "category": "fuel_symptom"
+  },
+  {
+    "id": "f16",
+    "description": "Vehicle required jump-start recently or had confirmed dead battery",
+    "value": false,
+    "tags": [
+      "context",
+      "electrical",
+      "battery"
+    ],
+    "category": "maintenance_context"
+  },
+  {
+    "id": "f17",
+    "description": "Headlights appear dim or exhibit noticeable flickering with key ON",
+    "value": true,
+    "tags": [
+      "symptom",
+      "electrical",
+      "lighting"
+    ],
+    "category": "electrical_symptom"
+  },
+  {
+    "id": "f18",
+    "description": "Single loud clunk from starter with no cranking",
+    "value": false,
+    "tags": [
+      "symptom",
+      "starting",
+      "sound"
+    ],
+    "category": "starting_symptom"
+  },
+  {
+    "id": "f19",
+    "description": "Security/anti-theft indicator flashing on dashboard",
+    "value": false,
+    "tags": [
+      "symptom",
+      "electrical",
+      "security"
+    ],
+    "category": "electrical_symptom"
+  },
+  {
+    "id": "f20",
+    "description": "Engine cranks normally with no signs of combustion",
+    "value": false,
+    "tags": [
+      "symptom",
+      "starting",
+      "crank_no_start"
+    ],
+    "category": "starting_symptom"
+  }
+]

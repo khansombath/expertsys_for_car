@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}ចុះឈ្មោះ - ប្រព័ន្ធជំនួយជួសជុលរថយន្ត{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0" style="border-radius: 15px;">
+            <div class="card-header bg-success text-white text-center py-3" style="border-radius: 15px 15px 0 0;">
+                <h4 class="mb-0"><i class="bi bi-person-plus me-2"></i>បង្កើតគណនីថ្មី</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-bold">ឈ្មោះអ្នកប្រើប្រាស់ (Username)</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="ជ្រើសរើសឈ្មោះសម្គាល់ខ្លួន" required>
+                        <div class="form-text text-muted">សូមជ្រើសរើសឈ្មោះដែលមិនទាន់មានអ្នកប្រើ។</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-bold">អាសយដ្ឋានអ៊ីមែល (មិនបង្ខំ)</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="ឧទាហរណ៍៖ name@example.com">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-bold">ពាក្យសម្ងាត់ (Password)</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="បញ្ចូលពាក្យសម្ងាត់របស់អ្នក" required>
+                        <div class="form-text text-muted">ត្រូវមានយ៉ាងតិច ៦ តួអក្សរ។</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label fw-bold">បញ្ជាក់ពាក្យសម្ងាត់</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="បញ្ចូលពាក្យសម្ងាត់ម្តងទៀត" required>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success py-2 fw-bold">ចុះឈ្មោះប្រើប្រាស់</button>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <span class="text-muted">មានគណនីរួចហើយមែនទេ?</span>
+                        <a href="{{ url_for('login') }}" class="btn btn-link fw-bold text-decoration-none">ចូលប្រើប្រាស់នៅទីនេះ</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">ប្រវត្តិនៃការធ្វើរោគវិនិច្ឆ័យ</h2>
+    <div>
+        <a class="btn btn-primary" href="{{ url_for('infer') }}">
+            <span class="d-none d-sm-inline">← បង្កើតរោគវិនិច្ឆ័យថ្មី</span>
+            <span class="d-sm-none">← ថ្មី</span>
+        </a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover mb-0">
+        <thead>
+            <tr>
+                <th class="d-none d-md-table-cell">ល.រ</th>
+                <th>កាលបរិច្ឆេទ</th>
+                <th class="d-none d-sm-table-cell">សេចក្តីសន្និដ្ឋានចម្បង</th>
+                <th>ទំនុកចិត្ត</th>
+                <th style="min-width: 120px;">សកម្មភាព</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for it in items %}
+            <tr>
+                <td class="d-none d-md-table-cell">
+                    <strong>{{ loop.index }}</strong>
+                </td>
+                
+                <td>
+                    <div class="d-md-none mb-1">
+                        <small class="text-muted">ល.រ:</small>
+                        <strong>{{ loop.index }}</strong>
+                    </div>
+                    <div class="text-nowrap">
+                        {{ it.formatted_timestamp }}
+                    </div>
+                </td>
+                
+                <td class="d-none d-sm-table-cell">
+                    {% if it.top_conclusion %}
+                        <span class="text-truncate d-inline-block" style="max-width: 200px;" 
+                              title="{{ it.top_conclusion | replace('_',' ') | title }}">
+                            {{ it.top_conclusion | replace('_',' ') | title }}
+                        </span>
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+                
+                <td>
+                    {% if it.top_confidence is not none %}
+                        {% if it.top_confidence >= 80 %}
+                            <span class="badge bg-success">{{ it.top_confidence }}%</span>
+                        {% elif it.top_confidence >= 50 %}
+                            <span class="badge bg-warning text-dark">{{ it.top_confidence }}%</span>
+                        {% else %}
+                            <span class="badge bg-danger">{{ it.top_confidence }}%</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge bg-secondary">-</span>
+                    {% endif %}
+                    
+                    <div class="d-sm-none mt-1 small">
+                        {% if it.top_conclusion %}
+                            <span class="text-truncate d-block" 
+                                  title="{{ it.top_conclusion | replace('_',' ') | title }}">
+                                {{ it.top_conclusion | replace('_',' ') | title }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">គ្មានសេចក្តីសន្និដ្ឋាន</span>
+                        {% endif %}
+                    </div>
+                </td>
+                
+                <td>
+                    <div class="d-flex flex-nowrap gap-1">
+                        <a href="{{ url_for('history_detail', hid=it.id) }}" 
+                           class="btn btn-sm btn-outline-info flex-fill">
+                            <span class="d-none d-sm-inline">មើល</span>
+                            <span class="d-sm-none">👁️</span>
+                        </a>
+                        <form action="{{ url_for('delete_history', hid=it.id) }}" 
+                              method="post" 
+                              class="d-inline flex-fill">
+                            <button type="submit" 
+                                    class="btn btn-sm btn-outline-danger w-100"
+                                    onclick="return confirm('តើអ្នកពិតជាចង់លុបប្រវត្តិនេះមែនទេ?')">
+                                <span class="d-none d-sm-inline">លុប</span>
+                                <span class="d-sm-none">🗑️</span>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not items %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                    មិនទាន់មានប្រវត្តិនៅឡើយទេ។ សូមសាកល្បងដំណើរការរោគវិនិច្ឆ័យដើម្បីបង្កើតប្រវត្តិទុក។
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    /* ការកែតម្រូវសម្រាប់អេក្រង់តូច */
+    @media (max-width: 575.98px) {
+        .table-responsive {
+            border: 0;
+            margin: 0 -1rem;
+            width: calc(100% + 2rem);
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.8rem;
+        }
+        
+        td, th {
+            padding: 0.75rem 0.5rem !important;
+        }
+        
+        .badge {
+            font-size: 0.75em;
+            padding: 0.35em 0.65em;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .table td, .table th {
+            padding: 0.75rem;
+        }
+        
+        td:nth-child(2),
+        th:nth-child(2) {
+            min-width: 120px;
+        }
+        
+        td:nth-child(4),
+        th:nth-child(4) {
+            min-width: 80px;
+        }
+    }
+    
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        td:nth-child(2),
+        th:nth-child(2) {
+            min-width: 140px;
+        }
+        
+        td:nth-child(3),
+        th:nth-child(3) {
+            max-width: 180px;
+        }
+    }
+    
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .flex-fill {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+    
+    .badge.bg-success { background-color: #198754 !important; }
+    .badge.bg-warning { background-color: #ffc107 !important; }
+    .badge.bg-danger { background-color: #dc3545 !important; }
+    .badge.bg-secondary { background-color: #6c757d !important; }
+</style>
+
+{% endblock %}

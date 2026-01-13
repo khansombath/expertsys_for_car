@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2">Taxonomy Editor</h1>
+            <p class="text-muted mb-0">
+                Define hierarchical relationships between facts and categories for intelligent observation expansion.
+            </p>
+        </div>
+    </div>
+
+    <!-- Full Width Taxonomy Structure -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-share-nodes me-2"></i>
+                        Taxonomy Structure
+                    </h5>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="loadSampleStructure()">
+                            <i class="bi bi-file-earmark-text me-1"></i>Load Sample
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="validateJSON()">
+                            <i class="bi bi-check-square me-1"></i>Validate JSON
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearAllRelationships()">
+                            <i class="bi bi-trash me-1"></i>Clear All
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('taxonomy_save') }}">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Parent Relationships</label>
+                            <textarea class="form-control font-monospace" 
+                                      name="raw_json" 
+                                      rows="8" 
+                                      style="font-size: 0.85rem;"
+                                      placeholder='{
+    "parent": {
+        "child_fact": "parent_category",
+        "another_child": "another_parent"
+    }
+}'>{{ raw_json }}</textarea>
+                            <div class="form-text text-muted mt-2">
+                                Define hierarchical relationships using JSON format. Each line represents a child-to-parent relationship.
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-save me-1"></i>Save Taxonomy
+                                </button>
+                            </div>
+                            <div class="text-muted small">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Use fact IDs (f1, f2...) as children, categories as parents
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Two Column Layout Below -->
+    <div class="row">
+        <!-- Left Column: Quick Guide -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-book me-2"></i>
+                        Quick Guide & Structure
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6 class="text-dark mb-2">Standard Format:</h6>
+                        <pre class="bg-light p-3 rounded small border" style="font-size: 0.75rem;">{
+    "parent": {
+        "child_id": "parent_id",
+        "f1": "starting_symptom",
+        "starting_symptom": "starting_issue",
+        "starting_issue": "engine_problem"
+    }
+}</pre>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-dark mb-2">Key Rules & Conventions:</h6>
+                        <div class="rules-list">
+                            <div class="rule-item d-flex align-items-center mb-2 p-2 bg-light rounded">
+                                <i class="bi bi-tag-fill text-primary me-2"></i>
+                                <div>
+                                    <strong>Fact IDs</strong>
+                                    <div class="small text-muted">Use f1, f2, f3... for individual facts</div>
+                                </div>
+                            </div>
+                            <div class="rule-item d-flex align-items-center mb-2 p-2 bg-light rounded">
+                                <i class="bi bi-diagram-3-fill text-success me-2"></i>
+                                <div>
+                                    <strong>Categories</strong>
+                                    <div class="small text-muted">Use descriptive names like starting_symptom, electrical_issue</div>
+                                </div>
+                            </div>
+                            <div class="rule-item d-flex align-items-center mb-2 p-2 bg-light rounded">
+                                <i class="bi bi-code-slash text-warning me-2"></i>
+                                <div>
+                                    <strong>JSON Syntax</strong>
+                                    <div class="small text-muted">Maintain valid JSON structure with proper quotes and commas</div>
+                                </div>
+                            </div>
+                            <div class="rule-item d-flex align-items-center p-2 bg-light rounded">
+                                <i class="bi bi-folder-fill text-info me-2"></i>
+                                <div>
+                                    <strong>Parent Key</strong>
+                                    <div class="small text-muted">All relationships must be under the "parent" object</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Statistics & Actions -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up me-2"></i>
+                        Statistics & Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Statistics Cards -->
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <div class="stat-card text-center p-3 bg-primary text-white rounded">
+                                <div class="stat-number display-6 fw-bold">{{ stats.total_relationships if stats else 0 }}</div>
+                                <div class="stat-label">Total Relationships</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card text-center p-3 bg-warning text-white rounded">
+                                <div class="stat-number display-6 fw-bold">{{ stats.facts_in_taxonomy if stats else 0 }}</div>
+                                <div class="stat-label">Facts in Taxonomy</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Stats -->
+                    <div class="mb-4">
+                        <h6 class="text-dark mb-3">Taxonomy Health</h6>
+                        <div class="detailed-stats">
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <span class="small">Missing Facts</span>
+                                <span class="badge bg-warning">{{ stats.missing_facts if stats else 0 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <span class="small">Orphaned Facts</span>
+                                <span class="badge bg-danger">{{ stats.orphaned_facts if stats else 0 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <span class="small">Categorized Facts</span>
+                                <span class="badge bg-success">{{ stats.categorized_facts if stats else 0 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-2">
+                                <span class="small">Uncategorized Facts</span>
+                                <span class="badge bg-secondary">{{ stats.uncategorized_facts if stats else 0 }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="mt-4">
+                        <h6 class="text-dark mb-3">Quick Actions</h6>
+                        <div class="actions-grid">
+                            <form method="POST" action="{{ url_for('taxonomy_add_missing_facts') }}" class="mb-2">
+                                <button type="submit" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-plus-circle me-2"></i>
+                                    Add Missing Facts
+                                </button>
+                            </form>
+
+                            <form method="POST" action="{{ url_for('taxonomy_add_rule_conclusions') }}" class="mb-2">
+                                <button type="submit" class="btn btn-outline-info w-100">
+                                    <i class="bi bi-diagram-3 me-2"></i>
+                                    Add Rule Conclusions
+                                </button>
+                            </form>
+
+                            <a href="{{ url_for('sync_all_categories') }}" class="btn btn-outline-success w-100 mb-2">
+                                <i class="bi bi-arrow-repeat me-2"></i>
+                                Sync All Categories
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.stat-card {
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.actions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rules-list {
+    background: transparent;
+    padding: 0;
+}
+
+.rule-item {
+    transition: all 0.2s ease;
+    border: 1px solid #e9ecef !important;
+}
+
+.rule-item:hover {
+    background: #f8f9fa !important;
+    border-color: #007bff !important;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.1);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-group .btn {
+    border-radius: 6px;
+}
+
+pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #f8f9fa !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.detailed-stats {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.badge {
+    font-size: 0.75em;
+    padding: 0.35em 0.65em;
+}
+</style>
+
+<script>
+function loadSampleStructure() {
+    const sampleJSON = `{
+    "parent": {
+        "f1": "starting_symptom",
+        "f2": "electrical_symptom",
+        "f3": "starting_symptom",
+        "f4": "starting_symptom",
+        "f5": "fuel_symptom",
+        "f6": "running_symptom",
+        "f7": "running_symptom",
+        "f8": "electrical_symptom",
+        "f9": "environment_context",
+        "starting_symptom": "starting_issue",
+        "running_symptom": "running_issue",
+        "fuel_symptom": "fuel_issue",
+        "electrical_symptom": "electrical_issue",
+        "starting_issue": "engine_problem",
+        "running_issue": "engine_problem",
+        "fuel_issue": "engine_problem",
+        "electrical_issue": "engine_problem",
+        "environment_context": "engine_problem"
+    }
+}`;
+    
+    const textarea = document.querySelector('textarea[name="raw_json"]');
+    textarea.value = sampleJSON;
+    formatJSON();
+    
+    showNotification('Sample structure loaded successfully!', 'success');
+}
+
+function validateJSON() {
+    const textarea = document.querySelector('textarea[name="raw_json"]');
+    try {
+        const parsed = JSON.parse(textarea.value);
+        
+        // Additional validation for structure
+        if (!parsed.parent || typeof parsed.parent !== 'object') {
+            throw new Error('Must have a "parent" object containing the relationships');
+        }
+        
+        showNotification('✅ JSON syntax is valid and structure is correct!', 'success');
+    } catch (e) {
+        showNotification('❌ JSON Error: ' + e.message, 'error');
+    }
+}
+
+function formatJSON() {
+    const textarea = document.querySelector('textarea[name="raw_json"]');
+    try {
+        const parsed = JSON.parse(textarea.value);
+        textarea.value = JSON.stringify(parsed, null, 4);
+        showNotification('JSON formatted successfully!', 'success');
+    } catch (error) {
+        showNotification('Cannot format - invalid JSON: ' + error.message, 'error');
+    }
+}
+
+function clearAllRelationships() {
+    if (confirm('Are you sure you want to delete ALL relationships? This action cannot be undone.')) {
+        const emptyJSON = `{
+    "parent": {}
+}`;
+        document.querySelector('textarea[name="raw_json"]').value = emptyJSON;
+        showNotification('All relationships cleared!', 'info');
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.custom-notification');
+    existingNotifications.forEach(notif => notif.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `custom-notification alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border: none;
+        border-radius: 8px;
+    `;
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 4000);
+}
+
+// Auto-format on Ctrl+Space
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.code === 'Space') {
+        e.preventDefault();
+        formatJSON();
+    }
+});
+
+// Add some interactive effects
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.querySelector('textarea[name="raw_json"]');
+    if (textarea) {
+        textarea.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        textarea.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    }
+});
+</script>
+
+{% endblock %}

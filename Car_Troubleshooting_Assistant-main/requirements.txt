@@ -1,0 +1,2 @@
+flask==2.3.3
+jsonschema==4.19.1

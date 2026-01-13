@@ -1,0 +1,205 @@
+[
+  {
+    "id": "r1",
+    "conditions": [
+      "f2",
+      "f3",
+      "f17"
+    ],
+    "conclusion": "battery_dead_or_severe_drain",
+    "certainty": 0.9,
+    "explain": "Complete electrical failure with rapid clicking and dim lights indicates severely discharged or dead battery.",
+    "recommendation": "🔋 Charge or replace battery. Check for parasitic drain. Test alternator output."
+  },
+  {
+    "id": "r2",
+    "conditions": [
+      "f4",
+      "f2"
+    ],
+    "conclusion": "complete_power_loss",
+    "certainty": 0.9,
+    "explain": "No cranking with dead dashboard suggests main power interruption - check battery connections, main fuses, or ignition switch.",
+    "recommendation": "⚡ Check battery terminals, main fuse box, and ignition switch wiring."
+  },
+  {
+    "id": "r3",
+    "conditions": [
+      "f1",
+      "f20",
+      "f15"
+    ],
+    "conclusion": "engine_flooded",
+    "certainty": 0.85,
+    "explain": "Normal cranking without starting plus strong gasoline smell indicates fuel flooding in cylinders.",
+    "recommendation": "⛽ Hold accelerator pedal to floor while cranking to clear flood. Check fuel injectors."
+  },
+  {
+    "id": "r4",
+    "conditions": [
+      "f1",
+      "f20",
+      "f5"
+    ],
+    "conclusion": "fuel_empty",
+    "certainty": 0.95,
+    "explain": "Engine cranks but won't start with empty fuel gauge strongly suggests out of fuel condition.",
+    "recommendation": "🛢️ Add fuel immediately. Check for fuel system damage from running dry."
+  },
+  {
+    "id": "r5",
+    "conditions": [
+      "f4",
+      "f18"
+    ],
+    "conclusion": "starter_solenoid_fault",
+    "certainty": 0.9,
+    "explain": "Single loud clunk without cranking indicates starter solenoid engaging but not activating starter motor.",
+    "recommendation": "🔧 Replace starter solenoid or entire starter assembly. Check starter wiring."
+  },
+  {
+    "id": "r6",
+    "conditions": [
+      "f11",
+      "f3",
+      "f17"
+    ],
+    "conclusion": "battery_weak",
+    "certainty": 0.85,
+    "explain": "Slow labored cranking with clicking and dim lights indicates weak battery unable to provide sufficient cranking amps.",
+    "recommendation": "🔋 Test battery voltage under load. Charge or replace battery. Check charging system."
+  },
+  {
+    "id": "r7",
+    "conditions": [
+      "f4",
+      "f19"
+    ],
+    "conclusion": "anti_theft_lockout",
+    "certainty": 0.95,
+    "explain": "No cranking with security light flashing confirms anti-theft system is preventing engine start.",
+    "recommendation": "🔒 Use key fob to disarm system. Check key battery. Try spare key. Consult dealer if persistent."
+  },
+  {
+    "id": "r8",
+    "conditions": [
+      "f1",
+      "f20",
+      "f9"
+    ],
+    "conclusion": "moisture_ignition_failure",
+    "certainty": 0.8,
+    "explain": "Cranking without starting after water exposure suggests moisture in ignition components (coils, plugs, wires).",
+    "recommendation": "💧 Dry ignition components with compressed air. Check for water in spark plug wells."
+  },
+  {
+    "id": "r9",
+    "conditions": [
+      "f6",
+      "f8"
+    ],
+    "conclusion": "sensor_failure",
+    "certainty": 0.8,
+    "explain": "Engine starts then stalls with Check Engine Light indicates critical sensor failure (crankshaft, camshaft, MAF).",
+    "recommendation": "📟 Scan for trouble codes. Check crankshaft/camshaft sensors, MAF sensor connections."
+  },
+  {
+    "id": "r10",
+    "conditions": [
+      "f7",
+      "f8"
+    ],
+    "conclusion": "ignition_misfire",
+    "certainty": 0.75,
+    "explain": "Rough idle with Check Engine Light suggests ignition misfire from faulty coils, plugs, or injectors.",
+    "recommendation": "⚡ Scan for misfire codes. Check spark plugs, ignition coils, fuel injectors."
+  },
+  {
+    "id": "r11",
+    "conditions": [
+      "f13"
+    ],
+    "conclusion": "starter_gear_damage",
+    "certainty": 0.9,
+    "explain": "Grinding noise during cranking indicates damaged starter pinion or flywheel ring gear teeth.",
+    "recommendation": "🔧 Replace starter assembly. Inspect flywheel ring gear for damage."
+  },
+  {
+    "id": "r12",
+    "conditions": [
+      "f10",
+      "f3"
+    ],
+    "conclusion": "poor_battery_connection",
+    "certainty": 0.95,
+    "explain": "Corroded/loose battery terminals with clicking sounds confirm poor electrical connections preventing proper current flow.",
+    "recommendation": "🔌 Clean and tighten battery terminals. Check ground connections. Apply terminal protector."
+  },
+  {
+    "id": "r13",
+    "conditions": [
+      "f14"
+    ],
+    "conclusion": "coolant_intrusion",
+    "certainty": 0.7,
+    "explain": "White exhaust smoke on startup may indicate coolant entering combustion chambers (head gasket issue).",
+    "recommendation": "🌫️ Perform compression test. Check for coolant in oil. May require head gasket replacement."
+  },
+  {
+    "id": "r14",
+    "conditions": [
+      "f1",
+      "f20",
+      "f12"
+    ],
+    "conclusion": "incorrect_electrical_service",
+    "certainty": 0.8,
+    "explain": "Cranking without starting after recent electrical work suggests incorrect installation or wiring issues.",
+    "recommendation": "🔧 Review recent electrical work. Check wiring connections, fuses, and relays."
+  },
+  {
+    "id": "r15",
+    "conditions": [
+      "f16",
+      "f11"
+    ],
+    "conclusion": "alternator_failure",
+    "certainty": 0.85,
+    "explain": "Recent jump-start with slow cranking indicates alternator not properly charging battery.",
+    "recommendation": "🔋 Test alternator output. Replace alternator if not charging. Check drive belt tension."
+  },
+  {
+    "id": "r16",
+    "conditions": [
+      "f1",
+      "f20",
+      "f8"
+    ],
+    "conclusion": "critical_sensor_failure",
+    "certainty": 0.75,
+    "explain": "Cranks but won't start with Check Engine Light suggests failure of critical engine management sensor.",
+    "recommendation": "📟 Scan for diagnostic codes. Check crankshaft position sensor, camshaft sensor, fuel pump relay."
+  },
+  {
+    "id": "r17",
+    "conditions": [
+      "f4",
+      "f9"
+    ],
+    "conclusion": "water_damaged_starter",
+    "certainty": 0.8,
+    "explain": "No cranking after water exposure indicates water damage to starter motor or solenoid.",
+    "recommendation": "💧 Replace starter motor. Check for water in starter housing and wiring."
+  },
+  {
+    "id": "r18",
+    "conditions": [
+      "f6",
+      "f15"
+    ],
+    "conclusion": "fuel_pressure_loss",
+    "certainty": 0.7,
+    "explain": "Stalling after start with gasoline smell suggests fuel pressure loss after initial prime.",
+    "recommendation": "⛽ Check fuel pump pressure. Inspect fuel lines, filter, and pressure regulator."
+  }
+]

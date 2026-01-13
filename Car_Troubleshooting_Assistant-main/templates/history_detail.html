@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mb-2">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h4 mb-0">ព័ត៌មានលម្អិតនៃប្រវត្តិលេខ {{ hid }}</h2>
+    </div>
+    
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="{{ url_for('history_list') }}">
+            ← ត្រឡប់ក្រោយ
+        </a>
+        <a class="btn btn-primary ms-auto" href="{{ url_for('infer') }}">
+            ធ្វើរោគវិនិច្ឆ័យថ្មី
+        </a>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <p><strong>កាលបរិច្ឆេទ៖</strong> {{ item.formatted_timestamp }}</p>
+
+        <p class="mt-3 mb-1"><strong>ការសង្កេតឃើញ៖</strong></p>
+        <div class="mb-2">
+            {% for fid, conf in item.observations.items() %}
+                <span class="badge bg-primary me-1">
+                    {{ fid }}: {{ "%.2f"|format(conf) }}
+                </span>
+            {% endfor %}
+        </div>
+
+        <p class="mt-3 mb-1"><strong>ការសង្កេតបន្ថែម (តាមចំណាត់ថ្នាក់ក្រុម)៖</strong></p>
+        <div class="mb-2">
+            {% for fid, conf in item.expanded_obs.items() %}
+                {% if conf > 0 %}
+                <span class="badge bg-secondary me-1 mb-1">
+                    {{ fid }}: {{ "%.2f"|format(conf) }}
+                </span>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<h5 class="mb-3">លទ្ធផលទទួលបាន</h5>
+{% if item.results %}
+    {% for r in item.results %}
+    <div class="card mb-2">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h6 class="mb-1">
+                    {{ r.conclusion | replace('_',' ') | title }}
+                </h6>
+                <span class="badge 
+                    {% if r.confidence > 0.7 %}
+                        bg-success
+                    {% elif r.confidence > 0.4 %}
+                        bg-warning text-dark
+                    {% else %}
+                        bg-secondary
+                    {% endif %}">
+                    {{ "%.0f"|format(r.confidence * 100) }}%
+                </span>
+            </div>
+
+            <p class="small text-muted mb-1">
+                <strong>លក្ខខណ្ឌ (Rule):</strong> {{ r.rule_id }} |
+                <strong>កម្រិតហានិភ័យ៖</strong> 
+                {% if r.confidence >= 0.8 %}
+                    <span class="badge bg-danger">ខ្ពស់</span>
+                {% elif r.confidence >= 0.5 %}
+                    <span class="badge bg-warning text-dark">មធ្យម</span>
+                {% else %}
+                    <span class="badge bg-success">ទាប</span>
+                {% endif %}
+            </p>
+
+            {% if r.explanation %}
+            <p class="mb-1"><strong>ការពន្យល់៖</strong> {{ r.explanation }}</p>
+            {% endif %}
+
+            {% if r.recommendation %}
+            <p class="mb-0"><strong>ការណែនាំ៖</strong> {{ r.recommendation }}</p>
+            {% endif %}
+
+            <div class="mt-2 small text-muted">
+                <strong>មូលហេតុបង្ក (Triggered conditions):</strong>
+                {% for cond in r.triggered_conditions %}
+                    <span class="badge bg-info me-1">{{ cond }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-warning">
+        មិនមានលទ្ធផលត្រូវបានកត់ត្រាទុកសម្រាប់ប្រវត្តិនេះទេ។
+    </div>
+{% endif %}
+{% endblock %}
