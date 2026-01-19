@@ -1,4 +1,4 @@
-# app.py
+# app.py - Car Troubleshooting Assistant in Khmer
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import json
@@ -31,25 +31,25 @@ SCHEMAS_FILE = os.getenv(
 )
 
 def _load_schemas_from_file(path: str):
-    """Dynamically load facts/rules schemas from a Python file."""
+    """បង្កើត facts/rules schemas ពីឯកសារ Python"""
     spec = importlib.util.spec_from_file_location("external_schemas", path)
     if spec is None or spec.loader is None:
-        raise FileNotFoundError(f"Cannot load schemas module from: {path}")
+        raise FileNotFoundError(f"មិនអាចទាញយក module schemas ពី: {path}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     try:
         return module.facts_array_schema, module.rules_array_schema
     except AttributeError as e:
         raise AttributeError(
-            f"'{path}' must expose 'facts_array_schema' and 'rules_array_schema'."
+            f"'{path}' ត្រូវតែមាន 'facts_array_schema' និង 'rules_array_schema'"
         ) from e
 
 try:
     facts_array_schema, rules_array_schema = _load_schemas_from_file(SCHEMAS_FILE)
 except Exception as e:
     raise RuntimeError(
-        f"Failed to load JSON Schemas from '{SCHEMAS_FILE}': {e}.\n"
-        "Ensure schemas/schemas.py exists and defines the required schemas."
+        f"មិនអាចទាញយក JSON Schemas ពី '{SCHEMAS_FILE}': {e}.\n"
+        "ត្រូវប្រាកដថា schemas/schemas.py មាន និងបានកំណត់ schemas ដែលត្រូវការ"
     )
 
 # --- Flask app & routes ---
@@ -61,7 +61,7 @@ app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-this-in-production")
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-login_manager.login_message = 'Please log in to access this page.'
+login_manager.login_message = 'សូមចូលគណនីដើម្បីចូលទៅកាន់ទំព័រនេះ'
 login_manager.login_message_category = 'warning'
 
 
@@ -71,8 +71,8 @@ class User(UserMixin):
         self.username = user_data['username']
         self.email = user_data.get('email')
         self.role = user_data['role']
-        self.profile_picture = user_data.get('profile_picture')
         self._is_active = user_data.get('is_active', True)
+        self.profile_picture = user_data.get('profile_picture') 
     
     @property
     def is_active(self):
@@ -115,6 +115,15 @@ def load_user(user_id):
 
 @app.context_processor
 def inject_user():
+    # ទាញយកទិន្នន័យអ្នកប្រើប្រាស់ថ្មីជាមួយរូបថតប្រវត្តិរូប
+    if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated:
+        try:
+            user_data = get_user(current_user.id)
+            if user_data:
+                user_obj = User(user_data)
+                return dict(current_user=user_obj)
+        except:
+            pass
     return dict(current_user=current_user)
 
 # --- Custom Decorators ---
@@ -123,7 +132,7 @@ def admin_required(f):
     @login_required
     def decorated_function(*args, **kwargs):
         if not current_user.is_admin():
-            flash("Access denied. Admin privileges required.", "danger")
+            flash("បដិសេធ។ ត្រូវការសិទ្ធិជាអ្នកគ្រប់គ្រង", "danger")
             return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
@@ -133,7 +142,7 @@ def expert_or_admin_required(f):
     @login_required
     def decorated_function(*args, **kwargs):
         if not current_user.can_edit():
-            flash("Access denied. Expert or admin privileges required.", "danger")
+            flash("បដិសេធ។ ត្រូវការសិទ្ធិជាអ្នកជំនាញ ឬអ្នកគ្រប់គ្រង", "danger")
             return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
@@ -143,7 +152,7 @@ def can_edit_required(f):
     @login_required
     def decorated_function(*args, **kwargs):
         if not current_user.can_edit():
-            flash("You don't have permission to edit content.", "danger")
+            flash("អ្នកមិនមានសិទ្ធិកែសម្រួលមាតិកា", "danger")
             return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
@@ -153,18 +162,19 @@ def can_delete_required(f):
     @login_required
     def decorated_function(*args, **kwargs):
         if not current_user.can_delete():
-            flash("You don't have permission to delete content.", "danger")
+            flash("អ្នកមិនមានសិទ្ធិលុបមាតិកា", "danger")
             return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
 
 # --- Helpers ---
+
 def clamp01(x) -> float:
     try:
         value = float(x)
-        # If value is between 0 and 100, treat as percentage
+        # ប្រសិនបើតម្លៃមានចន្លោះពី 0 ទៅ 100 ពិចារណាថាជាភាគរយ
         if 0 <= value <= 100:
-            if value > 1:  # Convert percentage to decimal
+            if value > 1:  # បំលែងភាគរយទៅជាទសភាគ
                 value = value / 100.0
         return max(0.0, min(1.0, value))
     except Exception:
@@ -312,18 +322,18 @@ def login():
         password = request.form.get("password", "")
         
         if not username or not password:
-            flash("Username and password are required", "danger")
+            flash("ឈ្មោះអ្នកប្រើប្រាស់ និងពាក្យសម្ងាត់ត្រូវបំពេញ", "danger")
             return render_template("login.html")
         
         user_data = authenticate_user(username, password)
         if user_data:
             user = User(user_data)
             login_user(user)
-            flash(f"Welcome back, {username}!", "success")
+            flash(f"ស្វាគមន៍ការត្រឡប់មកវិញ, {username}!", "success")
             next_page = request.args.get('next')
             return redirect(next_page or url_for('home'))
         else:
-            flash("Invalid username or password", "danger")
+            flash("ឈ្មោះអ្នកប្រើប្រាស់ ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ", "danger")
     
     return render_template("login.html")
 
@@ -331,7 +341,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash("You have been logged out", "info")
+    flash("អ្នកបានចាកចេញពីគណនី", "info")
     return redirect(url_for('login'))
 
 @app.route("/register", methods=["GET", "POST"])
@@ -343,23 +353,23 @@ def register():
         email = request.form.get("email", "").strip()
         
         if not username or not password:
-            flash("Username and password are required", "danger")
+            flash("ឈ្មោះអ្នកប្រើប្រាស់ និងពាក្យសម្ងាត់ត្រូវបំពេញ", "danger")
             return render_template("register.html")
         
         if password != confirm_password:
-            flash("Passwords do not match", "danger")
+            flash("ពាក្យសម្ងាត់មិនដូចគ្នា", "danger")
             return render_template("register.html")
         
         if len(password) < 6:
-            flash("Password must be at least 6 characters long", "danger")
+            flash("ពាក្យសម្ងាត់ត្រូវមានយ៉ាងតិច ៦ តួអក្សរ", "danger")
             return render_template("register.html")
         
         try:
             user_id = create_user(username, password, email)
-            flash("Registration successful! Please log in.", "success")
+            flash("ចុះឈ្មោះជោគជ័យ! សូមចូលគណនី", "success")
             return redirect(url_for('login'))
         except Exception as e:
-            flash(f"Registration failed: {str(e)}", "danger")
+            flash(f"ចុះឈ្មោះមិនបានសម្រេច: {str(e)}", "danger")
     
     return render_template("register.html")
 
@@ -401,7 +411,7 @@ def profile():
     try:
         user_data = get_user(current_user.id)
         if not user_data:
-            flash("User not found", "danger")
+            flash("រកមិនឃើញអ្នកប្រើប្រាស់", "danger")
             return redirect(url_for('home'))
         
         user_facts_count = 0
@@ -428,7 +438,7 @@ def profile():
                              user_history_count=user_history_count)
                              
     except Exception as e:
-        flash(f"Error loading profile: {str(e)}", "danger")
+        flash(f"កំហុសក្នុងការទាញយកប្រវត្តិរូប: {str(e)}", "danger")
         return redirect(url_for('home'))
 
 @app.route("/profile/update", methods=["POST"])
@@ -441,16 +451,16 @@ def update_profile():
     confirm_password = request.form.get("confirm_password", "")
     
     if not authenticate_user(current_user.username, current_password):
-        flash("Current password is incorrect", "danger")
+        flash("ពាក្យសម្ងាត់បច្ចុប្បន្នមិនត្រឹមត្រូវ", "danger")
         return redirect(url_for('profile'))
     
     if new_password:
         if new_password != confirm_password:
-            flash("New passwords do not match", "danger")
+            flash("ពាក្យសម្ងាត់ថ្មីមិនដូចគ្នា", "danger")
             return redirect(url_for('profile'))
         
         if len(new_password) < 6:
-            flash("New password must be at least 6 characters long", "danger")
+            flash("ពាក្យសម្ងាត់ថ្មីត្រូវមានយ៉ាងតិច ៦ តួអក្សរ", "danger")
             return redirect(url_for('profile'))
     
     try:
@@ -462,9 +472,9 @@ def update_profile():
             except:
                 pass
         
-        flash("Profile updated successfully!", "success")
+        flash("បានធ្វើបច្ចុប្បន្នភាពប្រវត្តិរូបដោយជោគជ័យ!", "success")
     except Exception as e:
-        flash(f"Error updating profile: {str(e)}", "danger")
+        flash(f"កំហុសក្នុងការធ្វើបច្ចុប្បន្នភាពប្រវត្តិរូប: {str(e)}", "danger")
     
     return redirect(url_for('profile'))
 
@@ -472,62 +482,29 @@ def update_profile():
 @login_required
 def upload_profile_picture():
     if 'profile_picture' not in request.files:
-        flash('No file selected', 'danger')
+        flash('មិនមានឯកសារបានជ្រើសរើស', 'danger')
         return redirect(url_for('profile'))
     
     file = request.files['profile_picture']
     
     if file.filename == '':
-        flash('No file selected', 'danger')
+        flash('មិនមានឯកសារបានជ្រើសរើស', 'danger')
         return redirect(url_for('profile'))
-    
-    # Check file extension
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-    
-    def allowed_file(filename):
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
     
     if not allowed_file(file.filename):
-        flash('Only image files (PNG, JPG, JPEG, GIF) are allowed', 'danger')
+        flash('អនុញ្ញាតតែឯកសាររូបភាព (PNG, JPG, JPEG, GIF)', 'danger')
         return redirect(url_for('profile'))
     
-    # Get file size
-    file.seek(0, 2)  # Seek to end
-    file_size = file.tell()
-    file.seek(0)  # Seek back to start
-    
-    if file_size > MAX_FILE_SIZE:
-        flash('File size must be less than 5MB', 'danger')
+    if file.content_length > MAX_FILE_SIZE:
+        flash('ទំហំឯកសារត្រូវតែតូចជាង 5MB', 'danger')
         return redirect(url_for('profile'))
     
     try:
-        # Read file data
         file_data = file.read()
-        
-        # Determine MIME type based on file extension
-        filename = file.filename.lower()
-        if filename.endswith('.png'):
-            mime_type = 'image/png'
-        elif filename.endswith('.jpg') or filename.endswith('.jpeg'):
-            mime_type = 'image/jpeg'
-        elif filename.endswith('.gif'):
-            mime_type = 'image/gif'
-        else:
-            mime_type = 'image/jpeg'  # default
-        
-        # Encode to base64 WITH data URI prefix
-        base64_data = base64.b64encode(file_data).decode('utf-8')
-        data_uri = f"data:{mime_type};base64,{base64_data}"
-        
-        # Store in database
-        update_user_profile(current_user.id, profile_picture=data_uri)
-        
-        flash('Profile picture uploaded successfully!', 'success')
-        
+        update_user_profile(current_user.id, profile_picture=file_data)
+        flash('បានផ្ទុករូបថតប្រវត្តិរូបដោយជោគជ័យ!', 'success')
     except Exception as e:
-        print(f"Error uploading picture: {str(e)}")
-        flash(f'Error uploading picture: {str(e)}', 'danger')
+        flash(f'កំហុសក្នុងការផ្ទុករូបថត: {str(e)}', 'danger')
     
     return redirect(url_for('profile'))
 
@@ -536,10 +513,10 @@ def upload_profile_picture():
 def remove_profile_picture():
     try:
         update_user_profile(current_user.id, profile_picture=None)
-        flash("Profile picture removed successfully", "success")
+        flash("បានដករូបថតប្រវត្តិរូបចេញ", "success")
         return redirect(url_for('profile'))
     except Exception as e:
-        flash(f"Error removing picture: {e}", "danger")
+        flash(f"កំហុសក្នុងការដករូបថត: {e}", "danger")
         return redirect(url_for('profile'))
 
 # --- Facts Routes ---
@@ -548,7 +525,8 @@ def remove_profile_picture():
 def facts_list():
     fresh_facts = get_all_facts()
     return render_template("facts_list.html", facts=fresh_facts)
-
+#
+# new fact for update to day 18 january 2026
 @app.route("/facts/new", methods=["GET", "POST"])
 @expert_or_admin_required
 def facts_new():
@@ -561,7 +539,7 @@ def facts_new():
         category = request.form.get("category", "uncategorized")
 
         if not fid:
-            flash("ID is required", "danger")
+            flash("ត្រូវការ ID", "danger")
             return render_template("fact_form.html", mode="new", fact={
                 "id": fid, "description": description, "value": value, 
                 "tags": tags, "category": category
@@ -569,7 +547,7 @@ def facts_new():
 
         existing_fact = get_fact(fid)
         if existing_fact:
-            flash(f"Fact ID '{fid}' already exists", "danger")
+            flash(f"Fact ID '{fid}' មានរួចហើយ", "danger")
             return render_template("fact_form.html", mode="new", fact={
                 "id": fid, "description": description, "value": value, 
                 "tags": tags, "category": category
@@ -584,23 +562,43 @@ def facts_new():
             all_facts = get_all_facts()
             test_facts = all_facts + [new_item]
             validate(test_facts, facts_array_schema)
+            
+            # Save fact and log audit
+            old_value = None  # New creation, no old value
+            new_value = dict(new_item)
+            
+            # Save to database
             save_fact(new_item, current_user.id)
+            
+            # Log audit - CREATE action
+            log_audit(
+                user_id=current_user.id,
+                action='CREATE',
+                table_name='facts',
+                record_id=fid,
+                old_value=old_value,
+                new_value=new_value,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
+            
             update_taxonomy_with_fact(fid, category)
         except ValidationError as e:
-            flash(f"Validation error: {e.message}", "danger")
+            flash(f"កំហុសផ្ទៀងផ្ទាត់: {e.message}", "danger")
             return render_template("fact_form.html", mode="new", fact=new_item)
 
-        flash(f"Fact '{fid}' created with category '{category}'", "success")
+        flash(f"បានបង្កើត Fact '{fid}' ជាមួយ category '{category}'", "success")
         return redirect(url_for("facts_list"))
 
     return render_template("fact_form.html", mode="new", fact=None)
 
+#  fact edit for update to day 18 january 2026
 @app.route("/facts/<fid>/edit", methods=["GET", "POST"])
 @expert_or_admin_required
 def facts_edit(fid):
     fact = get_fact(fid)
     if not fact:
-        flash("Fact not found", "warning")
+        flash("រកមិនឃើញ Fact", "warning")
         return redirect(url_for("facts_list"))
 
     if request.method == "POST":
@@ -619,38 +617,89 @@ def facts_edit(fid):
             all_facts = get_all_facts()
             test_facts = [updated_fact if f["id"] == fid else f for f in all_facts]
             validate(test_facts, facts_array_schema)
+            
+            # Get old value before saving
+            old_value = dict(fact) if fact else None
+            
+            # Save updated fact
             save_fact(updated_fact, current_user.id)
+            
+            # Log audit - UPDATE action
+            log_audit(
+                user_id=current_user.id,
+                action='UPDATE',
+                table_name='facts',
+                record_id=fid,
+                old_value=old_value,
+                new_value=updated_fact,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
+            
             update_taxonomy_with_fact(fid, category)
         except ValidationError as e:
-            flash(f"Validation error: {e.message}", "danger")
+            flash(f"កំហុសផ្ទៀងផ្ទាត់: {e.message}", "danger")
             return render_template("fact_form.html", mode="edit", fact=updated_fact)
 
-        flash(f"Fact '{fid}' updated with category '{category}'", "success")
+        flash(f"បានធ្វើបច្ចុប្បន្នភាព Fact '{fid}' ជាមួយ category '{category}'", "success")
         return redirect(url_for("facts_list"))
 
     return render_template("fact_form.html", mode="edit", fact=fact)
 
+# fact delete for update to day 18 january 2026
 @app.post("/facts/<fid>/delete")
 @admin_required
 def facts_delete(fid):
+    # Get fact before deletion for audit logging
+    fact = get_fact(fid)
+    if fact:
+        old_value = dict(fact)
+    else:
+        old_value = None
+    
+    # Delete the fact
     delete_fact(fid, current_user.id)
     delete_taxonomy_relationship(fid, current_user.id)
-    flash(f"Fact '{fid}' deleted from facts and taxonomy", "success")
+    
+    # Log audit - DELETE action (already done in delete_fact function)
+    # No need to log again since delete_fact already logs
+    
+    flash(f"បានលុប Fact '{fid}' ពី facts និង taxonomy", "success")
     return redirect(url_for("facts_list"))
 
+# fact toggle for update to day 18 january 2026
 @app.route("/facts/toggle/<fid>", methods=["POST"])
 @login_required
 def facts_toggle(fid):
     try:
         fact = get_fact(fid)
         if fact:
+            # Get old value before toggling
+            old_value = dict(fact)
+            
+            # Toggle the value
             fact["value"] = not fact["value"]
+            
+            # Save the updated fact
             save_fact(fact, current_user.id)
-            flash(f'Fact "{fid}" updated to {fact["value"]}', 'success')
+            
+            # Log audit - UPDATE action
+            log_audit(
+                user_id=current_user.id,
+                action='UPDATE',
+                table_name='facts',
+                record_id=fid,
+                old_value=old_value,
+                new_value=fact,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
+            
+            flash(f'បានធ្វើបច្ចុប្បន្នភាព Fact "{fid}" ទៅ {fact["value"]}', 'success')
         else:
-            flash(f'Fact "{fid}" not found', 'error')
+            flash(f'រកមិនឃើញ Fact "{fid}"', 'error')
     except Exception as e:
-        flash(f'Error toggling fact: {str(e)}', 'danger')
+        flash(f'កំហុសក្នុងការប្តូរ Fact: {str(e)}', 'danger')
     return redirect(url_for('facts_list'))
 
 # --- Rules Routes ---
@@ -660,6 +709,7 @@ def rules_list():
     fresh_rules = get_all_rules()
     return render_template("rules_list.html", rules=fresh_rules)
 
+# rule new for update to day 18 january 2026
 @app.route("/rules/new", methods=["GET", "POST"])
 @expert_or_admin_required
 def rules_new():
@@ -668,17 +718,14 @@ def rules_new():
         conditions_raw = (request.form.get("conditions") or "").strip()
         conclusion = (request.form.get("conclusion") or "").strip()
         
-        # Get certainty as string to preserve the original value
         certainty_str = request.form.get("certainty") or "80"
-        # Convert to float for processing
         try:
             certainty = float(certainty_str)
-            # If user entered percentage (e.g., 90), convert to decimal
             if certainty > 1:
                 certainty = certainty / 100.0
             certainty = max(0.0, min(1.0, certainty))
         except (ValueError, TypeError):
-            certainty = 0.8  # default
+            certainty = 0.8
             
         explain = (request.form.get("explain") or "").strip()
         recommendation = (request.form.get("recommendation") or "").strip()
@@ -690,46 +737,61 @@ def rules_new():
         }
 
         if not rid:
-            flash("ID is required", "danger")
+            flash("ត្រូវការ ID", "danger")
             return render_template("rule_form.html", mode="new", rule=new_item)
 
         all_rules = get_all_rules()
         if any(r.get("id") == rid for r in all_rules):
-            flash(f"Rule ID '{rid}' already exists", "danger")
+            flash(f"Rule ID '{rid}' មានរួចហើយ", "danger")
             return render_template("rule_form.html", mode="new", rule=new_item)
 
         try:
             test_rules = all_rules + [new_item]
             validate(test_rules, rules_array_schema)
+            
+            # Save rule and log audit
+            old_value = None  # New creation, no old value
+            
+            # Save to database
             save_rule(new_item, current_user.id)
+            
+            # Log audit - CREATE action
+            log_audit(
+                user_id=current_user.id,
+                action='CREATE',
+                table_name='rules',
+                record_id=rid,
+                old_value=old_value,
+                new_value=new_item,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
         except ValidationError as e:
-            flash(f"Validation error: {e.message}", "danger")
+            flash(f"កំហុសផ្ទៀងផ្ទាត់: {e.message}", "danger")
             return render_template("rule_form.html", mode="new", rule=new_item)
 
-        flash("Rule created", "success")
+        flash("បានបង្កើត Rule", "success")
         return redirect(url_for("rules_list"))
 
     return render_template("rule_form.html", mode="new", rule={"certainty": 0.8})
 
+# rule edit for update to day 18 january 2026
 @app.route("/rules/<rid>/edit", methods=["GET", "POST"])
 @expert_or_admin_required
 def rules_edit(rid):
     all_rules = get_all_rules()
     rule = next((r for r in all_rules if r.get("id") == rid), None)
     if not rule:
-        flash("Rule not found", "warning")
+        flash("រកមិនឃើញ Rule", "warning")
         return redirect(url_for("rules_list"))
 
     if request.method == "POST":
         conditions_raw = (request.form.get("conditions") or "").strip()
         conclusion = (request.form.get("conclusion") or "").strip()
         
-        # Get certainty as string to preserve the original value
         certainty_str = request.form.get("certainty") or "80"
-        # Convert to float for processing
         try:
             certainty = float(certainty_str)
-            # If user entered percentage (e.g., 90), convert to decimal
             if certainty > 1:
                 certainty = certainty / 100.0
             certainty = max(0.0, min(1.0, certainty))
@@ -749,21 +811,50 @@ def rules_edit(rid):
         try:
             test_rules = [updated if r["id"] == rule["id"] else r for r in all_rules]
             validate(test_rules, rules_array_schema)
+            
+            # Get old value before saving
+            old_value = dict(rule) if rule else None
+            
+            # Save updated rule
             save_rule(updated, current_user.id)
+            
+            # Log audit - UPDATE action
+            log_audit(
+                user_id=current_user.id,
+                action='UPDATE',
+                table_name='rules',
+                record_id=rid,
+                old_value=old_value,
+                new_value=updated,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
         except ValidationError as e:
-            flash(f"Validation error: {e.message}", "danger")
+            flash(f"កំហុសផ្ទៀងផ្ទាត់: {e.message}", "danger")
             return render_template("rule_form.html", mode="edit", rule=updated)
 
-        flash("Rule updated", "success")
+        flash("បានធ្វើបច្ចុប្បន្នភាព Rule", "success")
         return redirect(url_for("rules_list"))
 
     return render_template("rule_form.html", mode="edit", rule=rule)
 
+# rule delete for update to day 18 january 2026
 @app.post("/rules/<rid>/delete")
 @admin_required
 def rules_delete(rid):
+    # Get rule before deletion for audit logging
+    all_rules = get_all_rules()
+    rule = next((r for r in all_rules if r.get("id") == rid), None)
+    
+    if rule:
+        old_value = dict(rule)
+    else:
+        old_value = None
+    
+    # Delete the rule (function already logs audit in database.py)
     delete_rule(rid, current_user.id)
-    flash("Rule deleted", "success")
+    
+    flash("បានលុប Rule", "success")
     return redirect(url_for("rules_list"))
 
 # --- Taxonomy Routes ---
@@ -795,11 +886,11 @@ def taxonomy_add_missing_facts():
                 added_facts.append(fid)
         
         if missing_count > 0:
-            flash(f"Added {missing_count} facts to taxonomy", "success")
+            flash(f"បានបន្ថែម facts {missing_count} ទៅ taxonomy", "success")
         else:
-            flash("All facts are already in taxonomy", "info")
+            flash("រាល់ facts ទាំងអស់មាននៅក្នុង taxonomy រួចហើយ", "info")
     except Exception as e:
-        flash(f"Error adding missing facts: {str(e)}", "danger")
+        flash(f"កំហុសក្នុងការបន្ថែម facts ដែលបាត់: {str(e)}", "danger")
     return redirect(url_for("taxonomy_view"))
 
 @app.post("/taxonomy/add_rule_conclusions")
@@ -823,13 +914,14 @@ def taxonomy_add_rule_conclusions():
             update_taxonomy_relationship("diagnosed_issue", "engine_problem", current_user.id)
 
         if added_count > 0:
-            flash(f"Added {added_count} rule conclusions to taxonomy", "success")
+            flash(f"បានបន្ថែម rule conclusions {added_count} ទៅ taxonomy", "success")
         else:
-            flash("All rule conclusions are already in taxonomy", "info")
+            flash("រាល់ rule conclusions ទាំងអស់មាននៅក្នុង taxonomy រួចហើយ", "info")
     except Exception as e:
-        flash(f"Error adding rule conclusions: {e}", "danger")
+        flash(f"កំហុសក្នុងការបន្ថែម rule conclusions: {e}", "danger")
     return redirect(url_for("taxonomy_view"))
 
+# taxonomy save for update to day 18 january 2026
 @app.post("/taxonomy")
 @expert_or_admin_required
 def taxonomy_save():
@@ -837,17 +929,36 @@ def taxonomy_save():
     try:
         parsed = json.loads(raw)
         if not isinstance(parsed, dict):
-            raise ValueError("Taxonomy must be a JSON object (dictionary).")
+            raise ValueError("Taxonomy ត្រូវតែជា JSON object (វចនានុក្រម)")
         if "parent" in parsed and not isinstance(parsed["parent"], dict):
-            raise ValueError("taxonomy.parent must be a JSON object (dictionary).")
+            raise ValueError("taxonomy.parent ត្រូវតែជា JSON object (វចនានុក្រម)")
+        
+        # Get old taxonomy before saving
+        old_taxonomy = get_taxonomy()
+        
+        # Save new taxonomy
         save_taxonomy(parsed, current_user.id)
-        flash("Taxonomy saved", "success")
+        
+        # Log audit - UPDATE action
+        log_audit(
+            user_id=current_user.id,
+            action='UPDATE',
+            table_name='taxonomy',
+            record_id='all',
+            old_value=old_taxonomy,
+            new_value=parsed,
+            ip_address=request.remote_addr,
+            user_agent=request.user_agent.string
+        )
+        
+        flash("បានរក្សាទុក taxonomy", "success")
     except Exception as e:
-        flash(f"Failed to save taxonomy: {e}", "danger")
+        flash(f"មិនអាចរក្សាទុក taxonomy: {e}", "danger")
         taxonomy_data = get_taxonomy_data()
         return render_template("taxonomy.html", taxonomy={"parent": taxonomy_data}, raw_json=raw)
     return redirect(url_for("taxonomy_view"))
-
+#
+# taxonomy update fact category for update to day 18 january 2026
 @app.route("/update_fact_category", methods=["POST"])
 @expert_or_admin_required
 def update_fact_category():
@@ -855,17 +966,45 @@ def update_fact_category():
         fact_id = request.form.get("fact_id")
         category = request.form.get("category")
         if not fact_id:
-            flash("Fact ID is required", "danger")
+            flash("ត្រូវការ Fact ID", "danger")
             return redirect(url_for("taxonomy_view"))
+        
+        # Get old taxonomy relationship
+        taxonomy_data = get_taxonomy_data()
+        old_category = taxonomy_data.get(fact_id)
         
         if category:
             update_taxonomy_relationship(fact_id, category, current_user.id)
+            
+            # Log audit - UPDATE action
+            log_audit(
+                user_id=current_user.id,
+                action='UPDATE',
+                table_name='taxonomy',
+                record_id=fact_id,
+                old_value={'child': fact_id, 'parent': old_category} if old_category else None,
+                new_value={'child': fact_id, 'parent': category},
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
         else:
             delete_taxonomy_relationship(fact_id, current_user.id)
+            
+            # Log audit - DELETE action
+            log_audit(
+                user_id=current_user.id,
+                action='DELETE',
+                table_name='taxonomy',
+                record_id=fact_id,
+                old_value={'child': fact_id, 'parent': old_category} if old_category else None,
+                new_value=None,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
         
-        flash(f"Updated category for fact {fact_id}", "success")
+        flash(f"បានធ្វើបច្ចុប្បន្នភាព category សម្រាប់ fact {fact_id}", "success")
     except Exception as e:
-        flash(f"Error updating category: {str(e)}", "danger")
+        flash(f"កំហុសក្នុងការធ្វើបច្ចុប្បន្នភាព category: {str(e)}", "danger")
     return redirect(url_for("taxonomy_view"))
 
 @app.route("/sync_all_categories")
@@ -879,9 +1018,9 @@ def sync_all_categories():
             category = fact.get('category', 'uncategorized')
             update_taxonomy_with_fact(fact_id, category)
             updated_count += 1
-        flash(f"Synced {updated_count} facts to taxonomy", "success")
+        flash(f"បានសម្របសម្រួល categories សម្រាប់ facts {updated_count}", "success")
     except Exception as e:
-        flash(f"Error syncing categories: {e}", "danger")
+        flash(f"កំហុសក្នុងការសម្របសម្រួល categories: {e}", "danger")
     return redirect(url_for('taxonomy_view'))
 
 # --- Inference Routes ---
@@ -929,15 +1068,15 @@ def infer():
                     "observations": obs_conf, "expanded_obs": expanded_obs, "results": results
                 }
                 save_history_item(history_item, current_user.id)
-                flash("Diagnosis completed and saved to history", "success")
+                flash("បានបញ្ចប់ការវិនិច្ឆ័យ និងបានរក្សាទុកក្នុងប្រវត្តិ", "success")
             except Exception:
-                flash("Diagnosis completed but could not save to history", "warning")
+                flash("បានបញ្ចប់ការវិនិច្ឆ័យ ប៉ុន្តែមិនអាចរក្សាទុកក្នុងប្រវត្តិ", "warning")
 
             return render_template("infer.html", facts=active_facts, obs_conf=obs_conf,
                                  results=results, expanded_obs=expanded_obs)
             
         except Exception as e:
-            flash(f"Inference error: {str(e)}", "danger")
+            flash(f"កំហុសក្នុងការសន្និដ្ឋាន: {str(e)}", "danger")
             return redirect(url_for("infer"))
     
     obs_conf = session.get('obs_conf', {})
@@ -953,7 +1092,7 @@ def reset_inference():
     session.pop('results', None)
     session.pop('expanded_obs', None)
     session.modified = True
-    flash("All confidence values and results have been reset", "success")
+    flash("បានកំណត់ឡើងវិញនូវតម្លៃជឿជាក់ និងលទ្ធផលទាំងអស់", "success")
     return redirect(url_for("infer"))
 
 # --- History Routes ---
@@ -974,21 +1113,21 @@ def history_list():
             if processed_item.get("timestamp"):
                 processed_item["formatted_timestamp"] = processed_item["timestamp"].replace('T', ' ')
             else:
-                processed_item["formatted_timestamp"] = "Unknown time"
+                processed_item["formatted_timestamp"] = "មិនស្គាល់ពេលវេលា"
             
             if processed_item.get("results"):
                 sorted_results = sorted(processed_item["results"], key=lambda r: r.get("confidence", 0), reverse=True)
                 if sorted_results:
                     top = sorted_results[0]
-                    processed_item["top_conclusion"] = top.get("conclusion", "Unknown")
+                    processed_item["top_conclusion"] = top.get("conclusion", "មិនស្គាល់")
                     confidence_value = top.get("confidence", 0)
                     confidence_value = max(0.0, min(1.0, float(confidence_value)))
                     processed_item["top_confidence"] = int(confidence_value * 100)
                 else:
-                    processed_item["top_conclusion"] = "No conclusions"
+                    processed_item["top_conclusion"] = "គ្មានការសន្និដ្ឋាន"
                     processed_item["top_confidence"] = 0
             else:
-                processed_item["top_conclusion"] = "No diagnosis results"
+                processed_item["top_conclusion"] = "គ្មានលទ្ធផលវិនិច្ឆ័យ"
                 processed_item["top_confidence"] = 0
             
             processed_items.append(processed_item)
@@ -996,7 +1135,7 @@ def history_list():
         return render_template("history_list.html", items=processed_items)
     
     except Exception as e:
-        flash("Error loading history", "danger")
+        flash("កំហុសក្នុងការទាញយកប្រវត្តិ", "danger")
         return render_template("history_list.html", items=[])
 
 @app.route("/history/<int:hid>")
@@ -1005,7 +1144,7 @@ def history_detail(hid):
     items = get_history(current_user.id)
     item = next((x for x in items if x.get("id") == hid), None)
     if not item:
-        flash("History item not found", "warning")
+        flash("រកមិនឃើញធាតុប្រវត្តិ", "warning")
         return redirect(url_for("history_list"))
     return render_template("history_detail.html", item=item)
 
@@ -1013,7 +1152,7 @@ def history_detail(hid):
 @login_required
 def delete_history(hid):
     delete_history_item(hid, current_user.id)
-    flash(f"History item deleted", "success")
+    flash(f"បានលុបធាតុប្រវត្តិ", "success")
     return redirect(url_for("history_list"))
 
 # --- User Management Routes ---
@@ -1026,15 +1165,15 @@ def admin_users():
         users_data = sorted(users_data, key=lambda x: x['id'])
         users = [User(user_data) for user_data in users_data]
         
-        # Get audit logs (last 50 entries)
+        # ទាញយកកំណត់ហេតុសម្អាត (ធាតុចុងក្រោយ 50)
         audit_logs = get_audit_logs(limit=50)
         
-        # Process audit logs to handle datetime
+        # ដំណើរការកំណត់ហេតុសម្អាតដើម្បីដោះស្រាយ datetime
         for log in audit_logs:
             if log.get('created_at'):
-                # If it's already a datetime object, keep it
+                # ប្រសិនបើវាជាវត្ថុ datetime រួចហើយ ទុកវា
                 if not isinstance(log['created_at'], str):
-                    # Convert datetime to string if needed
+                    # បំលែង datetime ទៅជាខ្សែអក្សរប្រសិនបើចាំបាច់
                     pass
         
         try:
@@ -1060,7 +1199,7 @@ def admin_users():
             current_time=current_time
         )
     except Exception as e:
-        flash(f'Error loading admin dashboard: {str(e)}', 'danger')
+        flash(f'កំហុសក្នុងការទាញយកផ្ទាំងគ្រប់គ្រងអ្នកគ្រប់គ្រង: {str(e)}', 'danger')
         return redirect(url_for('home'))
 
 @app.route("/admin/users/<int:user_id>/update_role", methods=["POST"])
@@ -1069,15 +1208,15 @@ def admin_update_user_role(user_id):
     new_role = request.form.get("role")
     if new_role in ['admin', 'expert', 'user']:
         try:
-            # Get the user before updating
+            # ទាញយកអ្នកប្រើប្រាស់មុនពេលធ្វើបច្ចុប្បន្នភាព
             user = get_user(user_id)
             old_value = {'role': user['role']} if user else None
             
-            # Update the role
+            # ធ្វើបច្ចុប្បន្នភាពតួនាទី
             success = update_user_role(user_id, new_role)
             
             if success:
-                # Log the audit event
+                # កត់ត្រាព្រឹត្តិការណ៍សម្អាត
                 log_audit(
                     user_id=current_user.id,
                     action='UPDATE',
@@ -1088,13 +1227,13 @@ def admin_update_user_role(user_id):
                     ip_address=request.remote_addr,
                     user_agent=request.user_agent.string
                 )
-                flash(f"User role updated to {new_role}", "success")
+                flash(f"បានធ្វើបច្ចុប្បន្នភាពតួនាទីអ្នកប្រើប្រាស់ទៅ {new_role}", "success")
             else:
-                flash("Failed to update user role", "danger")
+                flash("មិនអាចធ្វើបច្ចុប្បន្នភាពតួនាទីអ្នកប្រើប្រាស់", "danger")
         except Exception as e:
-            flash(f"Error: {str(e)}", "danger")
+            flash(f"កំហុស: {str(e)}", "danger")
     else:
-        flash("Invalid role", "danger")
+        flash("តួនាទីមិនត្រឹមត្រូវ", "danger")
     
     return redirect(url_for('admin_users'))
 
@@ -1108,21 +1247,21 @@ def admin_add_user():
     role = request.form.get("role", "user")
     
     if not username or not password:
-        flash("Username and password are required", "danger")
+        flash("ឈ្មោះអ្នកប្រើប្រាស់ និងពាក្យសម្ងាត់ត្រូវបំពេញ", "danger")
         return redirect(url_for('admin_users'))
     
     if password != confirm_password:
-        flash("Passwords do not match", "danger")
+        flash("ពាក្យសម្ងាត់មិនដូចគ្នា", "danger")
         return redirect(url_for('admin_users'))
     
     if len(password) < 6:
-        flash("Password must be at least 6 characters long", "danger")
+        flash("ពាក្យសម្ងាត់ត្រូវមានយ៉ាងតិច ៦ តួអក្សរ", "danger")
         return redirect(url_for('admin_users'))
     
     try:
         user_id = create_user(username, password, email, role)
         
-        # Log the audit event
+        # កត់ត្រាព្រឹត្តិការណ៍សម្អាត
         from database import log_audit
         log_audit(
             user_id=current_user.id,
@@ -1135,9 +1274,9 @@ def admin_add_user():
             user_agent=request.user_agent.string
         )
         
-        flash(f"User '{username}' created successfully", "success")
+        flash(f"បានបង្កើតអ្នកប្រើប្រាស់ '{username}' ដោយជោគជ័យ", "success")
     except Exception as e:
-        flash(f"Failed to create user: {str(e)}", "danger")
+        flash(f"មិនអាចបង្កើតអ្នកប្រើប្រាស់: {str(e)}", "danger")
     
     return redirect(url_for('admin_users'))
 
@@ -1145,7 +1284,7 @@ def admin_add_user():
 @admin_required
 def admin_toggle_user_status(user_id):
     if user_id == current_user.id:
-        flash("Cannot change your own status", "warning")
+        flash("មិនអាចប្តូរស្ថានភាពផ្ទាល់ខ្លួន", "warning")
         return redirect(url_for('admin_users'))
     
     try:
@@ -1158,7 +1297,7 @@ def admin_toggle_user_status(user_id):
         if user:
             new_status = not user['is_active']
             
-            # Log the old value
+            # Get old value
             old_value = {'is_active': user['is_active']}
             
             cursor.execute(
@@ -1166,7 +1305,9 @@ def admin_toggle_user_status(user_id):
                 (new_status, user_id)
             )
             
-            # Log the audit event
+            conn.commit()
+            
+            # AUDIT LOGGING - FIXED
             log_audit(
                 user_id=current_user.id,
                 action='UPDATE',
@@ -1178,20 +1319,19 @@ def admin_toggle_user_status(user_id):
                 user_agent=request.user_agent.string
             )
             
-            conn.commit()
-            
-            status_text = "enabled" if new_status else "disabled"
-            flash(f"User {status_text} successfully", "success")
+            status_text = "បានបើកដំណើរការ" if new_status else "បានបិទ"
+            flash(f"បាន{status_text}អ្នកប្រើប្រាស់ដោយជោគជ័យ", "success")
         else:
-            flash("User not found", "warning")
+            flash("រកមិនឃើញអ្នកប្រើប្រាស់", "warning")
             
     except Exception as e:
-        flash(f"Failed to update user status: {str(e)}", "danger")
+        flash(f"មិនអាចធ្វើបច្ចុប្បន្នភាពស្ថានភាពអ្នកប្រើប្រាស់: {str(e)}", "danger")
     finally:
         cursor.close()
         conn.close()
     
     return redirect(url_for('admin_users'))
+
 @app.route("/admin/users/edit", methods=["POST"])
 @admin_required
 def admin_edit_user():
@@ -1202,26 +1342,26 @@ def admin_edit_user():
     confirm_password = request.form.get("confirm_password", "")
     
     if not user_id:
-        flash("User ID is required", "danger")
+        flash("ត្រូវការ User ID", "danger")
         return redirect(url_for('admin_users'))
     
     if not username:
-        flash("Username is required", "danger")
+        flash("ត្រូវការឈ្មោះអ្នកប្រើប្រាស់", "danger")
         return redirect(url_for('admin_users'))
     
     if password and password != confirm_password:
-        flash("Passwords do not match", "danger")
+        flash("ពាក្យសម្ងាត់មិនដូចគ្នា", "danger")
         return redirect(url_for('admin_users'))
     
     if password and len(password) < 6:
-        flash("Password must be at least 6 characters long", "danger")
+        flash("ពាក្យសម្ងាត់ត្រូវមានយ៉ាងតិច ៦ តួអក្សរ", "danger")
         return redirect(url_for('admin_users'))
     
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         
-        # Get old user data for audit log
+        # ទាញយកទិន្នន័យអ្នកប្រើប្រាស់ចាស់សម្រាប់កំណត់ហេតុសម្អាត
         cursor.execute("SELECT username, email FROM users WHERE id = %s", (user_id,))
         old_user = cursor.fetchone()
         
@@ -1230,7 +1370,7 @@ def admin_edit_user():
             (username, user_id)
         )
         if cursor.fetchone():
-            flash(f"Username '{username}' already exists", "danger")
+            flash(f"ឈ្មោះអ្នកប្រើប្រាស់ '{username}' មានរួចហើយ", "danger")
             return redirect(url_for('admin_users'))
         
         update_fields = ["username = %s", "email = %s"]
@@ -1248,11 +1388,11 @@ def admin_edit_user():
         cursor.execute(query, params)
         conn.commit()
         
-        # Log the audit event
+        # កត់ត្រាព្រឹត្តិការណ៍សម្អាត
         old_value = {'username': old_user['username'], 'email': old_user['email']} if old_user else None
         new_value = {'username': username, 'email': email}
         if password:
-            new_value['password'] = '******'  # Don't log actual password
+            new_value['password'] = '******'  # កុំកត់ត្រាពាក្យសម្ងាត់ជាក់ស្តែង
         
         log_audit(
             user_id=current_user.id,
@@ -1265,10 +1405,10 @@ def admin_edit_user():
             user_agent=request.user_agent.string
         )
         
-        flash(f"User '{username}' updated successfully", "success")
+        flash(f"បានធ្វើបច្ចុប្បន្នភាពអ្នកប្រើប្រាស់ '{username}' ដោយជោគជ័យ", "success")
         
     except Exception as e:
-        flash(f"Failed to update user: {str(e)}", "danger")
+        flash(f"មិនអាចធ្វើបច្ចុប្បន្នភាពអ្នកប្រើប្រាស់: {str(e)}", "danger")
     finally:
         cursor.close()
         conn.close()
@@ -1281,35 +1421,46 @@ def admin_delete_user():
     user_id = request.form.get("user_id")
     
     if not user_id:
-        flash("User ID is required", "danger")
+        flash("ត្រូវការ User ID", "danger")        
         return redirect(url_for('admin_users'))
     
     if int(user_id) == current_user.id:
-        flash("Cannot delete your own account", "warning")
+        flash("មិនអាចលុបគណនីផ្ទាល់ខ្លួន", "warning")
         return redirect(url_for('admin_users'))
     
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         
-        # Get user data for audit log before deleting
-        cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
-        user = cursor.fetchone()
+        # ទាញយកទិន្នន័យអ្នកប្រើប្រាស់មុនពេលលុបសម្រាប់កំណត់ហេតុសម្អាត
+        # ONLY get non-sensitive fields
+        cursor.execute("SELECT id, username, email, role, is_active, created_at FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()    
         
         if not user:
-            flash("User not found", "warning")
+            flash("រកមិនឃើញអ្នកប្រើប្រាស់", "warning")
             return redirect(url_for('admin_users'))
         
-        # Delete the user
+        # Clean user data for audit logging
+        cleaned_user = dict(user)
+        
+        # Ensure all values are JSON serializable
+        for key, value in cleaned_user.items():
+            if isinstance(value, datetime):
+                cleaned_user[key] = value.isoformat()
+            elif value is None:
+                cleaned_user[key] = None
+        
+        # លុបអ្នកប្រើប្រាស់
         cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
         
-        # Log the audit event
+        # កត់ត្រាព្រឹត្តិការណ៍សម្អាត
         log_audit(
             user_id=current_user.id,
             action='DELETE',
             table_name='users',
             record_id=user_id,
-            old_value=user,
+            old_value=cleaned_user,  # Use cleaned data
             new_value=None,
             ip_address=request.remote_addr,
             user_agent=request.user_agent.string
@@ -1317,10 +1468,11 @@ def admin_delete_user():
         
         conn.commit()
         
-        flash(f"User deleted successfully", "success")
+        flash(f"បានលុបអ្នកប្រើប្រាស់ដោយជោគជ័យ", "success")
         
     except Exception as e:
-        flash(f"Failed to delete user: {str(e)}", "danger")
+        flash(f"មិនអាចលុបអ្នកប្រើប្រាស់: {str(e)}", "danger")
+        print(f"Delete user error: {e}")  # For debugging
     finally:
         cursor.close()
         conn.close()
@@ -1349,12 +1501,12 @@ def delete_audit_logs_batch():
         log_ids = data.get('log_ids', [])
         
         if not log_ids:
-            return jsonify({"success": False, "error": "No log IDs provided"})
+            return jsonify({"success": False, "error": "មិនមាន log IDs បានផ្តល់"})
         
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Convert list to tuple for SQL IN clause
+        # បំលែងបញ្ជីទៅជា tuple សម្រាប់ SQL IN clause
         placeholders = ', '.join(['%s'] * len(log_ids))
         query = f"DELETE FROM audit_log WHERE id IN ({placeholders})"
         cursor.execute(query, tuple(log_ids))
@@ -1374,15 +1526,15 @@ def export_audit_log(log_id):
         log = cursor.fetchone()
         
         if log:
-            # Convert to JSON file
+            # បំលែងទៅជាឯកសារ JSON
             response = jsonify(log)
             response.headers['Content-Disposition'] = f'attachment; filename=audit_log_{log_id}.json'
             return response
         else:
-            flash("Log not found", "danger")
+            flash("រកមិនឃើញកំណត់ហេតុ", "danger")
             return redirect(url_for('admin_users'))
     except Exception as e:
-        flash(f"Export failed: {str(e)}", "danger")
+        flash(f"ការនាំចេញមិនបានសម្រេច: {str(e)}", "danger")
         return redirect(url_for('admin_users'))
 
 @app.route("/admin/audit/export-batch")
@@ -1391,7 +1543,7 @@ def export_audit_logs_batch():
     try:
         log_ids = request.args.get('ids', '').split(',')
         if not log_ids or log_ids[0] == '':
-            flash("No logs selected", "warning")
+            flash("មិនមានកំណត់ហេតុបានជ្រើសរើស", "warning")
             return redirect(url_for('admin_users'))
         
         conn = get_db_connection()
@@ -1402,13 +1554,25 @@ def export_audit_logs_batch():
         cursor.execute(query, tuple(log_ids))
         logs = cursor.fetchall()
         
-        # Convert to JSON file
+        # បំលែងទៅជាឯកសារ JSON
         response = jsonify(logs)
         response.headers['Content-Disposition'] = f'attachment; filename=audit_logs_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
         return response
     except Exception as e:
-        flash(f"Export failed: {str(e)}", "danger")
+        flash(f"ការនាំចេញមិនបានសម្រេច: {str(e)}", "danger")
         return redirect(url_for('admin_users'))
+@app.route("/admin/audit/clear-all", methods=["POST"])
+@admin_required
+def clear_all_audit_logs():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM audit_log")
+        conn.commit()
+        return jsonify({"success": True, "deleted": cursor.rowcount})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})    
+    
 
 # --- Other Routes ---
 @app.get("/readme")
@@ -1424,8 +1588,9 @@ def debug_stats():
     return jsonify({
         "stats": stats,
         "facts_count": facts_count,
-        "taxonomy_keys": list(taxonomy_data.keys())[:5] if taxonomy_data else "No taxonomy"
+        "taxonomy_keys": list(taxonomy_data.keys())[:5] if taxonomy_data else "គ្មាន taxonomy"
     })
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=os.getenv("FLASK_DEBUG") == "1")

@@ -5,7 +5,7 @@ import json
 import os
 import importlib.util
 from jsonschema import validate, ValidationError
-from datetime import datetime
+from datetime import datetime,date
 from functools import wraps
 from werkzeug.utils import secure_filename
 import base64
@@ -525,7 +525,8 @@ def remove_profile_picture():
 def facts_list():
     fresh_facts = get_all_facts()
     return render_template("facts_list.html", facts=fresh_facts)
-
+#
+# new fact for update to day 18 january 2026
 @app.route("/facts/new", methods=["GET", "POST"])
 @expert_or_admin_required
 def facts_new():
@@ -561,7 +562,26 @@ def facts_new():
             all_facts = get_all_facts()
             test_facts = all_facts + [new_item]
             validate(test_facts, facts_array_schema)
+            
+            # Save fact and log audit
+            old_value = None  # New creation, no old value
+            new_value = dict(new_item)
+            
+            # Save to database
             save_fact(new_item, current_user.id)
+            
+            # Log audit - CREATE action
+            log_audit(
+                user_id=current_user.id,
+                action='CREATE',
+                table_name='facts',
+                record_id=fid,
+                old_value=old_value,
+                new_value=new_value,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
+            
             update_taxonomy_with_fact(fid, category)
         except ValidationError as e:
             flash(f"កំហុសផ្ទៀងផ្ទាត់: {e.message}", "danger")
@@ -572,6 +592,7 @@ def facts_new():
 
     return render_template("fact_form.html", mode="new", fact=None)
 
+#  fact edit for update to day 18 january 2026
 @app.route("/facts/<fid>/edit", methods=["GET", "POST"])
 @expert_or_admin_required
 def facts_edit(fid):
@@ -596,7 +617,25 @@ def facts_edit(fid):
             all_facts = get_all_facts()
             test_facts = [updated_fact if f["id"] == fid else f for f in all_facts]
             validate(test_facts, facts_array_schema)
+            
+            # Get old value before saving
+            old_value = dict(fact) if fact else None
+            
+            # Save updated fact
             save_fact(updated_fact, current_user.id)
+            
+            # Log audit - UPDATE action
+            log_audit(
+                user_id=current_user.id,
+                action='UPDATE',
+                table_name='facts',
+                record_id=fid,
+                old_value=old_value,
+                new_value=updated_fact,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
+            
             update_taxonomy_with_fact(fid, category)
         except ValidationError as e:
             flash(f"កំហុសផ្ទៀងផ្ទាត់: {e.message}", "danger")
@@ -607,22 +646,55 @@ def facts_edit(fid):
 
     return render_template("fact_form.html", mode="edit", fact=fact)
 
+# fact delete for update to day 18 january 2026
 @app.post("/facts/<fid>/delete")
 @admin_required
 def facts_delete(fid):
+    # Get fact before deletion for audit logging
+    fact = get_fact(fid)
+    if fact:
+        old_value = dict(fact)
+    else:
+        old_value = None
+    
+    # Delete the fact
     delete_fact(fid, current_user.id)
     delete_taxonomy_relationship(fid, current_user.id)
+    
+    # Log audit - DELETE action (already done in delete_fact function)
+    # No need to log again since delete_fact already logs
+    
     flash(f"បានលុប Fact '{fid}' ពី facts និង taxonomy", "success")
     return redirect(url_for("facts_list"))
 
+# fact toggle for update to day 18 january 2026
 @app.route("/facts/toggle/<fid>", methods=["POST"])
 @login_required
 def facts_toggle(fid):
     try:
         fact = get_fact(fid)
         if fact:
+            # Get old value before toggling
+            old_value = dict(fact)
+            
+            # Toggle the value
             fact["value"] = not fact["value"]
+            
+            # Save the updated fact
             save_fact(fact, current_user.id)
+            
+            # Log audit - UPDATE action
+            log_audit(
+                user_id=current_user.id,
+                action='UPDATE',
+                table_name='facts',
+                record_id=fid,
+                old_value=old_value,
+                new_value=fact,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
+            
             flash(f'បានធ្វើបច្ចុប្បន្នភាព Fact "{fid}" ទៅ {fact["value"]}', 'success')
         else:
             flash(f'រកមិនឃើញ Fact "{fid}"', 'error')
@@ -637,6 +709,7 @@ def rules_list():
     fresh_rules = get_all_rules()
     return render_template("rules_list.html", rules=fresh_rules)
 
+# rule new for update to day 18 january 2026
 @app.route("/rules/new", methods=["GET", "POST"])
 @expert_or_admin_required
 def rules_new():
@@ -645,17 +718,14 @@ def rules_new():
         conditions_raw = (request.form.get("conditions") or "").strip()
         conclusion = (request.form.get("conclusion") or "").strip()
         
-        # ទាញយក certainty ជាខ្សែអក្សរដើម្បីរក្សាតម្លៃដើម
         certainty_str = request.form.get("certainty") or "80"
-        # បំលែងទៅជាលេខទសភាគសម្រាប់ដំណើរការ
         try:
             certainty = float(certainty_str)
-            # ប្រសិនបើអ្នកប្រើប្រាស់បញ្ចូលភាគរយ (ឧទាហរណ៍ 90) បំលែងទៅជាទសភាគ
             if certainty > 1:
                 certainty = certainty / 100.0
             certainty = max(0.0, min(1.0, certainty))
         except (ValueError, TypeError):
-            certainty = 0.8  # លំនាំដើម
+            certainty = 0.8
             
         explain = (request.form.get("explain") or "").strip()
         recommendation = (request.form.get("recommendation") or "").strip()
@@ -678,7 +748,24 @@ def rules_new():
         try:
             test_rules = all_rules + [new_item]
             validate(test_rules, rules_array_schema)
+            
+            # Save rule and log audit
+            old_value = None  # New creation, no old value
+            
+            # Save to database
             save_rule(new_item, current_user.id)
+            
+            # Log audit - CREATE action
+            log_audit(
+                user_id=current_user.id,
+                action='CREATE',
+                table_name='rules',
+                record_id=rid,
+                old_value=old_value,
+                new_value=new_item,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
         except ValidationError as e:
             flash(f"កំហុសផ្ទៀងផ្ទាត់: {e.message}", "danger")
             return render_template("rule_form.html", mode="new", rule=new_item)
@@ -688,6 +775,7 @@ def rules_new():
 
     return render_template("rule_form.html", mode="new", rule={"certainty": 0.8})
 
+# rule edit for update to day 18 january 2026
 @app.route("/rules/<rid>/edit", methods=["GET", "POST"])
 @expert_or_admin_required
 def rules_edit(rid):
@@ -701,12 +789,9 @@ def rules_edit(rid):
         conditions_raw = (request.form.get("conditions") or "").strip()
         conclusion = (request.form.get("conclusion") or "").strip()
         
-        # ទាញយក certainty ជាខ្សែអក្សរដើម្បីរក្សាតម្លៃដើម
         certainty_str = request.form.get("certainty") or "80"
-        # បំលែងទៅជាលេខទសភាគសម្រាប់ដំណើរការ
         try:
             certainty = float(certainty_str)
-            # ប្រសិនបើអ្នកប្រើប្រាស់បញ្ចូលភាគរយ (ឧទាហរណ៍ 90) បំលែងទៅជាទសភាគ
             if certainty > 1:
                 certainty = certainty / 100.0
             certainty = max(0.0, min(1.0, certainty))
@@ -726,7 +811,24 @@ def rules_edit(rid):
         try:
             test_rules = [updated if r["id"] == rule["id"] else r for r in all_rules]
             validate(test_rules, rules_array_schema)
+            
+            # Get old value before saving
+            old_value = dict(rule) if rule else None
+            
+            # Save updated rule
             save_rule(updated, current_user.id)
+            
+            # Log audit - UPDATE action
+            log_audit(
+                user_id=current_user.id,
+                action='UPDATE',
+                table_name='rules',
+                record_id=rid,
+                old_value=old_value,
+                new_value=updated,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
         except ValidationError as e:
             flash(f"កំហុសផ្ទៀងផ្ទាត់: {e.message}", "danger")
             return render_template("rule_form.html", mode="edit", rule=updated)
@@ -736,10 +838,22 @@ def rules_edit(rid):
 
     return render_template("rule_form.html", mode="edit", rule=rule)
 
+# rule delete for update to day 18 january 2026
 @app.post("/rules/<rid>/delete")
 @admin_required
 def rules_delete(rid):
+    # Get rule before deletion for audit logging
+    all_rules = get_all_rules()
+    rule = next((r for r in all_rules if r.get("id") == rid), None)
+    
+    if rule:
+        old_value = dict(rule)
+    else:
+        old_value = None
+    
+    # Delete the rule (function already logs audit in database.py)
     delete_rule(rid, current_user.id)
+    
     flash("បានលុប Rule", "success")
     return redirect(url_for("rules_list"))
 
@@ -807,6 +921,7 @@ def taxonomy_add_rule_conclusions():
         flash(f"កំហុសក្នុងការបន្ថែម rule conclusions: {e}", "danger")
     return redirect(url_for("taxonomy_view"))
 
+# taxonomy save for update to day 18 january 2026
 @app.post("/taxonomy")
 @expert_or_admin_required
 def taxonomy_save():
@@ -817,14 +932,33 @@ def taxonomy_save():
             raise ValueError("Taxonomy ត្រូវតែជា JSON object (វចនានុក្រម)")
         if "parent" in parsed and not isinstance(parsed["parent"], dict):
             raise ValueError("taxonomy.parent ត្រូវតែជា JSON object (វចនានុក្រម)")
+        
+        # Get old taxonomy before saving
+        old_taxonomy = get_taxonomy()
+        
+        # Save new taxonomy
         save_taxonomy(parsed, current_user.id)
+        
+        # Log audit - UPDATE action
+        log_audit(
+            user_id=current_user.id,
+            action='UPDATE',
+            table_name='taxonomy',
+            record_id='all',
+            old_value=old_taxonomy,
+            new_value=parsed,
+            ip_address=request.remote_addr,
+            user_agent=request.user_agent.string
+        )
+        
         flash("បានរក្សាទុក taxonomy", "success")
     except Exception as e:
         flash(f"មិនអាចរក្សាទុក taxonomy: {e}", "danger")
         taxonomy_data = get_taxonomy_data()
         return render_template("taxonomy.html", taxonomy={"parent": taxonomy_data}, raw_json=raw)
     return redirect(url_for("taxonomy_view"))
-
+#
+# taxonomy update fact category for update to day 18 january 2026
 @app.route("/update_fact_category", methods=["POST"])
 @expert_or_admin_required
 def update_fact_category():
@@ -835,10 +969,38 @@ def update_fact_category():
             flash("ត្រូវការ Fact ID", "danger")
             return redirect(url_for("taxonomy_view"))
         
+        # Get old taxonomy relationship
+        taxonomy_data = get_taxonomy_data()
+        old_category = taxonomy_data.get(fact_id)
+        
         if category:
             update_taxonomy_relationship(fact_id, category, current_user.id)
+            
+            # Log audit - UPDATE action
+            log_audit(
+                user_id=current_user.id,
+                action='UPDATE',
+                table_name='taxonomy',
+                record_id=fact_id,
+                old_value={'child': fact_id, 'parent': old_category} if old_category else None,
+                new_value={'child': fact_id, 'parent': category},
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
         else:
             delete_taxonomy_relationship(fact_id, current_user.id)
+            
+            # Log audit - DELETE action
+            log_audit(
+                user_id=current_user.id,
+                action='DELETE',
+                table_name='taxonomy',
+                record_id=fact_id,
+                old_value={'child': fact_id, 'parent': old_category} if old_category else None,
+                new_value=None,
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
         
         flash(f"បានធ្វើបច្ចុប្បន្នភាព category សម្រាប់ fact {fact_id}", "success")
     except Exception as e:
@@ -989,8 +1151,12 @@ def history_detail(hid):
 @app.route("/history/delete/<int:hid>", methods=["POST"])
 @login_required
 def delete_history(hid):
-    delete_history_item(hid, current_user.id)
-    flash(f"បានលុបធាតុប្រវត្តិ", "success")
+    try:
+        delete_history_item(hid, current_user.id)
+        flash(f"បានលុបធាតុប្រវត្តិ", "success")
+    except Exception as e:
+        flash(f"កំហុសក្នុងការលុបប្រវត្តិ: {str(e)}", "danger")
+    
     return redirect(url_for("history_list"))
 
 # --- User Management Routes ---
@@ -1259,7 +1425,7 @@ def admin_delete_user():
     user_id = request.form.get("user_id")
     
     if not user_id:
-        flash("ត្រូវការ User ID", "danger")
+        flash("ត្រូវការ User ID", "danger")        
         return redirect(url_for('admin_users'))
     
     if int(user_id) == current_user.id:
@@ -1273,7 +1439,7 @@ def admin_delete_user():
         # ទាញយកទិន្នន័យអ្នកប្រើប្រាស់មុនពេលលុបសម្រាប់កំណត់ហេតុសម្អាត
         # ONLY get non-sensitive fields
         cursor.execute("SELECT id, username, email, role, is_active, created_at FROM users WHERE id = %s", (user_id,))
-        user = cursor.fetchone()
+        user = cursor.fetchone()    
         
         if not user:
             flash("រកមិនឃើញអ្នកប្រើប្រាស់", "warning")
@@ -1410,6 +1576,7 @@ def clear_all_audit_logs():
         return jsonify({"success": True, "deleted": cursor.rowcount})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})    
+    
 
 # --- Other Routes ---
 @app.get("/readme")

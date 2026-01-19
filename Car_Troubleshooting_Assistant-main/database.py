@@ -1,7 +1,7 @@
 # database.py Car_Troubleshooting Assistant - MySQL Version
 import os
 import json
-from datetime import datetime
+from datetime import date, datetime
 import mysql.connector
 from mysql.connector import pooling, Error
 from dotenv import load_dotenv
@@ -865,6 +865,7 @@ def get_history(user_id=None):
         cursor.close()
         conn.close()
 
+#  update to day 18 january 2026
 def save_history_item(item, user_id=None):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -882,6 +883,20 @@ def save_history_item(item, user_id=None):
         ))
         
         conn.commit()
+        
+        # Log audit for history creation
+        if user_id:
+            log_audit(
+                user_id=user_id,
+                action='CREATE',
+                table_name='history',
+                record_id=cursor.lastrowid,
+                old_value=None,
+                new_value={'timestamp': item.get("timestamp"), 'action': 'inference'},
+                ip_address=None,
+                user_agent=None
+            )
+            
         return cursor.lastrowid
     except Error as e:
         conn.rollback()
@@ -890,13 +905,40 @@ def save_history_item(item, user_id=None):
         cursor.close()
         conn.close()
 
+# update to day 18 january 2026
 def delete_history_item(hid, user_id=None):
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     
     try:
+        # Get history item before deletion for audit logging
+        cursor.execute("SELECT * FROM history WHERE id = %s", (hid,))
+        old_value = cursor.fetchone()
+        
         cursor.execute("DELETE FROM history WHERE id = %s", (hid,))
         conn.commit()
+        
+        # Log audit - DELETE action
+        if old_value and user_id:
+            # Clean old_value before logging
+            cleaned_old_value = dict(old_value)
+            for key, value in cleaned_old_value.items():
+                if isinstance(value, datetime):
+                    cleaned_old_value[key] = value.isoformat()
+                elif isinstance(value, date):
+                    cleaned_old_value[key] = value.isoformat()
+            
+            log_audit(
+                user_id=user_id,
+                action='DELETE',
+                table_name='history',
+                record_id=hid,
+                old_value=cleaned_old_value,
+                new_value=None,
+                ip_address=None,
+                user_agent=None
+            )
+            
         return True
     except Error as e:
         conn.rollback()
@@ -904,16 +946,54 @@ def delete_history_item(hid, user_id=None):
     finally:
         cursor.close()
         conn.close()
-
 # ============================================================
 #                    AUDIT LOG FUNCTIONS
 # ============================================================
+# update to day 18 january 2026
 def log_audit(user_id, action, table_name, record_id, old_value, new_value, ip_address=None, user_agent=None):
     """Log user actions for auditing"""
+    
+    def serialize_value(value):
+        """Helper function to serialize values with datetime support"""
+        if value is None:
+            return None
+        
+        if isinstance(value, dict):
+            # Recursively process dictionary
+            result = {}
+            for key, val in value.items():
+                result[key] = serialize_value(val)
+            return result
+        elif isinstance(value, list):
+            # Recursively process list
+            return [serialize_value(item) for item in value]
+        elif isinstance(value, datetime):
+            # Convert datetime to ISO format string
+            return value.isoformat()
+        elif isinstance(value, date):
+            # Convert date to ISO format string
+            return value.isoformat()
+        elif hasattr(value, 'isoformat'):
+            # Handle any other objects with isoformat method
+            try:
+                return value.isoformat()
+            except:
+                return str(value)
+        elif isinstance(value, (int, float, bool, str)):
+            # Basic types that are JSON serializable
+            return value
+        else:
+            # Fallback to string representation
+            return str(value)
+    
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
+        # Serialize old_value and new_value
+        serialized_old = json.dumps(serialize_value(old_value)) if old_value else None
+        serialized_new = json.dumps(serialize_value(new_value)) if new_value else None
+        
         cursor.execute('''
             INSERT INTO audit_log (user_id, action, table_name, record_id, old_value, new_value, ip_address, user_agent)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -922,21 +1002,23 @@ def log_audit(user_id, action, table_name, record_id, old_value, new_value, ip_a
             action,
             table_name,
             str(record_id),
-            json.dumps(old_value) if old_value else None,
-            json.dumps(new_value) if new_value else None,
+            serialized_old,
+            serialized_new,
             ip_address,
             user_agent
         ))
         
         conn.commit()
         return True
-    except Error:
+    except Error as e:
         conn.rollback()
+        # Log error but don't crash
+        print(f"Audit logging failed: {e}")
         return False
     finally:
         cursor.close()
         conn.close()
-
+        
 def get_audit_logs(user_id=None, limit=100):
     """Get audit logs"""
     conn = get_db_connection()

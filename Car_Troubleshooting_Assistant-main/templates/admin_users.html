@@ -4,108 +4,93 @@
 
 {% block content %}
 <style>
-     .table-hover tbody tr:hover {
-        background-color: rgba(52, 152, 219, 0.05);
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    /* ===== GLOBAL ADMIN STYLES ===== */
+    .admin-container {
+        font-family: 'Segoe UI', 'Noto Sans Khmer', 'Roboto', sans-serif;
     }
     
-    .bg-gradient-primary {
-        background: linear-gradient(135deg, #d0dce4 0%, #d9e4eb 100%) !important;
-        color: white !important;
-    }
-    
-    .text-purple {
-        color: #9b59b6 !important;
-    }
-    
-    .btn-group .btn {
-        border-radius: 6px !important;
-        margin: 0 2px;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-group .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
-    .badge {
-        font-weight: 500;
-        letter-spacing: 0.3px;
-    }
-    
-    .avatar-md {
-        width: 45px;
-        height: 45px;
-    }
-    
-    .empty-state {
-        max-width: 400px;
-        margin: 0 auto;
-    }
-    
-    .empty-state-icon {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        width: 100px;
-        height: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-    }
-
-    
-    /* Avatar Smaller */
-    .avatar-sm {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .avatar-title {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .audit-row:hover {
-        background-color: rgba(0, 123, 255, 0.05) !important;
-    }
-    
-    .action-badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.35em 0.65em;
-    }
-    
-    pre {
-        font-size: 0.85rem;
-        font-family: 'Courier New', monospace;
-        background-color: #f8f9fa;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #e9ecef;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-    
-    .form-control.bg-light {
-        border: 1px solid #dee2e6;
-        padding: 0.5rem;
-        border-radius: 0.375rem;
-    }
-    
+    /* ===== ADMIN HERO HEADER ===== */
     .admin-hero {
-        background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
         color: white;
-        padding: 3rem 0;
+        padding: 2.5rem 0;
         border-radius: 0 0 20px 20px;
         margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .admin-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    
+    .admin-hero h1 {
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    
+    .admin-hero .alert-light {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 12px 20px;
+    }
+    
+    /* ===== NAV TABS ===== */
+    .nav-tabs {
+        border-bottom: 2px solid #e9ecef;
+        margin-bottom: 2rem;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        color: #6c757d;
+        font-weight: 500;
+        padding: 12px 20px;
+        margin-right: 5px;
+        border-radius: 10px 10px 0 0;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        color: #495057;
+        background-color: #f8f9fa;
+        transform: translateY(-2px);
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #2c3e50;
+        background-color: white;
+        border: 2px solid #dee2e6;
+        border-bottom-color: white;
+        font-weight: 600;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+    }
+    
+    .nav-tabs .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+    }
+    
+    /* ===== DASHBOARD STATS ===== */
+    .dashboard-stats {
+        margin-bottom: 30px;
     }
     
     .stat-card {
@@ -115,12 +100,24 @@
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         margin-bottom: 1rem;
         text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        height: 100%;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        border-color: #e9ecef;
     }
     
     .stat-number {
         font-size: 2.5rem;
-        font-weight: bold;
+        font-weight: 800;
         color: #2c3e50;
+        line-height: 1.2;
+        margin-bottom: 5px;
+        font-family: 'Segoe UI', sans-serif;
     }
     
     .stat-label {
@@ -128,136 +125,452 @@
         font-size: 0.9rem;
         text-transform: uppercase;
         letter-spacing: 1px;
+        font-weight: 600;
     }
     
-    .nav-tabs .nav-link {
-        font-weight: 500;
+    .stat-card i {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        display: inline-block;
+        padding: 15px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     }
     
-    .log-pre {
-        font-size: 0.8rem;
-        max-height: 300px;
-        overflow-y: auto;
+    .stat-card:nth-child(1) i { color: #3498db; }
+    .stat-card:nth-child(2) i { color: #2ecc71; }
+    .stat-card:nth-child(3) i { color: #e74c3c; }
+    .stat-card:nth-child(4) i { color: #9b59b6; }
+    
+    /* ===== QUICK ACTIONS ===== */
+    .quick-actions .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    }
+    
+    .quick-actions .card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    .quick-actions .card-body {
+        padding: 2rem 1rem;
+    }
+    
+    .quick-actions .card i {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.03);
+    }
+    
+    .quick-actions .card h6 {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0;
+    }
+    
+    /* ===== USERS TABLE - ENHANCED ===== */
+    .users-table-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    
+    .users-table-container .card-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+        color: white;
+        border: none;
+        padding: 1.25rem 1.5rem;
+        border-radius: 15px 15px 0 0 !important;
+    }
+    
+    .users-table-container .card-header h5 {
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .users-table {
+        margin: 0;
+        border: none;
+    }
+    
+    .users-table thead th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        padding: 16px 12px;
+        font-weight: 600;
+        color: #2c3e50;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .users-table tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .users-table tbody tr:hover {
+        background-color: #f8f9fa !important;
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    .users-table td {
+        padding: 16px 12px;
+        vertical-align: middle;
+        border: none;
+        font-size: 0.95rem;
     }
     
     .user-id-badge {
         font-family: 'Courier New', monospace;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.85rem;
-        font-weight: bold;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        display: inline-block;
+        min-width: 40px;
+        text-align: center;
     }
     
     .current-user-badge {
         background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        box-shadow: 0 4px 10px rgba(67, 233, 123, 0.3);
     }
     
-    /* Timeline Styles */
-    .timeline {
-        position: relative;
-        padding-left: 30px;
-    }
-    
-    .timeline::before {
-        content: '';
-        position: absolute;
-        left: 15px;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        background: linear-gradient(to bottom, #667eea, #764ba2);
-    }
-    
-    .timeline-item {
-        position: relative;
-        margin-bottom: 2rem;
-        padding-bottom: 2rem;
-        border-bottom: 1px solid #e9ecef;
-    }
-    
-    .timeline-item:last-child {
-        border-bottom: none;
-    }
-    
-    .timeline-item::before {
-        content: '';
-        position: absolute;
-        left: -20px;
-        top: 10px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #667eea;
-        border: 3px solid white;
-        box-shadow: 0 0 0 3px #667eea;
-    }
-    
-    .timeline-date {
-        font-size: 0.85rem;
-        color: #6c757d;
-        margin-bottom: 0.5rem;
-        background: #f8f9fa;
-        padding: 5px 10px;
-        border-radius: 5px;
-        display: inline-block;
-    }
-    
-    .audit-badge {
-        padding: 5px 15px;
+    .user-status-badge {
+        padding: 6px 12px;
         border-radius: 20px;
-        font-weight: 600;
         font-size: 0.85rem;
-        display: inline-flex;
-        align-items: center;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 80px;
+        text-align: center;
+    }
+    
+    .users-table .form-select-sm {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .users-table .form-select-sm:hover {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    .users-table .form-select-sm:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+    }
+    
+    .user-actions .btn-group {
         gap: 5px;
     }
     
-    .badge-create {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        color: white;
+    .user-actions .btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
     }
     
-    .badge-update {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        color: white;
+    .user-actions .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
     
-    .badge-delete {
-        background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+    /* ===== AUDIT TABLE STYLES ===== */
+    #auditLogsTable th {
+        background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
         color: white;
+        font-weight: 600;
+        padding: 12px 8px;
+        border: none;
+        white-space: nowrap;
     }
-    
-    .user-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
+
+    #auditLogsTable td {
+        padding: 10px 8px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .audit-log-row {
+        transition: all 0.2s ease;
+    }
+
+    .audit-log-row:hover {
+        background-color: #f8f9fa;
+        transform: translateX(2px);
+    }
+
+    .audit-stat-box {
+        background: white;
+        border-radius: 10px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        border: 1px solid #e9ecef;
+        min-width: 150px;
+    }
+
+    .audit-stat-box .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #2c3e50;
         font-size: 1.2rem;
-        font-weight: bold;
+    }
+
+    .audit-stat-box .stat-icon.bg-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;
     }
-    
-    .audit-log-entry {
-        background: white;
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
+
+    .audit-stat-box .stat-icon.bg-primary {
+        background: linear-gradient(135deg, #007bff 0%, #17a2b8 100%);
+        color: white;
+    }
+
+    .audit-stat-box .stat-icon.bg-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        color: white;
+    }
+
+    .audit-stat-box .stat-info {
+        flex: 1;
+    }
+
+    .audit-stat-box .stat-number {
+        font-size: 1.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: #2c3e50;
+        margin-bottom: 2px;
+    }
+
+    .audit-stat-box .stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .data-preview-container {
+        max-width: 200px;
+    }
+
+    .data-change {
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+    }
+
+    .data-change.old-data {
+        background: rgba(220, 53, 69, 0.1);
+        border-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+    }
+
+    .data-change.new-data {
+        background: rgba(40, 167, 69, 0.1);
+        border-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+
+    .user-avatar-small {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+
+    /* ===== MODAL ENHANCEMENTS ===== */
+    .modal-audit-section {
+        margin-bottom: 1.75rem;
     }
     
-    .audit-log-entry:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    .modal-section-title {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #f0f0f0;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
     }
     
-    .spinner-border-sm {
-        width: 1rem;
-        height: 1rem;
-        border-width: 0.2em;
+    .modal-section-title i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .modal-audit-section .form-control {
+        background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+    
+    .modal-data-value {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        padding: 15px;
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        max-height: 350px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .modal-data-value::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .modal-data-value::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    
+    .modal-data-value::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    
+    .modal-data-value::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+    
+    /* ===== RESPONSIVE DESIGN ===== */
+    @media (max-width: 992px) {
+        #auditLogsTable {
+            font-size: 0.85rem;
+        }
+        
+        .audit-stat-box {
+            min-width: 130px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .audit-stat-box {
+            min-width: 120px;
+            padding: 8px;
+            gap: 8px;
+        }
+        
+        .audit-stat-box .stat-number {
+            font-size: 1.3rem;
+        }
+        
+        #auditLogsTable th,
+        #auditLogsTable td {
+            padding: 8px 6px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .audit-stat-box {
+            min-width: 110px;
+        }
+        
+        .audit-filter-section .row {
+            margin: 0 -10px;
+        }
+        
+        .audit-filter-section .col-md-3,
+        .audit-filter-section .col-md-4,
+        .audit-filter-section .col-md-2 {
+            padding: 0 10px;
+            margin-bottom: 15px;
+        }
+    }
+    
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .audit-table tbody tr {
+        animation: fadeInUp 0.3s ease forwards;
+        animation-delay: calc(var(--row-index, 0) * 0.05s);
+        opacity: 0;
+    }
+    
+    .stat-card-audit {
+        animation: fadeInUp 0.4s ease forwards;
+        animation-delay: calc(var(--card-index, 0) * 0.1s);
+        opacity: 0;
+    }
+    
+    /* ===== CUSTOM SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
     }
 </style>
 
@@ -479,7 +792,7 @@
                                                 <button type="button" class="btn btn-primary edit-user-btn" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#editUserModal"
-                                                        data-user-id="{{ user.id }}"
+                                                        data-user-id="{{ loop.index }}"
                                                         data-username="{{ user.username }}"
                                                         data-email="{{ user.email or '' }}"
                                                         title="កែសម្រួលអ្នកប្រើប្រាស់">
@@ -490,7 +803,7 @@
                                                 <button type="button" class="btn btn-danger delete-user-btn" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#deleteUserModal"
-                                                        data-user-id="{{ user.id }}"
+                                                        data-user-id="{{ loop.index }}"
                                                         data-username="{{ user.username }}"
                                                         title="លុបអ្នកប្រើប្រាស់">
                                                     <i class="bi bi-trash"></i>
@@ -521,20 +834,20 @@
                             <i class="bi bi-info-circle me-1"></i>កំណត់ហេតុសកម្មភាពអ្នកប្រើប្រាស់ទាំងអស់
                         </p>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-primary me-3">
-                            <i class="bi bi-clock-history me-1"></i>កំណត់ហេតុសុវត្ថិភាព
-                        </span>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-outline-primary" id="refreshAuditLogs">
+                            <i class="bi bi-arrow-clockwise me-1"></i>ផ្ទុកឡើងវិញ
+                        </button>
                         <button class="btn btn-sm btn-outline-danger" id="clearAuditLogs" data-bs-toggle="modal" data-bs-target="#confirmClearLogs">
-                            <i class="bi bi-trash me-1"></i>សម្អាតកំណត់ហេតុ
+                            <i class="bi bi-trash me-1"></i>សម្អាត
                         </button>
                     </div>
                 </div>
                 
                 <!-- Filter Controls -->
                 <div class="card-body border-bottom">
-                    <div class="row g-3">
-                        <div class="col-md-4">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
                             <label class="form-label small fw-bold">
                                 <i class="bi bi-filter me-1"></i>សកម្មភាព
                             </label>
@@ -545,7 +858,7 @@
                                 <option value="DELETE">លុប</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label small fw-bold">
                                 <i class="bi bi-table me-1"></i>តារាង
                             </label>
@@ -554,6 +867,8 @@
                                 <option value="users">អ្នកប្រើប្រាស់</option>
                                 <option value="facts">ការពិត</option>
                                 <option value="rules">ច្បាប់</option>
+                                <option value="history">ប្រវត្តិ</option>
+                                <option value="taxonomy">ចំណាត់ថ្នាក់</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -561,30 +876,61 @@
                                 <i class="bi bi-search me-1"></i>ស្វែងរក
                             </label>
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" id="auditSearch" placeholder="ស្វែងរកឈ្មោះអ្នកប្រើ...">
+                                <input type="text" class="form-control" id="auditSearch" placeholder="ស្វែងរកឈ្មោះអ្នកប្រើ ឬទិន្នន័យ...">
                                 <button class="btn btn-outline-secondary" type="button" id="clearSearch">
                                     <i class="bi bi-x"></i>
                                 </button>
                             </div>
                         </div>
+                        <div class="col-md-2">
+                            <div class="d-grid">
+                                <button class="btn btn-sm btn-outline-success" id="exportAllLogs">
+                                    <i class="bi bi-download me-1"></i>នាំចេញទាំងអស់
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     
-                    <!-- Stats -->
+                    <!-- Quick Stats -->
                     <div class="row mt-3">
                         <div class="col-12">
-                            <div class="d-flex flex-wrap gap-2">
-                                <span class="badge bg-light text-dark border">
-                                    <i class="bi bi-journal-text me-1"></i>សរុប: <span id="totalLogs">{{ audit_logs|length }}</span>
-                                </span>
-                                <span class="badge bg-success">
-                                    <i class="bi bi-plus-circle me-1"></i>បង្កើត: <span id="createCount">0</span>
-                                </span>
-                                <span class="badge bg-primary">
-                                    <i class="bi bi-pencil me-1"></i>កែសម្រួល: <span id="updateCount">0</span>
-                                </span>
-                                <span class="badge bg-danger">
-                                    <i class="bi bi-trash me-1"></i>លុប: <span id="deleteCount">0</span>
-                                </span>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="audit-stat-box">
+                                    <div class="stat-icon">
+                                        <i class="bi bi-journal-text"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-number" id="totalLogs">{{ audit_logs|length }}</div>
+                                        <div class="stat-label">សរុប</div>
+                                    </div>
+                                </div>
+                                <div class="audit-stat-box">
+                                    <div class="stat-icon bg-success">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-number" id="createCount">0</div>
+                                        <div class="stat-label">បង្កើត</div>
+                                    </div>
+                                </div>
+                                <div class="audit-stat-box">
+                                    <div class="stat-icon bg-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-number" id="updateCount">0</div>
+                                        <div class="stat-label">កែសម្រួល</div>
+                                    </div>
+                                </div>
+                                <div class="audit-stat-box">
+                                    <div class="stat-icon bg-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-number" id="deleteCount">0</div>
+                                        <div class="stat-label">លុប</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -592,41 +938,47 @@
                 
                 <!-- Audit Logs Table -->
                 <div class="card-body p-0">
-                    <div class="timeline p-4" id="auditTimeline">
-                        {% if audit_logs %}
-                            {% for log in audit_logs|sort(attribute='created_at', reverse=true) %}
-                            <div class="timeline-item audit-log-entry" 
-                                 data-action="{{ log.action }}" 
-                                 data-username="{{ log.username|default('', true)|lower }}"
-                                 data-table="{{ log.table_name }}"
-                                 data-search="{{ (log.username or '') ~ ' ' ~ log.action ~ ' ' ~ log.table_name }}">
-                                <div class="timeline-date">
-                                    <i class="bi bi-calendar3 me-2"></i>
-                                    {% if log.created_at %}
-                                        {{ log.created_at.strftime('%d/%m/%Y %H:%M') }}
-                                    {% else %}
-                                        មិនស្គាល់
-                                    {% endif %}
-                                </div>
-                                <div class="d-flex align-items-start justify-content-between">
-                                    <div style="flex: 1;">
-                                        <div class="d-flex align-items-center gap-3 mb-2">
-                                            <div class="user-avatar bg-dark">
-                                                {{ (log.username or 'N')[0]|upper }}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-0" id="auditLogsTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th width="60">
+                                        <input type="checkbox" class="form-check-input" id="selectAllAuditLogs">
+                                    </th>
+                                    <th width="50">លេខ</th>
+                                    <th width="150">អ្នកប្រើប្រាស់</th>
+                                    <th width="120">សកម្មភាព</th>
+                                    <th width="100">តារាង</th>
+                                    <th width="100">លេខសម្គាល់</th>
+                                    <th>ទិន្នន័យ</th>
+                                    <th width="150">ពេលវេលា</th>
+                                    <th width="100">សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if audit_logs %}
+                                   {% for log in audit_logs|sort(attribute='created_at') %}
+                                    <tr class="audit-log-row" 
+                                        data-action="{{ log.action }}" 
+                                        data-table="{{ log.table_name }}"
+                                        data-search="{{ (log.username or '') ~ ' ' ~ log.action ~ ' ' ~ log.table_name ~ ' ' ~ (log.record_id or '') }}">
+                                        <td>
+                                            <input type="checkbox" class="form-check-input log-checkbox" value="{{ log.id }}">
+                                        </td>
+                                        <td class="text-center">{{ loop.index }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="user-avatar-small me-2">
+                                                    {{ (log.username or 'N')[0]|upper }}
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold">{{ log.username or 'មិនស្គាល់' }}</div>
+                                                    <small class="text-muted">ID: {{ log.user_id }}</small>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h5 class="mb-0 fw-bold">{{ log.username or 'មិនស្គាល់' }}</h5>
-                                                <small class="text-muted">
-                                                    <i class="bi bi-hash me-1"></i>
-                                                    លេខសម្គាល់កំណត់ហេតុ: #{{ loop.index }}
-                                                    {% if log.user_id %}
-                                                        • លេខសម្គាល់អ្នកប្រើ: #{{ log.user_id }}
-                                                    {% endif %}
-                                                </small>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex gap-3 mb-3">
-                                            <span class="audit-badge {% if log.action == 'CREATE' %}badge-create{% elif log.action == 'UPDATE' %}badge-update{% else %}badge-delete{% endif %}">
+                                        </td>
+                                        <td>
+                                            <span class="badge {% if log.action == 'CREATE' %}bg-success{% elif log.action == 'UPDATE' %}bg-primary{% else %}bg-danger{% endif %}">
                                                 <i class="bi 
                                                     {% if log.action == 'CREATE' %}bi-plus-circle
                                                     {% elif log.action == 'UPDATE' %}bi-pencil
@@ -637,80 +989,123 @@
                                                 {% elif log.action == 'DELETE' %}លុប
                                                 {% else %}{{ log.action }}{% endif %}
                                             </span>
-                                            <span class="badge bg-info bg-opacity-10 text-info border border-info px-3 py-2">
-                                                <i class="bi bi-table me-2"></i>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                <i class="bi bi-table me-1"></i>
                                                 {{ log.table_name }}
                                             </span>
-                                        </div>
-                                        {% if log.old_value or log.new_value %}
-                                        <div class="bg-light p-3 rounded">
-                                            <small class="text-muted d-block mb-1">
-                                                <i class="bi bi-info-circle me-1"></i>
-                                                បានកែប្រែទិន្នន័យ៖
-                                            </small>
-                                            {% if log.old_value %}
-                                            <div class="mb-2">
-                                                <small class="text-danger fw-bold">ចាស់៖</small>
-                                                <div class="small bg-white p-2 rounded" style="max-height: 100px; overflow: auto;">
-                                                    {{ log.old_value|tojson|truncate(200) }}
+                                        </td>
+                                        <td>
+                                            <code class="small">{{ log.record_id|default('N/A', true) }}</code>
+                                        </td>
+                                        <td>
+                                            <div class="data-preview-container">
+                                                {% if log.old_value or log.new_value %}
+                                                    <div class="d-flex gap-2">
+                                                        {% if log.old_value %}
+                                                        <div class="data-change old-data" data-bs-toggle="tooltip" title="តម្លៃចាស់">
+                                                            <i class="bi bi-arrow-left text-danger"></i>
+                                                            <span class="small">ចាស់</span>
+                                                        </div>
+                                                        {% endif %}
+                                                        
+                                                        {% if log.new_value %}
+                                                        <div class="data-change new-data" data-bs-toggle="tooltip" title="តម្លៃថ្មី">
+                                                            <i class="bi bi-arrow-right text-success"></i>
+                                                            <span class="small">ថ្មី</span>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% else %}
+                                                    <span class="text-muted small">គ្មានការផ្លាស់ប្តូរ</span>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="timestamp-cell">
+                                                <div class="small text-nowrap">
+                                                    <i class="bi bi-calendar3 me-1"></i>
+                                                    {% if log.created_at %}
+                                                        {{ log.created_at.strftime('%d/%m/%Y') }}
+                                                    {% else %}
+                                                        មិនស្គាល់
+                                                    {% endif %}
+                                                </div>
+                                                <div class="small text-muted">
+                                                    <i class="bi bi-clock me-1"></i>
+                                                    {% if log.created_at %}
+                                                        {{ log.created_at.strftime('%H:%M') }}
+                                                    {% else %}
+                                                        --
+                                                    {% endif %}
                                                 </div>
                                             </div>
-                                            {% endif %}
-                                            
-                                            {% if log.new_value %}
-                                            <div>
-                                                <small class="text-success fw-bold">ថ្មី៖</small>
-                                                <div class="small bg-white p-2 rounded" style="max-height: 100px; overflow: auto;">
-                                                    {{ log.new_value|tojson|truncate(200) }}
-                                                </div>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary view-details-btn" 
+                                                        data-log-id="{{ log.id }}"
+                                                        data-log-username="{{ log.username|default('មិនស្គាល់', true) }}"
+                                                        data-log-action="{{ log.action|default('មិនស្គាល់', true) }}"
+                                                        data-log-table="{{ log.table_name|default('មិនស្គាល់', true) }}"
+                                                        data-log-record="{{ log.record_id|default('មិនមាន', true) }}"
+                                                        data-log-useragent="{{ log.user_agent|default('មិនស្គាល់', true) }}"
+                                                        data-log-oldvalue="{% if log.old_value %}{% if log.old_value is string %}{{ log.old_value|escape }}{% else %}{{ log.old_value|tojson|safe }}{% endif %}{% else %}null{% endif %}"
+                                                        data-log-newvalue="{% if log.new_value %}{% if log.new_value is string %}{{ log.new_value|escape }}{% else %}{{ log.new_value|tojson|safe }}{% endif %}{% else %}null{% endif %}"
+                                                        data-log-time="{% if log.created_at %}{{ log.created_at.isoformat() }}{% else %}null{% endif %}"
+                                                        title="មើលលម្អិត">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger delete-log-btn" 
+                                                        data-log-id="{{ log.id }}"
+                                                        data-log-username="{{ log.username }}"
+                                                        title="លុប">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </div>
-                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="9">
+                                        <div class="text-center py-5">
+                                            <div class="empty-state">
+                                                <div class="empty-state-icon bg-light rounded-circle p-4 d-inline-block mb-4">
+                                                    <i class="bi bi-journal-x display-4 text-muted"></i>
+                                                </div>
+                                                <h4 class="fw-bold text-muted mb-3">មិនមានកំណត់ហេតុ</h4>
+                                                <p class="text-muted mb-4">មិនទាន់មានសកម្មភាពណាមួយត្រូវបានកត់ត្រា</p>
+                                            </div>
                                         </div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="btn-group btn-group-sm ms-3" style="flex-shrink: 0;">
-                                       <!-- In the audit log entry template, update the button: -->
-<!-- In your audit log entry template, make sure data is properly escaped -->
-<button class="btn btn-outline-primary view-details-btn" 
-        data-log-id="{{ log.id }}"
-        data-log-username="{{ log.username|default('មិនស្គាល់', true) }}"
-        data-log-action="{{ log.action|default('មិនស្គាល់', true) }}"
-        data-log-table="{{ log.table_name|default('មិនស្គាល់', true) }}"
-        data-log-record="{{ log.record_id|default('មិនមាន', true) }}"
-        data-log-useragent="{{ log.user_agent|default('មិនស្គាល់', true) }}"
-        data-log-oldvalue="{{ log.old_value|tojson|safe if log.old_value else 'null' }}"
-        data-log-newvalue="{{ log.new_value|tojson|safe if log.new_value else 'null' }}"
-        data-log-time="{% if log.created_at %}{{ log.created_at.isoformat() }}{% else %}null{% endif %}"
-        title="មើលលម្អិត">
-    <i class="bi bi-eye"></i>
-</button>
-                                        <button class="btn btn-outline-danger delete-log-btn" 
-                                                data-log-id="{{ log.id }}"
-                                                data-log-username="{{ log.username }}"
-                                                title="លុប">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                        <div class="text-center py-5">
-                            <div class="empty-state">
-                                <div class="empty-state-icon bg-light rounded-circle p-4 d-inline-block mb-4">
-                                    <i class="bi bi-journal-x display-4 text-muted"></i>
-                                </div>
-                                <h4 class="fw-bold text-muted mb-3">មិនមានកំណត់ហេតុ</h4>
-                                <p class="text-muted mb-4">មិនទាន់មានសកម្មភាពណាមួយត្រូវបានកត់ត្រា</p>
-                            </div>
-                        </div>
-                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
                 {% if audit_logs %}
                 <div class="card-footer">
                     <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAllAuditLogsFooter">
+                                <label class="form-check-label small" for="selectAllAuditLogsFooter">
+                                    ជ្រើសរើសទាំងអស់ (<span id="selectedCount">0</span> ជ្រើសរើស)
+                                </label>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-success" id="exportSelectedLogs">
+                                    <i class="bi bi-download me-1"></i>នាំចេញដែលបានជ្រើស
+                                </button>
+                                <button class="btn btn-outline-danger" id="deleteSelectedLogs">
+                                    <i class="bi bi-trash me-1"></i>លុបដែលបានជ្រើស
+                                </button>
+                            </div>
+                        </div>
                         <div>
                             <span class="text-muted small">
                                 <i class="bi bi-info-circle me-1"></i>បង្ហាញ <span id="showingCount">{{ audit_logs|length }}</span> កំណត់ហេតុ
@@ -724,7 +1119,6 @@
     </div>
 </div>
 
-<!-- Log Details Modal -->
 <!-- Log Details Modal -->
 <div class="modal fade" id="logDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -1107,314 +1501,209 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // ==================== AUDIT LOGS FUNCTIONALITY ====================
-    // ==================== AUDIT LOGS FUNCTIONALITY ====================
+    // Refresh audit logs
+    document.getElementById('refreshAuditLogs')?.addEventListener('click', function() {
+        location.reload();
+    });
 
-// View Details for Audit Logs
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.view-details-btn')) {
-        const button = e.target.closest('.view-details-btn');
-        showLogDetails(button);
-    }
-    
-    if (e.target.closest('.delete-log-btn')) {
-        const button = e.target.closest('.delete-log-btn');
-        confirmDeleteLog(button);
-    }
-});
+    // Export all logs
+    document.getElementById('exportAllLogs')?.addEventListener('click', function() {
+        window.open('/admin/audit/export-batch', '_blank');
+    });
 
-function showLogDetails(button) {
-    // Get data from button attributes
-    const username = button.getAttribute('data-log-username');
-    const action = button.getAttribute('data-log-action');
-    const table = button.getAttribute('data-log-table');
-    const recordId = button.getAttribute('data-log-record');
-    const time = button.getAttribute('data-log-time');
-    const userAgent = button.getAttribute('data-log-useragent');
-    
-    // Parse JSON data - IMPORTANT: Use safe parsing
-    let oldValue = null;
-    let newValue = null;
-    
-    try {
-        const oldValueStr = button.getAttribute('data-log-oldvalue');
-        const newValueStr = button.getAttribute('data-log-newvalue');
-        
-        // Check if the strings are not null/undefined and not empty objects
-        if (oldValueStr && oldValueStr !== '{}' && oldValueStr !== 'null') {
-            oldValue = JSON.parse(oldValueStr);
-        }
-        
-        if (newValueStr && newValueStr !== '{}' && newValueStr !== 'null') {
-            newValue = JSON.parse(newValueStr);
-        }
-    } catch (e) {
-        console.error('Error parsing JSON:', e);
-        oldValue = null;
-        newValue = null;
-    }
-    
-    // Translate action and table names to Khmer
-    const actionTranslations = {
-        'CREATE': 'បង្កើត',
-        'UPDATE': 'កែសម្រួល',
-        'DELETE': 'លុប',
-        'LOGIN': 'ចូលប្រើ',
-        'LOGOUT': 'ចាកចេញ',
-        'READ': 'អាន'
-    };
-    
-    const tableTranslations = {
-        'users': 'អ្នកប្រើប្រាស់',
-        'facts': 'ការពិត',
-        'rules': 'ច្បាប់',
-        'audit_logs': 'កំណត់ហេតុ',
-        'sessions': 'វដ្តសកម្មភាព'
-    };
-    
-    const translatedAction = actionTranslations[action] || action;
-    const translatedTable = tableTranslations[table] || table;
-    
-    // Populate basic information
-    document.getElementById('detailUsername').textContent = username || 'មិនស្គាល់';
-    document.getElementById('detailAction').textContent = translatedAction || 'មិនស្គាល់';
-    document.getElementById('detailTable').textContent = translatedTable || 'មិនមាន';
-    document.getElementById('detailRecordId').textContent = recordId || 'មិនមាន';
-    document.getElementById('detailActionType').textContent = translatedAction || 'មិនស្គាល់';
-    
-    // Format and display time
-    if (time) {
-        try {
-            const date = new Date(time);
-            if (!isNaN(date.getTime())) {
-                const options = { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false 
-                };
-                document.getElementById('detailTime').textContent = date.toLocaleDateString('km-KH', options);
-            } else {
-                document.getElementById('detailTime').textContent = time;
-            }
-        } catch (e) {
-            document.getElementById('detailTime').textContent = time;
-        }
-    } else {
-        document.getElementById('detailTime').textContent = 'មិនស្គាល់';
-    }
-    
-    // Show/hide data changes section based on action type
-    const dataChangesSection = document.getElementById('dataChangesSection');
-    const noDataChangesSection = document.getElementById('noDataChangesSection');
-    
-    // Actions that should show data changes
-    const dataChangeActions = ['CREATE', 'UPDATE', 'DELETE'];
-    
-    if (dataChangeActions.includes(action) && (oldValue || newValue)) {
-        // Show data changes section
-        dataChangesSection.style.display = 'block';
-        noDataChangesSection.style.display = 'none';
-        
-        // Format and display data
-        const formattedOldValue = formatDataForDisplay(oldValue);
-        const formattedNewValue = formatDataForDisplay(newValue);
-        
-        // Show/hide sections based on data availability
-        const oldValueSection = document.getElementById('oldValueSection');
-        const newValueSection = document.getElementById('newValueSection');
-        
-        if (oldValue && Object.keys(oldValue).length > 0) {
-            oldValueSection.style.display = 'block';
-            document.getElementById('detailOldValue').textContent = formattedOldValue;
-        } else {
-            oldValueSection.style.display = 'none';
-        }
-        
-        if (newValue && Object.keys(newValue).length > 0) {
-            newValueSection.style.display = 'block';
-            document.getElementById('detailNewValue').textContent = formattedNewValue;
-        } else {
-            newValueSection.style.display = 'none';
-        }
-        
-        // If no data at all, show message
-        if ((!oldValue || Object.keys(oldValue).length === 0) && 
-            (!newValue || Object.keys(newValue).length === 0)) {
-            dataChangesSection.style.display = 'none';
-            noDataChangesSection.style.display = 'block';
-        }
-    } else {
-        // Hide data changes section for other actions
-        dataChangesSection.style.display = 'none';
-        noDataChangesSection.style.display = 'block';
-    }
-    
-    // User Agent (Browser information)
-    const userAgentSection = document.getElementById('detailUserAgentSection');
-    if (userAgent && userAgent !== 'null' && userAgent !== 'undefined' && userAgent !== '') {
-        userAgentSection.style.display = 'block';
-        
-        // Try to parse user agent for better display
-        let userAgentText = userAgent;
-        if (userAgent.includes('Chrome')) userAgentText = 'Google Chrome';
-        else if (userAgent.includes('Firefox')) userAgentText = 'Mozilla Firefox';
-        else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) userAgentText = 'Safari';
-        else if (userAgent.includes('Edge')) userAgentText = 'Microsoft Edge';
-        else if (userAgent.includes('Opera')) userAgentText = 'Opera';
-        
-        document.getElementById('detailUserAgent').textContent = userAgentText;
-    } else {
-        userAgentSection.style.display = 'none';
-    }
-    
-    // Set export button
-    const logId = button.getAttribute('data-log-id');
-    const exportBtn = document.getElementById('exportCurrentLogBtn');
-    if (exportBtn) {
-        exportBtn.onclick = function() {
-            exportLog(logId);
-        };
-    }
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('logDetailsModal'));
-    modal.show();
-}
+    // Select all checkbox functionality
+    document.getElementById('selectAllAuditLogs')?.addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.log-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        updateSelectedCount();
+    });
 
-// Helper function to format data for display
-// Helper function to format data for display with Khmer translations
-function formatDataForDisplay(data) {
-    if (!data || Object.keys(data).length === 0) {
-        return 'មិនមានទិន្នន័យ';
+    document.getElementById('selectAllAuditLogsFooter')?.addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.log-checkbox');
+        const mainCheckbox = document.getElementById('selectAllAuditLogs');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        if (mainCheckbox) {
+            mainCheckbox.checked = this.checked;
+        }
+        updateSelectedCount();
+    });
+
+    // Update selected count function
+    function updateSelectedCount() {
+        const selected = document.querySelectorAll('.log-checkbox:checked');
+        const selectedCount = document.getElementById('selectedCount');
+        if (selectedCount) {
+            selectedCount.textContent = selected.length;
+        }
     }
-    
-    const translations = {
-        'id': 'លេខសម្គាល់',
-        'username': 'ឈ្មោះអ្នកប្រើប្រាស់',
-        'email': 'អ៊ីមែល',
-        'role': 'តួនាទី',
-        'is_active': 'ស្ថានភាព',
-        'password_hash': 'ពាក្យសម្ងាត់',
-        'created_at': 'កាលបរិច្ឆេទបង្កើត',
-        'updated_at': 'កាលបរិច្ឆេទកែសម្រួល',
-        'car_problem': 'បញ្ហារថយន្ត',
-        'symptoms': 'រោគសញ្ញា',
-        'causes': 'មូលហេតុ',
-        'solutions': 'ដំណោះស្រាយ',
-        'conclusion': 'សេចក្តីសន្និដ្ឋាន',
-        'condition': 'លក្ខខណ្ឌ',
-        'result': 'លទ្ធផល',
-        'description': 'ការពិពណ៌នា',
-        'fact_id': 'លេខសម្គាល់ការពិត',
-        'rule_id': 'លេខសម្គាល់ច្បាប់',
-        'user_id': 'លេខសម្គាល់អ្នកប្រើប្រាស់',
-        'name': 'ឈ្មោះ',
-        'content': 'មាតិកា',
-        'ip_address': 'អាសយដ្ឋាន IP',
-        'user_agent': 'ឧបករណ៍ប្រើប្រាស់',
-        'table_name': 'តារាង',
-        'action': 'សកម្មភាព',
-        'record_id': 'លេខសម្គាល់កំណត់ត្រា',
-        'old_value': 'តម្លៃចាស់',
-        'new_value': 'តម្លៃថ្មី'
-    };
-    
-    // Special value translations
-    const valueTranslations = {
-        // Boolean translations for is_active
-        'true': 'សកម្ម',
-        'false': 'អសកម្ម',
-        '1': 'សកម្ម',
-        '0': 'អសកម្ម',
-        
-        // Role translations
-        'user': 'អ្នកប្រើប្រាស់',
-        'admin': 'អ្នកគ្រប់គ្រង',
-        'expert': 'អ្នកជំនាញ',
-        
-        // General boolean translations
-        'yes': 'បាទ/ចាស៎',
-        'no': 'ទេ'
-    };
-    
-    // Create formatted output
-    const formatted = {};
-    for (const [key, value] of Object.entries(data)) {
-        const translatedKey = translations[key] || key;
-        
-        // Skip sensitive data
-        if (key === 'password_hash' || key === 'password') {
-            formatted[translatedKey] = '********';
-            continue;
+
+    // Export selected logs
+    document.getElementById('exportSelectedLogs')?.addEventListener('click', function() {
+        const selected = document.querySelectorAll('.log-checkbox:checked');
+        if (selected.length === 0) {
+            showNotification('សូមជ្រើសរើសកំណត់ហេតុដើម្បីនាំចេញ', 'warning');
+            return;
         }
         
-        // Special handling for specific fields
-        if (key === 'is_active') {
-            // Convert various boolean formats to Khmer
-            if (value === true || value === 'true' || value === 1 || value === '1') {
-                formatted[translatedKey] = 'សកម្ម';
-            } else if (value === false || value === 'false' || value === 0 || value === '0') {
-                formatted[translatedKey] = 'អសកម្ម';
-            } else if (value === null || value === undefined) {
-                formatted[translatedKey] = 'ទទេ';
-            } else {
-                // Check if it's a string that needs translation
-                const strValue = String(value);
-                formatted[translatedKey] = valueTranslations[strValue.toLowerCase()] || strValue;
-            }
-            continue;
+        const logIds = Array.from(selected).map(cb => cb.value);
+        const url = `/admin/audit/export-batch?ids=${logIds.join(',')}`;
+        window.open(url, '_blank');
+    });
+
+    // Delete selected logs
+    document.getElementById('deleteSelectedLogs')?.addEventListener('click', function() {
+        const selected = document.querySelectorAll('.log-checkbox:checked');
+        if (selected.length === 0) {
+            showNotification('សូមជ្រើសរើសកំណត់ហេតុដើម្បីលុប', 'warning');
+            return;
         }
         
-        // Special handling for role field
-        if (key === 'role') {
-            if (value) {
-                const strValue = String(value).toLowerCase();
-                formatted[translatedKey] = valueTranslations[strValue] || strValue;
-                continue;
-            }
-        }
-        
-        // Handle string values
-        if (typeof value === 'string') {
-            // Check if the string looks like JSON
-            if ((value.trim().startsWith('{') && value.trim().endsWith('}')) ||
-                (value.trim().startsWith('[') && value.trim().endsWith(']'))) {
-                try {
-                    const parsed = JSON.parse(value);
-                    formatted[translatedKey] = JSON.stringify(parsed, null, 2);
-                    continue;
-                } catch (e) {
-                    // Not valid JSON, continue with normal processing
-                }
-            }
+        if (confirm(`តើអ្នកពិតជាចង់លុប ${selected.length} កំណត់ហេតុដែលបានជ្រើសរើសមែនទេ?`)) {
+            const logIds = Array.from(selected).map(cb => cb.value);
             
-            // Check for special value translations
-            const lowerValue = value.toLowerCase();
-            if (valueTranslations[lowerValue]) {
-                formatted[translatedKey] = valueTranslations[lowerValue];
-                continue;
-            }
+            fetch('/admin/audit/delete-batch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({ log_ids: logIds })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove selected rows
+                    selected.forEach(checkbox => {
+                        const row = checkbox.closest('.audit-log-row');
+                        if (row) {
+                            row.style.opacity = '0.5';
+                            setTimeout(() => {
+                                row.remove();
+                            }, 300);
+                        }
+                    });
+                    
+                    // Reset checkboxes
+                    document.getElementById('selectAllAuditLogs').checked = false;
+                    document.getElementById('selectAllAuditLogsFooter').checked = false;
+                    
+                    showNotification(`${data.deleted || selected.length} កំណត់ហេតុត្រូវបានលុបដោយជោគជ័យ`, 'success');
+                    updateAuditStats();
+                    updateSelectedCount();
+                } else {
+                    showNotification('មិនអាចលុបកំណត់ហេតុបាន: ' + (data.error || ''), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('មានបញ្ហាក្នុងការលុបកំណត់ហេតុ', 'error');
+            });
+        }
+    });
+
+    // Initialize tooltips for data change indicators
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+        new bootstrap.Tooltip(el);
+    });
+
+    // Update audit stats function for table layout
+    function updateAuditStats() {
+        const rows = document.querySelectorAll('.audit-log-row');
+        let createCount = 0, updateCount = 0, deleteCount = 0;
+        
+        rows.forEach(row => {
+            const action = row.getAttribute('data-action');
+            if (action === 'CREATE') createCount++;
+            else if (action === 'UPDATE') updateCount++;
+            else if (action === 'DELETE') deleteCount++;
+        });
+        
+        document.getElementById('createCount').textContent = createCount;
+        document.getElementById('updateCount').textContent = updateCount;
+        document.getElementById('deleteCount').textContent = deleteCount;
+        document.getElementById('totalLogs').textContent = rows.length;
+        document.getElementById('showingCount').textContent = rows.length;
+    }
+
+    // Initialize audit stats
+    updateAuditStats();
+
+    // View Details for Audit Logs
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.view-details-btn')) {
+            const button = e.target.closest('.view-details-btn');
+            showLogDetails(button);
         }
         
-        // Format boolean values
-        if (value === true) {
-            formatted[translatedKey] = 'បាទ/ចាស៎';
-        } else if (value === false) {
-            formatted[translatedKey] = 'ទេ';
+        if (e.target.closest('.delete-log-btn')) {
+            const button = e.target.closest('.delete-log-btn');
+            confirmDeleteLog(button);
         }
-        // Format numeric values
-        else if (value === 1 || value === '1') {
-            formatted[translatedKey] = '១';
-        } else if (value === 0 || value === '0') {
-            formatted[translatedKey] = '០';
+    });
+
+    function showLogDetails(button) {
+        // Get data from button attributes
+        const username = button.getAttribute('data-log-username');
+        const action = button.getAttribute('data-log-action');
+        const table = button.getAttribute('data-log-table');
+        const recordId = button.getAttribute('data-log-record');
+        const time = button.getAttribute('data-log-time');
+        const userAgent = button.getAttribute('data-log-useragent');
+        
+        // Parse JSON data using our new function
+        let oldValue = null;
+        let newValue = null;
+        
+        try {
+            const oldValueStr = button.getAttribute('data-log-oldvalue');
+            const newValueStr = button.getAttribute('data-log-newvalue');
+            
+            oldValue = parseAuditValue(oldValueStr);
+            newValue = parseAuditValue(newValueStr);
+            
+        } catch (e) {
+            console.error('Error parsing JSON:', e);
+            oldValue = null;
+            newValue = null;
         }
-        // Format dates
-        else if ((key.includes('_at') || key.includes('date') || key.includes('time')) && value) {
+        
+        // Translate action and table names to Khmer
+        const actionTranslations = {
+            'CREATE': 'បង្កើត',
+            'UPDATE': 'កែសម្រួល',
+            'DELETE': 'លុប',
+            'LOGIN': 'ចូលប្រើ',
+            'LOGOUT': 'ចាកចេញ',
+            'READ': 'អាន'
+        };
+        
+        const tableTranslations = {
+            'users': 'អ្នកប្រើប្រាស់',
+            'facts': 'ការពិត',
+            'rules': 'ច្បាប់',
+            'history': 'ប្រវត្តិ',
+            'taxonomy': 'ចំណាត់ថ្នាក់',
+            'audit_log': 'កំណត់ហេតុ'
+        };
+        
+        const translatedAction = actionTranslations[action] || action;
+        const translatedTable = tableTranslations[table] || table;
+        
+        // Populate basic information
+        document.getElementById('detailUsername').textContent = username || 'មិនស្គាល់';
+        document.getElementById('detailAction').textContent = translatedAction || 'មិនស្គាល់';
+        document.getElementById('detailTable').textContent = translatedTable || 'មិនមាន';
+        document.getElementById('detailRecordId').textContent = recordId || 'មិនមាន';
+        document.getElementById('detailActionType').textContent = translatedAction || 'មិនស្គាល់';
+        
+        // Format and display time
+        if (time) {
             try {
-                const date = new Date(value);
+                const date = new Date(time);
                 if (!isNaN(date.getTime())) {
                     const options = { 
                         year: 'numeric', 
@@ -1425,581 +1714,461 @@ function formatDataForDisplay(data) {
                         second: '2-digit',
                         hour12: false 
                     };
-                    formatted[translatedKey] = date.toLocaleDateString('km-KH', options);
+                    document.getElementById('detailTime').textContent = date.toLocaleDateString('km-KH', options);
                 } else {
-                    formatted[translatedKey] = value;
+                    document.getElementById('detailTime').textContent = time;
                 }
             } catch (e) {
-                formatted[translatedKey] = value;
-            }
-        }
-        // Handle null values
-        else if (value === null) {
-            formatted[translatedKey] = 'ទទេ';
-        }
-        // Handle undefined values
-        else if (value === undefined) {
-            formatted[translatedKey] = 'មិនកំណត់';
-        }
-        // For arrays or objects, try to format them
-        else if (Array.isArray(value) || typeof value === 'object') {
-            formatted[translatedKey] = JSON.stringify(value, null, 2);
-        }
-        // Simple values
-        else {
-            formatted[translatedKey] = value;
-        }
-    }
-    
-    return JSON.stringify(formatted, null, 2);
-}
-
-// Updated JSON parsing function
-function parseAuditValue(valueStr) {
-    if (!valueStr || valueStr === '{}' || valueStr === 'null' || valueStr === '' || valueStr.trim() === '') {
-        return null;
-    }
-    
-    console.log('Parsing:', valueStr);
-    
-    // Remove the tojson filter if it's there
-    let cleanStr = valueStr;
-    
-    // If it starts with a quote and ends with a quote, remove them
-    if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
-        cleanStr = cleanStr.slice(1, -1);
-    }
-    
-    // Handle escaped quotes
-    if (cleanStr.includes('\\"')) {
-        cleanStr = cleanStr.replace(/\\"/g, '"');
-    }
-    
-    // Remove any other escaping
-    cleanStr = cleanStr.replace(/\\\\/g, '\\');
-    
-    console.log('Cleaned:', cleanStr);
-    
-    try {
-        // Try to parse as JSON
-        const parsed = JSON.parse(cleanStr);
-        console.log('Successfully parsed:', parsed);
-        return parsed;
-    } catch (e) {
-        console.error('Parse error:', e);
-        
-        // Try to handle malformed JSON
-        try {
-            // Try to fix common issues
-            let fixed = cleanStr
-                .replace(/'/g, '"') // Single to double quotes
-                .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3') // Quote property names
-                .replace(/:\s*([^"][^,}]*)(?=,|})/g, ': "$1"'); // Quote unquoted values
-            
-            const parsed = JSON.parse(fixed);
-            console.log('Parsed after fixing:', parsed);
-            return parsed;
-        } catch (e2) {
-            console.error('Final parse error:', e2);
-            return { error: 'Could not parse', raw: cleanStr };
-        }
-    }
-}
-
-// Update the showLogDetails function to use the new parser
-function showLogDetails(button) {
-    // Get data from button attributes
-    const username = button.getAttribute('data-log-username');
-    const action = button.getAttribute('data-log-action');
-    const table = button.getAttribute('data-log-table');
-    const recordId = button.getAttribute('data-log-record');
-    const time = button.getAttribute('data-log-time');
-    const userAgent = button.getAttribute('data-log-useragent');
-    
-    // Parse JSON data using our new function
-    let oldValue = null;
-    let newValue = null;
-    
-    try {
-        const oldValueStr = button.getAttribute('data-log-oldvalue');
-        const newValueStr = button.getAttribute('data-log-newvalue');
-        
-        console.log('=== PARSING AUDIT VALUES ===');
-        console.log('Raw old value:', oldValueStr);
-        console.log('Raw new value:', newValueStr);
-        
-        oldValue = parseAuditValue(oldValueStr);
-        newValue = parseAuditValue(newValueStr);
-        
-        console.log('Parsed old value:', oldValue);
-        console.log('Parsed new value:', newValue);
-        
-    } catch (e) {
-        console.error('Error parsing JSON:', e);
-        oldValue = null;
-        newValue = null;
-    }
-    
-    // Rest of the function remains the same...
-    const actionTranslations = {
-        'CREATE': 'បង្កើត',
-        'UPDATE': 'កែសម្រួល',
-        'DELETE': 'លុប',
-        'LOGIN': 'ចូលប្រើ',
-        'LOGOUT': 'ចាកចេញ',
-        'READ': 'អាន'
-    };
-    
-    const tableTranslations = {
-        'users': 'អ្នកប្រើប្រាស់',
-        'facts': 'ការពិត',
-        'rules': 'ច្បាប់',
-        'audit_logs': 'កំណត់ហេតុ',
-        'sessions': 'វដ្តសកម្មភាព'
-    };
-    
-    const translatedAction = actionTranslations[action] || action;
-    const translatedTable = tableTranslations[table] || table;
-    
-    // Populate basic information
-    document.getElementById('detailUsername').textContent = username || 'មិនស្គាល់';
-    document.getElementById('detailAction').textContent = translatedAction || 'មិនស្គាល់';
-    document.getElementById('detailTable').textContent = translatedTable || 'មិនមាន';
-    document.getElementById('detailRecordId').textContent = recordId || 'មិនមាន';
-    document.getElementById('detailActionType').textContent = translatedAction || 'មិនស្គាល់';
-    
-    // Format and display time
-    if (time) {
-        try {
-            const date = new Date(time);
-            if (!isNaN(date.getTime())) {
-                const options = { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false 
-                };
-                document.getElementById('detailTime').textContent = date.toLocaleDateString('km-KH', options);
-            } else {
                 document.getElementById('detailTime').textContent = time;
             }
-        } catch (e) {
-            document.getElementById('detailTime').textContent = time;
-        }
-    } else {
-        document.getElementById('detailTime').textContent = 'មិនស្គាល់';
-    }
-    
-    // Show/hide data changes section based on action type
-    const dataChangesSection = document.getElementById('dataChangesSection');
-    const noDataChangesSection = document.getElementById('noDataChangesSection');
-    
-    // Actions that should show data changes
-    const dataChangeActions = ['CREATE', 'UPDATE', 'DELETE'];
-    
-    if (dataChangeActions.includes(action) && (oldValue || newValue)) {
-        // Show data changes section
-        dataChangesSection.style.display = 'block';
-        noDataChangesSection.style.display = 'none';
-        
-        // Format and display data
-        const formattedOldValue = formatDataForDisplay(oldValue);
-        const formattedNewValue = formatDataForDisplay(newValue);
-        
-        // Show/hide sections based on data availability
-        const oldValueSection = document.getElementById('oldValueSection');
-        const newValueSection = document.getElementById('newValueSection');
-        
-        if (oldValue && Object.keys(oldValue).length > 0) {
-            oldValueSection.style.display = 'block';
-            document.getElementById('detailOldValue').textContent = formattedOldValue;
         } else {
-            oldValueSection.style.display = 'none';
+            document.getElementById('detailTime').textContent = 'មិនស្គាល់';
         }
         
-        if (newValue && Object.keys(newValue).length > 0) {
-            newValueSection.style.display = 'block';
-            document.getElementById('detailNewValue').textContent = formattedNewValue;
+        // Show/hide data changes section based on action type
+        const dataChangesSection = document.getElementById('dataChangesSection');
+        const noDataChangesSection = document.getElementById('noDataChangesSection');
+        
+        // Actions that should show data changes
+        const dataChangeActions = ['CREATE', 'UPDATE', 'DELETE'];
+        
+        if (dataChangeActions.includes(action) && (oldValue || newValue)) {
+            // Show data changes section
+            dataChangesSection.style.display = 'block';
+            noDataChangesSection.style.display = 'none';
+            
+            // Format and display data
+            const formattedOldValue = formatDataForDisplay(oldValue);
+            const formattedNewValue = formatDataForDisplay(newValue);
+            
+            // Show/hide sections based on data availability
+            const oldValueSection = document.getElementById('oldValueSection');
+            const newValueSection = document.getElementById('newValueSection');
+            
+            if (oldValue && Object.keys(oldValue).length > 0) {
+                oldValueSection.style.display = 'block';
+                document.getElementById('detailOldValue').textContent = formattedOldValue;
+            } else {
+                oldValueSection.style.display = 'none';
+            }
+            
+            if (newValue && Object.keys(newValue).length > 0) {
+                newValueSection.style.display = 'block';
+                document.getElementById('detailNewValue').textContent = formattedNewValue;
+            } else {
+                newValueSection.style.display = 'none';
+            }
+            
+            // If no data at all, show message
+            if ((!oldValue || Object.keys(oldValue).length === 0) && 
+                (!newValue || Object.keys(newValue).length === 0)) {
+                dataChangesSection.style.display = 'none';
+                noDataChangesSection.style.display = 'block';
+            }
         } else {
-            newValueSection.style.display = 'none';
-        }
-        
-        // If no data at all, show message
-        if ((!oldValue || Object.keys(oldValue).length === 0) && 
-            (!newValue || Object.keys(newValue).length === 0)) {
+            // Hide data changes section for other actions
             dataChangesSection.style.display = 'none';
             noDataChangesSection.style.display = 'block';
         }
-    } else {
-        // Hide data changes section for other actions
-        dataChangesSection.style.display = 'none';
-        noDataChangesSection.style.display = 'block';
-    }
-    
-    // User Agent (Browser information)
-    const userAgentSection = document.getElementById('detailUserAgentSection');
-    if (userAgent && userAgent !== 'null' && userAgent !== 'undefined' && userAgent !== '') {
-        userAgentSection.style.display = 'block';
         
-        // Try to parse user agent for better display
-        let userAgentText = userAgent;
-        if (userAgent.includes('Chrome')) userAgentText = 'Google Chrome';
-        else if (userAgent.includes('Firefox')) userAgentText = 'Mozilla Firefox';
-        else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) userAgentText = 'Safari';
-        else if (userAgent.includes('Edge')) userAgentText = 'Microsoft Edge';
-        else if (userAgent.includes('Opera')) userAgentText = 'Opera';
-        
-        document.getElementById('detailUserAgent').textContent = userAgentText;
-    } else {
-        userAgentSection.style.display = 'none';
-    }
-    
-    // Set export button
-    const logId = button.getAttribute('data-log-id');
-    const exportBtn = document.getElementById('exportCurrentLogBtn');
-    if (exportBtn) {
-        exportBtn.onclick = function() {
-            exportLog(logId);
-        };
-    }
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('logDetailsModal'));
-    modal.show();
-}
-
-let currentLogToDelete = null;
-let currentDeleteButton = null;
-
-function confirmDeleteLog(button) {
-    const logId = button.getAttribute('data-log-id');
-    const username = button.getAttribute('data-log-username');
-    
-    currentLogToDelete = logId;
-    currentDeleteButton = button;
-    
-    document.getElementById('deleteLogMessage').textContent = 
-        `តើអ្នកពិតជាចង់លុបកំណត់ហេតុរបស់ "${username || 'មិនស្គាល់'}" មែនទេ?`;
-    
-    const modal = new bootstrap.Modal(document.getElementById('confirmDeleteLogModal'));
-    modal.show();
-}
-
-// Confirm delete log
-document.getElementById('confirmDeleteLogBtn').addEventListener('click', function() {
-    if (currentLogToDelete && currentDeleteButton) {
-        deleteLog(currentLogToDelete, currentDeleteButton);
-        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteLogModal'));
-        modal.hide();
-    }
-});
-
-function deleteLog(logId, button) {
-    // Show loading state
-    const originalHTML = button.innerHTML;
-    button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>កំពុងលុប...';
-    button.disabled = true;
-    
-    // Send POST request (CHANGED FROM DELETE TO POST)
-    fetch(`/admin/audit/delete/${logId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            // Remove the log entry from DOM
-            const logEntry = button.closest('.audit-log-entry');
-            if (logEntry) {
-                logEntry.style.opacity = '0.5';
-                setTimeout(() => {
-                    logEntry.remove();
-                    showNotification('កំណត់ហេតុត្រូវបានលុបដោយជោគជ័យ', 'success');
-                    updateAuditStats();
-                }, 300);
-            }
+        // User Agent (Browser information)
+        const userAgentSection = document.getElementById('detailUserAgentSection');
+        if (userAgent && userAgent !== 'null' && userAgent !== 'undefined' && userAgent !== '') {
+            userAgentSection.style.display = 'block';
+            
+            // Try to parse user agent for better display
+            let userAgentText = userAgent;
+            if (userAgent.includes('Chrome')) userAgentText = 'Google Chrome';
+            else if (userAgent.includes('Firefox')) userAgentText = 'Mozilla Firefox';
+            else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) userAgentText = 'Safari';
+            else if (userAgent.includes('Edge')) userAgentText = 'Microsoft Edge';
+            else if (userAgent.includes('Opera')) userAgentText = 'Opera';
+            
+            document.getElementById('detailUserAgent').textContent = userAgentText;
         } else {
-            showNotification('មិនអាចលុបកំណត់ហេតុបាន: ' + (data.error || ''), 'error');
-            button.innerHTML = originalHTML;
-            button.disabled = false;
+            userAgentSection.style.display = 'none';
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('មានបញ្ហាក្នុងការលុបកំណត់ហេតុ', 'error');
-        button.innerHTML = originalHTML;
-        button.disabled = false;
-    });
-}
+        
+        // Set export button
+        const logId = button.getAttribute('data-log-id');
+        const exportBtn = document.getElementById('exportCurrentLogBtn');
+        if (exportBtn) {
+            exportBtn.onclick = function() {
+                exportLog(logId);
+            };
+        }
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('logDetailsModal'));
+        modal.show();
+    }
 
-// Clear all logs
-document.getElementById('confirmClearAllBtn').addEventListener('click', function() {
-    fetch('/admin/audit/clear-all', {
-        method: 'POST', // ឬ DELETE ប្រសិនបើអ្នកមាន route នេះ
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
+    function formatDataForDisplay(data) {
+        if (!data || Object.keys(data).length === 0) {
+            return 'មិនមានទិន្នន័យ';
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Remove all log entries
-            document.querySelectorAll('.audit-log-entry').forEach(entry => {
-                entry.remove();
-            });
+        
+        // If data is already a string (might be JSON string), try to parse it
+        if (typeof data === 'string') {
+            try {
+                // Try to parse as JSON first
+                const parsed = JSON.parse(data);
+                return formatDataForDisplay(parsed);
+            } catch (e) {
+                // If not JSON, return as is
+                return data;
+            }
+        }
+        
+        // If data is an array, format each item
+        if (Array.isArray(data)) {
+            return data.map(item => formatDataForDisplay(item)).join('\n');
+        }
+        
+        // If data is a plain object, format key-value pairs
+        if (typeof data === 'object' && data !== null) {
+            const translations = {
+                'id': 'លេខសម្គាល់',
+                'timestamp': 'ពេលវេលា',
+                'observations': 'ការសង្កេត',
+                'expanded_obs': 'ការពង្រីកការសង្កេត',
+                'results': 'លទ្ធផល',
+                'user_id': 'លេខសម្គាល់អ្នកប្រើ',
+                'username': 'ឈ្មោះអ្នកប្រើប្រាស់',
+                'email': 'អ៊ីមែល',
+                'role': 'តួនាទី',
+                'is_active': 'ស្ថានភាព',
+                'created_by': 'បង្កើតដោយ',
+                'table_name': 'តារាង',
+                'action': 'សកម្មភាព',
+                'record_id': 'លេខសម្គាល់កំណត់ត្រា',
+                'old_value': 'តម្លៃចាស់',
+                'new_value': 'តម្លៃថ្មី',
+                'ip_address': 'អាសយដ្ឋាន IP',
+                'user_agent': 'ឧបករណ៍ប្រើប្រាស់'
+            };
             
-            // Show empty state
-            const timeline = document.getElementById('auditTimeline');
-            timeline.innerHTML = `
-                <div class="text-center py-5">
-                    <div class="empty-state">
-                        <div class="empty-state-icon bg-light rounded-circle p-4 d-inline-block mb-4">
-                            <i class="bi bi-journal-x display-4 text-muted"></i>
-                        </div>
-                        <h4 class="fw-bold text-muted mb-3">មិនមានកំណត់ហេតុ</h4>
-                        <p class="text-muted mb-4">កំណត់ហេតុទាំងអស់ត្រូវបានសម្អាត</p>
-                    </div>
-                </div>
-            `;
+            const formattedLines = [];
             
-            // Hide footer
-            const cardFooter = document.querySelector('.card-footer');
-            if (cardFooter) {
-                cardFooter.style.display = 'none';
+            for (const [key, value] of Object.entries(data)) {
+                const translatedKey = translations[key] || key;
+                
+                // Handle nested objects recursively
+                if (typeof value === 'object' && value !== null) {
+                    formattedLines.push(`${translatedKey}:`);
+                    formattedLines.push(formatDataForDisplay(value).split('\n').map(line => `  ${line}`).join('\n'));
+                } else {
+                    // Special formatting for specific values
+                    let formattedValue = value;
+                    
+                    if (key === 'is_active' || key === 'value') {
+                        formattedValue = value ? 'បាទ/ចាស៎' : 'ទេ';
+                    } else if (key === 'timestamp' || key.includes('_at') || key.includes('date')) {
+                        // Try to format date
+                        try {
+                            const date = new Date(value);
+                            if (!isNaN(date.getTime())) {
+                                formattedValue = date.toLocaleDateString('km-KH', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: false
+                                });
+                            }
+                        } catch (e) {
+                            // Keep original value if can't parse as date
+                        }
+                    } else if (value === null || value === undefined) {
+                        formattedValue = 'ទទេ';
+                    }
+                    
+                    formattedLines.push(`${translatedKey}: ${formattedValue}`);
+                }
             }
             
-            showNotification('កំណត់ហេតុទាំងអស់ត្រូវបានលុបដោយជោគជ័យ', 'success');
-            updateAuditStats();
-            
-            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmClearLogs'));
-            modal.hide();
-        } else {
-            showNotification('មិនអាចសម្អាតកំណត់ហេតុបាន: ' + (data.error || ''), 'error');
+            return formattedLines.join('\n');
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('មានបញ្ហាក្នុងការសម្អាតកំណត់ហេតុ', 'error');
-    });
-});
-
-// Export function
-function exportLog(logId) {
-    window.open(`/admin/audit/export/${logId}`, '_blank');
-}
-
-// Export Selected Logs
-document.getElementById('exportSelected')?.addEventListener('click', function() {
-    const selected = document.querySelectorAll('.log-checkbox:checked');
-    if (selected.length === 0) {
-        showNotification('សូមជ្រើសរើសកំណត់ហេតុដើម្បីនាំចេញ', 'warning');
-        return;
+        
+        // For any other type, convert to string
+        return String(data);
     }
-    
-    const logIds = Array.from(selected).map(cb => cb.value);
-    const url = `/admin/audit/export-batch?ids=${logIds.join(',')}`;
-    window.open(url, '_blank');
-});
 
-// Delete Selected Logs
-document.getElementById('deleteSelected')?.addEventListener('click', function() {
-    const selected = document.querySelectorAll('.log-checkbox:checked');
-    if (selected.length === 0) {
-        showNotification('សូមជ្រើសរើសកំណត់ហេតុដើម្បីលុប', 'warning');
-        return;
-    }
-    
-    document.getElementById('deleteCountText').textContent = selected.length;
-    
-    // Show confirmation modal
-    const modal = new bootstrap.Modal(document.getElementById('confirmDeleteSelected'));
-    modal.show();
-    
-    // Set up confirm button
-    const confirmBtn = document.getElementById('confirmDeleteSelectedBtn');
-    confirmBtn.onclick = function() {
-        const logIds = Array.from(selected).map(cb => cb.value);
-        deleteLogsBatch(logIds);
-        const modalInstance = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteSelected'));
-        modalInstance.hide();
-    };
-});
-
-function deleteLogsBatch(logIds) {
-    // Send POST request
-    fetch('/admin/audit/delete-batch', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
-        },
-        body: JSON.stringify({ log_ids: logIds })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Remove selected log entries
-            logIds.forEach(logId => {
-                const row = document.querySelector(`.audit-log-entry [data-log-id="${logId}"]`);
-                if (row) {
-                    const logEntry = row.closest('.audit-log-entry');
-                    if (logEntry) {
-                        logEntry.style.opacity = '0.5';
-                        setTimeout(() => {
-                            logEntry.remove();
-                        }, 300);
+    function parseAuditValue(valueStr) {
+        if (!valueStr || valueStr === '{}' || valueStr === 'null' || valueStr === '' || valueStr.trim() === '') {
+            return null;
+        }
+        
+        // Check if it's already a JavaScript object (from stringified JSON in template)
+        if (typeof valueStr === 'object') {
+            return valueStr;
+        }
+        
+        // Remove any unwanted characters
+        let cleanStr = valueStr;
+        
+        // If it's already a JSON string, parse it
+        try {
+            // Try direct JSON parse first
+            const parsed = JSON.parse(cleanStr);
+            return parsed;
+        } catch (e1) {
+            // Try to fix common JSON issues
+            try {
+                // Remove extra escaping
+                cleanStr = cleanStr.replace(/\\\\/g, '\\');
+                cleanStr = cleanStr.replace(/\\"/g, '"');
+                
+                // Remove surrounding quotes if present
+                if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
+                    cleanStr = cleanStr.slice(1, -1);
+                }
+                
+                // Try parsing again
+                const parsed = JSON.parse(cleanStr);
+                return parsed;
+            } catch (e2) {
+                // If it's a string that looks like a Python dict, try to handle it
+                if (cleanStr.includes("'") && cleanStr.includes(":")) {
+                    try {
+                        // Replace single quotes with double quotes
+                        const fixed = cleanStr.replace(/'/g, '"');
+                        // Add quotes to property names
+                        const quoted = fixed.replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3');
+                        const parsed = JSON.parse(quoted);
+                        return parsed;
+                    } catch (e3) {
+                        // If all else fails, return as string
+                        return { raw: cleanStr };
                     }
                 }
-            });
-            
-            // Reset checkboxes
-            document.getElementById('selectAllLogs').checked = false;
-            
-            showNotification(`${data.deleted || logIds.length} កំណត់ហេតុត្រូវបានលុបដោយជោគជ័យ`, 'success');
-            updateAuditStats();
-        } else {
-            showNotification('មិនអាចលុបកំណត់ហេតុបាន: ' + (data.error || ''), 'error');
+                
+                // If all else fails, return as string
+                return { raw: cleanStr };
+            }
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('មានបញ្ហាក្នុងការលុបកំណត់ហេតុ', 'error');
-    });
-}
+    }
 
-// Select All Checkbox
-document.getElementById('selectAllLogs')?.addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('.log-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = this.checked;
+    let currentLogToDelete = null;
+    let currentDeleteButton = null;
+
+    function confirmDeleteLog(button) {
+        const logId = button.getAttribute('data-log-id');
+        const username = button.getAttribute('data-log-username');
+        
+        currentLogToDelete = logId;
+        currentDeleteButton = button;
+        
+        document.getElementById('deleteLogMessage').textContent = 
+            `តើអ្នកពិតជាចង់លុបកំណត់ហេតុរបស់ "${username || 'មិនស្គាល់'}" មែនទេ?`;
+        
+        const modal = new bootstrap.Modal(document.getElementById('confirmDeleteLogModal'));
+        modal.show();
+    }
+
+    // Confirm delete log
+    document.getElementById('confirmDeleteLogBtn').addEventListener('click', function() {
+        if (currentLogToDelete && currentDeleteButton) {
+            deleteLog(currentLogToDelete, currentDeleteButton);
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteLogModal'));
+            modal.hide();
+        }
     });
+
+    function deleteLog(logId, button) {
+        // Show loading state
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>កំពុងលុប...';
+        button.disabled = true;
+        
+        // Send POST request
+        fetch(`/admin/audit/delete/${logId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Remove the log entry from DOM
+                const logEntry = button.closest('.audit-log-row');
+                if (logEntry) {
+                    logEntry.style.opacity = '0.5';
+                    setTimeout(() => {
+                        logEntry.remove();
+                        showNotification('កំណត់ហេតុត្រូវបានលុបដោយជោគជ័យ', 'success');
+                        updateAuditStats();
+                        updateSelectedCount();
+                    }, 300);
+                }
+            } else {
+                showNotification('មិនអាចលុបកំណត់ហេតុបាន: ' + (data.error || ''), 'error');
+                button.innerHTML = originalHTML;
+                button.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('មានបញ្ហាក្នុងការលុបកំណត់ហេតុ', 'error');
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+        });
+    }
+
+    // Clear all logs
+    document.getElementById('confirmClearAllBtn').addEventListener('click', function() {
+        fetch('/admin/audit/clear-all', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove all log entries
+                document.querySelectorAll('.audit-log-row').forEach(row => {
+                    row.remove();
+                });
+                
+                // Show empty state
+                const tbody = document.querySelector('#auditLogsTable tbody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9">
+                            <div class="text-center py-5">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon bg-light rounded-circle p-4 d-inline-block mb-4">
+                                        <i class="bi bi-journal-x display-4 text-muted"></i>
+                                    </div>
+                                    <h4 class="fw-bold text-muted mb-3">មិនមានកំណត់ហេតុ</h4>
+                                    <p class="text-muted mb-4">កំណត់ហេតុទាំងអស់ត្រូវបានសម្អាត</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                
+                // Hide footer
+                const cardFooter = document.querySelector('.card-footer');
+                if (cardFooter) {
+                    cardFooter.style.display = 'none';
+                }
+                
+                showNotification('កំណត់ហេតុទាំងអស់ត្រូវបានលុបដោយជោគជ័យ', 'success');
+                updateAuditStats();
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirmClearLogs'));
+                modal.hide();
+            } else {
+                showNotification('មិនអាចសម្អាតកំណត់ហេតុបាន: ' + (data.error || ''), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('មានបញ្ហាក្នុងការសម្អាតកំណត់ហេតុ', 'error');
+        });
+    });
+
+    // Export function
+    function exportLog(logId) {
+        window.open(`/admin/audit/export/${logId}`, '_blank');
+    }
+
+    // Filter functionality for audit logs
+    const auditSearch = document.getElementById('auditSearch');
+    const auditActionFilter = document.getElementById('auditActionFilter');
+    const auditTableFilter = document.getElementById('auditTableFilter');
+    const clearSearchBtn = document.getElementById('clearSearch');
+
+    if (auditSearch) {
+        auditSearch.addEventListener('input', filterAuditLogs);
+    }
+
+    if (auditActionFilter) {
+        auditActionFilter.addEventListener('change', filterAuditLogs);
+    }
+
+    if (auditTableFilter) {
+        auditTableFilter.addEventListener('change', filterAuditLogs);
+    }
+
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', function() {
+            auditSearch.value = '';
+            filterAuditLogs();
+        });
+    }
+
+    function filterAuditLogs() {
+        const searchTerm = auditSearch.value.toLowerCase();
+        const actionFilter = auditActionFilter.value;
+        const tableFilter = auditTableFilter.value;
+        
+        const rows = document.querySelectorAll('.audit-log-row');
+        let visibleCount = 0;
+        let createCount = 0, updateCount = 0, deleteCount = 0;
+        
+        rows.forEach(row => {
+            const action = row.getAttribute('data-action');
+            const table = row.getAttribute('data-table');
+            const searchData = row.getAttribute('data-search').toLowerCase();
+            
+            let shouldShow = true;
+            
+            // Apply filters
+            if (actionFilter !== 'all' && action !== actionFilter) {
+                shouldShow = false;
+            }
+            
+            if (tableFilter !== 'all' && table !== tableFilter) {
+                shouldShow = false;
+            }
+            
+            if (searchTerm && !searchData.includes(searchTerm)) {
+                shouldShow = false;
+            }
+            
+            if (shouldShow) {
+                row.style.display = 'table-row';
+                visibleCount++;
+                
+                // Count actions
+                if (action === 'CREATE') createCount++;
+                else if (action === 'UPDATE') updateCount++;
+                else if (action === 'DELETE') deleteCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Update counts
+        document.getElementById('showingCount').textContent = visibleCount;
+        document.getElementById('createCount').textContent = createCount;
+        document.getElementById('updateCount').textContent = updateCount;
+        document.getElementById('deleteCount').textContent = deleteCount;
+    }
+
+    // Event listener for individual checkboxes
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('log-checkbox')) {
+            updateSelectedCount();
+        }
+    });
+
+    // Initialize selected count
     updateSelectedCount();
-});
 
-// Update selected count
-function updateSelectedCount() {
-    const selected = document.querySelectorAll('.log-checkbox:checked');
-    const selectedCount = document.getElementById('selectedCount');
-    if (selectedCount) {
-        selectedCount.querySelector('span.fw-bold').textContent = selected.length;
-    }
-}
-
-// Event listener for individual checkboxes
-document.addEventListener('change', function(e) {
-    if (e.target.classList.contains('log-checkbox')) {
-        updateSelectedCount();
-    }
-});
-
-// Filter functionality for audit logs
-const auditSearch = document.getElementById('auditSearch');
-const auditActionFilter = document.getElementById('auditActionFilter');
-const auditTableFilter = document.getElementById('auditTableFilter');
-const clearSearchBtn = document.getElementById('clearSearch');
-
-if (auditSearch) {
-    auditSearch.addEventListener('input', filterAuditLogs);
-}
-
-if (auditActionFilter) {
-    auditActionFilter.addEventListener('change', filterAuditLogs);
-}
-
-if (auditTableFilter) {
-    auditTableFilter.addEventListener('change', filterAuditLogs);
-}
-
-if (clearSearchBtn) {
-    clearSearchBtn.addEventListener('click', function() {
-        auditSearch.value = '';
-        filterAuditLogs();
-    });
-}
-
-function filterAuditLogs() {
-    const searchTerm = auditSearch.value.toLowerCase();
-    const actionFilter = auditActionFilter.value;
-    const tableFilter = auditTableFilter.value;
-    
-    const logEntries = document.querySelectorAll('.audit-log-entry');
-    let visibleCount = 0;
-    let createCount = 0, updateCount = 0, deleteCount = 0;
-    
-    logEntries.forEach(entry => {
-        const action = entry.getAttribute('data-action');
-        const table = entry.getAttribute('data-table');
-        const username = entry.getAttribute('data-username');
-        const searchData = entry.getAttribute('data-search');
-        
-        let shouldShow = true;
-        
-        // Apply filters
-        if (actionFilter !== 'all' && action !== actionFilter) {
-            shouldShow = false;
-        }
-        
-        if (tableFilter !== 'all' && table !== tableFilter) {
-            shouldShow = false;
-        }
-        
-        if (searchTerm && !searchData.toLowerCase().includes(searchTerm)) {
-            shouldShow = false;
-        }
-        
-        if (shouldShow) {
-            entry.style.display = 'block';
-            visibleCount++;
-            
-            // Count actions
-            if (action === 'CREATE') createCount++;
-            else if (action === 'UPDATE') updateCount++;
-            else if (action === 'DELETE') deleteCount++;
-        } else {
-            entry.style.display = 'none';
-        }
-    });
-    
-    // Update counts
-    document.getElementById('showingCount').textContent = visibleCount;
-    document.getElementById('createCount').textContent = createCount;
-    document.getElementById('updateCount').textContent = updateCount;
-    document.getElementById('deleteCount').textContent = deleteCount;
-}
-
-// Initialize stats on load
-function updateAuditStats() {
-    const logEntries = document.querySelectorAll('.audit-log-entry');
-    let createCount = 0, updateCount = 0, deleteCount = 0;
-    
-    logEntries.forEach(entry => {
-        const action = entry.getAttribute('data-action');
-        if (action === 'CREATE') createCount++;
-        else if (action === 'UPDATE') updateCount++;
-        else if (action === 'DELETE') deleteCount++;
-    });
-    
-    document.getElementById('createCount').textContent = createCount;
-    document.getElementById('updateCount').textContent = updateCount;
-    document.getElementById('deleteCount').textContent = deleteCount;
-    document.getElementById('totalLogs').textContent = logEntries.length;
-    document.getElementById('showingCount').textContent = logEntries.length;
-}
-
-// Initialize stats on load
-updateAuditStats();
     // Helper functions
     function getCSRFToken() {
         return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
