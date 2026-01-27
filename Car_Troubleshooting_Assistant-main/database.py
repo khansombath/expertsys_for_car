@@ -154,6 +154,7 @@ def create_tables():
                 parent VARCHAR(100) NOT NULL,
                 created_by INT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- ADD THIS
                 UNIQUE KEY unique_child (child),
                 FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
             )
@@ -782,13 +783,26 @@ def update_taxonomy_relationship(child, parent, user_id=None):
     cursor = conn.cursor()
     
     try:
-        cursor.execute('''
-            INSERT INTO taxonomy (child, parent, created_by)
-            VALUES (%s, %s, %s)
-            ON DUPLICATE KEY UPDATE
-                parent = VALUES(parent),
-                updated_at = CURRENT_TIMESTAMP
-        ''', (child, parent, user_id))
+        # Check if the column exists
+        cursor.execute("SHOW COLUMNS FROM taxonomy LIKE 'updated_at'")
+        has_updated_at = cursor.fetchone() is not None
+        
+        if has_updated_at:
+            cursor.execute('''
+                INSERT INTO taxonomy (child, parent, created_by)
+                VALUES (%s, %s, %s)
+                ON DUPLICATE KEY UPDATE
+                    parent = VALUES(parent),
+                    updated_at = CURRENT_TIMESTAMP
+            ''', (child, parent, user_id))
+        else:
+            # Fallback for old schema
+            cursor.execute('''
+                INSERT INTO taxonomy (child, parent, created_by)
+                VALUES (%s, %s, %s)
+                ON DUPLICATE KEY UPDATE
+                    parent = VALUES(parent)
+            ''', (child, parent, user_id))
         
         conn.commit()
         return True

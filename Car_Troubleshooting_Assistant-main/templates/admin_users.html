@@ -8,7 +8,7 @@
     .admin-container {
         font-family: 'Segoe UI', 'Noto Sans Khmer', 'Roboto', sans-serif;
     }
-    
+    /* Last updated at 19 time 6:48PM in Timeline  */
     /* ===== ADMIN HERO HEADER ===== */
     .admin-hero {
         background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
@@ -966,17 +966,26 @@
                                             <input type="checkbox" class="form-check-input log-checkbox" value="{{ log.id }}">
                                         </td>
                                         <td class="text-center">{{ loop.index }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="user-avatar-small me-2">
-                                                    {{ (log.username or 'N')[0]|upper }}
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bold">{{ log.username or 'មិនស្គាល់' }}</div>
-                                                    <small class="text-muted">ID: {{ log.user_id }}</small>
-                                                </div>
-                                            </div>
-                                        </td>
+                                       <!-- In your audit logs table section, update the user information column -->
+<!-- In the audit logs table, update the user cell (around line 400-420) -->
+<td>
+    <div class="d-flex align-items-center">
+        <div class="user-avatar-small me-2">
+            {{ (log.username or 'N')[0]|upper }}
+        </div>
+        <div>
+            <div class="fw-bold">{{ log.username or 'មិនស្គាល់' }}</div>
+            <!-- Calculate display ID based on sorted_users -->
+            {% set display_id = 0 %}
+            {% for user in sorted_users %}
+                {% if user.id == log.user_id %}
+                    {% set display_id = loop.index %}
+                {% endif %}
+            {% endfor %}
+            <small class="text-muted">ID: {{ display_id if display_id > 0 else 'N/A' }}</small>
+        </div>
+    </div>
+</td>
                                         <td>
                                             <span class="badge {% if log.action == 'CREATE' %}bg-success{% elif log.action == 'UPDATE' %}bg-primary{% else %}bg-danger{% endif %}">
                                                 <i class="bi 
@@ -1044,19 +1053,30 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                                <button class="btn btn-outline-primary view-details-btn" 
-                                                        data-log-id="{{ log.id }}"
-                                                        data-log-username="{{ log.username|default('មិនស្គាល់', true) }}"
-                                                        data-log-action="{{ log.action|default('មិនស្គាល់', true) }}"
-                                                        data-log-table="{{ log.table_name|default('មិនស្គាល់', true) }}"
-                                                        data-log-record="{{ log.record_id|default('មិនមាន', true) }}"
-                                                        data-log-useragent="{{ log.user_agent|default('មិនស្គាល់', true) }}"
-                                                        data-log-oldvalue="{% if log.old_value %}{% if log.old_value is string %}{{ log.old_value|escape }}{% else %}{{ log.old_value|tojson|safe }}{% endif %}{% else %}null{% endif %}"
-                                                        data-log-newvalue="{% if log.new_value %}{% if log.new_value is string %}{{ log.new_value|escape }}{% else %}{{ log.new_value|tojson|safe }}{% endif %}{% else %}null{% endif %}"
-                                                        data-log-time="{% if log.created_at %}{{ log.created_at.isoformat() }}{% else %}null{% endif %}"
-                                                        title="មើលលម្អិត">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
+                                                <!-- Update the button attributes to include user display ID -->
+<!-- Update the view-details-btn (around line 470) -->
+<button class="btn btn-outline-primary view-details-btn" 
+        data-log-id="{{ log.id }}"
+        data-log-username="{{ log.username|default('មិនស្គាល់', true) }}"
+        data-log-action="{{ log.action|default('មិនស្គាល់', true) }}"
+        data-log-table="{{ log.table_name|default('មិនមាន', true) }}"
+        data-log-record="{{ log.record_id|default('មិនមាន', true) }}"
+        data-log-useragent="{{ log.user_agent|default('មិនស្គាល់', true) }}"
+        data-log-oldvalue="{% if log.old_value %}{% if log.old_value is string %}{{ log.old_value|escape }}{% else %}{{ log.old_value|tojson|safe }}{% endif %}{% else %}null{% endif %}"
+        data-log-newvalue="{% if log.new_value %}{% if log.new_value is string %}{{ log.new_value|escape }}{% else %}{{ log.new_value|tojson|safe }}{% endif %}{% else %}null{% endif %}"
+        data-log-time="{% if log.created_at %}{{ log.created_at.isoformat() }}{% else %}null{% endif %}"
+        data-log-userid="{{ log.user_id|default('0', true) }}"
+    
+        {% set display_id = 0 %}
+        {% for user in sorted_users %}
+            {% if user.id == log.user_id %}
+                {% set display_id = loop.index %}
+            {% endif %}
+        {% endfor %}
+        data-log-display-id="{{ display_id if display_id > 0 else 'N/A' }}"
+        title="មើលលម្អិត">
+    <i class="bi bi-eye"></i>
+</button>
                                                 <button class="btn btn-outline-danger delete-log-btn" 
                                                         data-log-id="{{ log.id }}"
                                                         data-log-username="{{ log.username }}"
@@ -1645,163 +1665,306 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    function showLogDetails(button) {
-        // Get data from button attributes
-        const username = button.getAttribute('data-log-username');
-        const action = button.getAttribute('data-log-action');
-        const table = button.getAttribute('data-log-table');
-        const recordId = button.getAttribute('data-log-record');
-        const time = button.getAttribute('data-log-time');
-        const userAgent = button.getAttribute('data-log-useragent');
-        
-        // Parse JSON data using our new function
-        let oldValue = null;
-        let newValue = null;
-        
-        try {
-            const oldValueStr = button.getAttribute('data-log-oldvalue');
-            const newValueStr = button.getAttribute('data-log-newvalue');
-            
-            oldValue = parseAuditValue(oldValueStr);
-            newValue = parseAuditValue(newValueStr);
-            
-        } catch (e) {
-            console.error('Error parsing JSON:', e);
-            oldValue = null;
-            newValue = null;
-        }
-        
-        // Translate action and table names to Khmer
-        const actionTranslations = {
-            'CREATE': 'បង្កើត',
-            'UPDATE': 'កែសម្រួល',
-            'DELETE': 'លុប',
-            'LOGIN': 'ចូលប្រើ',
-            'LOGOUT': 'ចាកចេញ',
-            'READ': 'អាន'
-        };
-        
-        const tableTranslations = {
-            'users': 'អ្នកប្រើប្រាស់',
-            'facts': 'ការពិត',
-            'rules': 'ច្បាប់',
-            'history': 'ប្រវត្តិ',
-            'taxonomy': 'ចំណាត់ថ្នាក់',
-            'audit_log': 'កំណត់ហេតុ'
-        };
-        
-        const translatedAction = actionTranslations[action] || action;
-        const translatedTable = tableTranslations[table] || table;
-        
-        // Populate basic information
-        document.getElementById('detailUsername').textContent = username || 'មិនស្គាល់';
-        document.getElementById('detailAction').textContent = translatedAction || 'មិនស្គាល់';
-        document.getElementById('detailTable').textContent = translatedTable || 'មិនមាន';
-        document.getElementById('detailRecordId').textContent = recordId || 'មិនមាន';
-        document.getElementById('detailActionType').textContent = translatedAction || 'មិនស្គាល់';
-        
-        // Format and display time
-        if (time) {
-            try {
-                const date = new Date(time);
-                if (!isNaN(date.getTime())) {
-                    const options = { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false 
-                    };
-                    document.getElementById('detailTime').textContent = date.toLocaleDateString('km-KH', options);
-                } else {
-                    document.getElementById('detailTime').textContent = time;
+   // Helper function to get user display ID from user table
+function getUserDisplayId(userId) {
+    // Look for the user in the users table
+    const userRows = document.querySelectorAll('#usersTable tbody tr');
+    for (const row of userRows) {
+        // Get the displayed ID from the first column (loop.index)
+        const userBadge = row.querySelector('.user-id-badge');
+        if (userBadge) {
+            const displayId = userBadge.textContent.trim();
+            // Find the user by checking the username in the second column
+            const usernameCell = row.querySelector('td:nth-child(2) strong');
+            if (usernameCell) {
+                // If we need to match by actual user ID, we should store it in a data attribute
+                const rowUserId = row.getAttribute('data-user-id');
+                if (rowUserId && rowUserId == userId) {
+                    return displayId;
                 }
-            } catch (e) {
+            }
+        }
+    }
+    return 'N/A';
+}
+
+// Main function to show log details
+function showLogDetails(button) {
+    // Get data from button attributes
+    const username = button.getAttribute('data-log-username');
+    const action = button.getAttribute('data-log-action');
+    const table = button.getAttribute('data-log-table');
+    const recordId = button.getAttribute('data-log-record');
+    const time = button.getAttribute('data-log-time');
+    const userAgent = button.getAttribute('data-log-useragent');
+    const userId = button.getAttribute('data-log-userid');
+    // Get the DISPLAY ID (loop.index from user table)
+    const displayId = button.getAttribute('data-log-display-id');
+    
+    // Parse JSON data
+    let oldValue = null;
+    let newValue = null;
+    
+    try {
+        const oldValueStr = button.getAttribute('data-log-oldvalue');
+        const newValueStr = button.getAttribute('data-log-newvalue');
+        
+        oldValue = parseAuditValue(oldValueStr);
+        newValue = parseAuditValue(newValueStr);
+        
+    } catch (e) {
+        console.error('Error parsing JSON:', e);
+        oldValue = null;
+        newValue = null;
+    }
+    
+    // Translate action and table names to Khmer
+    const actionTranslations = {
+        'CREATE': 'បង្កើត',
+        'UPDATE': 'កែសម្រួល',
+        'DELETE': 'លុប',
+        'LOGIN': 'ចូលប្រើ',
+        'LOGOUT': 'ចាកចេញ',
+        'READ': 'អាន'
+    };
+    
+    const tableTranslations = {
+        'users': 'អ្នកប្រើប្រាស់',
+        'facts': 'ការពិត',
+        'rules': 'ច្បាប់',
+        'history': 'ប្រវត្តិ',
+        'taxonomy': 'ចំណាត់ថ្នាក់',
+        'audit_log': 'កំណត់ហេតុ'
+    };
+    
+    const translatedAction = actionTranslations[action] || action;
+    const translatedTable = tableTranslations[table] || table;
+    
+    // Display using the DISPLAY ID (loop.index)
+    const usernameElement = document.getElementById('detailUsername');
+    usernameElement.innerHTML = `
+        <div class="d-flex align-items-center mb-2">
+            <div class="user-avatar-small me-2">
+                ${(username || 'មិនស្គាល់')[0].toUpperCase()}
+            </div>
+            <div>
+                <strong>${username || 'មិនស្គាល់'}</strong>
+                <br>
+                <small class="text-muted">លេខសម្គាល់អ្នកប្រើ: <span class="badge bg-primary">${displayId}</span></small>
+            </div>
+        </div>
+        <div class="mt-2">
+            <small class="text-muted">ព័ត៌មានពីតារាងអ្នកប្រើប្រាស់:</small>
+            <br>
+            <small>លេខសម្គាល់: ${displayId}</small>
+            <br>
+            <small>ឈ្មោះ: ${username || 'មិនស្គាល់'}</small>
+            <br>
+            <small>អត្តសញ្ញាណតាមប្រព័ន្ធ: ${userId || 'N/A'}</small>
+        </div>
+    `;
+    
+    document.getElementById('detailAction').textContent = translatedAction || 'មិនស្គាល់';
+    document.getElementById('detailTable').textContent = translatedTable || 'មិនមាន';
+    document.getElementById('detailRecordId').textContent = recordId || 'មិនមាន';
+    document.getElementById('detailActionType').textContent = translatedAction || 'មិនស្គាល់';
+    
+    
+    // Format and display time
+    if (time) {
+        try {
+            const date = new Date(time);
+            if (!isNaN(date.getTime())) {
+                const options = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false 
+                };
+                document.getElementById('detailTime').textContent = date.toLocaleDateString('km-KH', options);
+            } else {
                 document.getElementById('detailTime').textContent = time;
             }
+        } catch (e) {
+            document.getElementById('detailTime').textContent = time;
+        }
+    } else {
+        document.getElementById('detailTime').textContent = 'មិនស្គាល់';
+    }
+    
+    // Show/hide data changes section based on action type
+    const dataChangesSection = document.getElementById('dataChangesSection');
+    const noDataChangesSection = document.getElementById('noDataChangesSection');
+    
+    // Actions that should show data changes
+    const dataChangeActions = ['CREATE', 'UPDATE', 'DELETE'];
+    
+    if (dataChangeActions.includes(action) && (oldValue || newValue)) {
+        // Show data changes section
+        dataChangesSection.style.display = 'block';
+        noDataChangesSection.style.display = 'none';
+        
+        // Format and display data
+        const formattedOldValue = formatDataForDisplay(oldValue);
+        const formattedNewValue = formatDataForDisplay(newValue);
+        
+        // Show/hide sections based on data availability
+        const oldValueSection = document.getElementById('oldValueSection');
+        const newValueSection = document.getElementById('newValueSection');
+        
+        if (oldValue && Object.keys(oldValue).length > 0) {
+            oldValueSection.style.display = 'block';
+            document.getElementById('detailOldValue').textContent = formattedOldValue;
         } else {
-            document.getElementById('detailTime').textContent = 'មិនស្គាល់';
+            oldValueSection.style.display = 'none';
         }
         
-        // Show/hide data changes section based on action type
-        const dataChangesSection = document.getElementById('dataChangesSection');
-        const noDataChangesSection = document.getElementById('noDataChangesSection');
-        
-        // Actions that should show data changes
-        const dataChangeActions = ['CREATE', 'UPDATE', 'DELETE'];
-        
-        if (dataChangeActions.includes(action) && (oldValue || newValue)) {
-            // Show data changes section
-            dataChangesSection.style.display = 'block';
-            noDataChangesSection.style.display = 'none';
-            
-            // Format and display data
-            const formattedOldValue = formatDataForDisplay(oldValue);
-            const formattedNewValue = formatDataForDisplay(newValue);
-            
-            // Show/hide sections based on data availability
-            const oldValueSection = document.getElementById('oldValueSection');
-            const newValueSection = document.getElementById('newValueSection');
-            
-            if (oldValue && Object.keys(oldValue).length > 0) {
-                oldValueSection.style.display = 'block';
-                document.getElementById('detailOldValue').textContent = formattedOldValue;
-            } else {
-                oldValueSection.style.display = 'none';
-            }
-            
-            if (newValue && Object.keys(newValue).length > 0) {
-                newValueSection.style.display = 'block';
-                document.getElementById('detailNewValue').textContent = formattedNewValue;
-            } else {
-                newValueSection.style.display = 'none';
-            }
-            
-            // If no data at all, show message
-            if ((!oldValue || Object.keys(oldValue).length === 0) && 
-                (!newValue || Object.keys(newValue).length === 0)) {
-                dataChangesSection.style.display = 'none';
-                noDataChangesSection.style.display = 'block';
-            }
+        if (newValue && Object.keys(newValue).length > 0) {
+            newValueSection.style.display = 'block';
+            document.getElementById('detailNewValue').textContent = formattedNewValue;
         } else {
-            // Hide data changes section for other actions
+            newValueSection.style.display = 'none';
+        }
+        
+        // If no data at all, show message
+        if ((!oldValue || Object.keys(oldValue).length === 0) && 
+            (!newValue || Object.keys(newValue).length === 0)) {
             dataChangesSection.style.display = 'none';
             noDataChangesSection.style.display = 'block';
         }
-        
-        // User Agent (Browser information)
-        const userAgentSection = document.getElementById('detailUserAgentSection');
-        if (userAgent && userAgent !== 'null' && userAgent !== 'undefined' && userAgent !== '') {
-            userAgentSection.style.display = 'block';
-            
-            // Try to parse user agent for better display
-            let userAgentText = userAgent;
-            if (userAgent.includes('Chrome')) userAgentText = 'Google Chrome';
-            else if (userAgent.includes('Firefox')) userAgentText = 'Mozilla Firefox';
-            else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) userAgentText = 'Safari';
-            else if (userAgent.includes('Edge')) userAgentText = 'Microsoft Edge';
-            else if (userAgent.includes('Opera')) userAgentText = 'Opera';
-            
-            document.getElementById('detailUserAgent').textContent = userAgentText;
-        } else {
-            userAgentSection.style.display = 'none';
-        }
-        
-        // Set export button
-        const logId = button.getAttribute('data-log-id');
-        const exportBtn = document.getElementById('exportCurrentLogBtn');
-        if (exportBtn) {
-            exportBtn.onclick = function() {
-                exportLog(logId);
-            };
-        }
-        
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('logDetailsModal'));
-        modal.show();
+    } else {
+        // Hide data changes section for other actions
+        dataChangesSection.style.display = 'none';
+        noDataChangesSection.style.display = 'block';
     }
+    
+    // User Agent (Browser information)
+    const userAgentSection = document.getElementById('detailUserAgentSection');
+    if (userAgent && userAgent !== 'null' && userAgent !== 'undefined' && userAgent !== '') {
+        userAgentSection.style.display = 'block';
+        
+        // Try to parse user agent for better display
+        let userAgentText = userAgent;
+        if (userAgent.includes('Chrome')) userAgentText = 'Google Chrome';
+        else if (userAgent.includes('Firefox')) userAgentText = 'Mozilla Firefox';
+        else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) userAgentText = 'Safari';
+        else if (userAgent.includes('Edge')) userAgentText = 'Microsoft Edge';
+        else if (userAgent.includes('Opera')) userAgentText = 'Opera';
+        
+        document.getElementById('detailUserAgent').textContent = userAgentText;
+    } else {
+        userAgentSection.style.display = 'none';
+    }
+    
+    // Set export button
+    const logId = button.getAttribute('data-log-id');
+    const exportBtn = document.getElementById('exportCurrentLogBtn');
+    if (exportBtn) {
+        exportBtn.onclick = function() {
+            exportLog(logId);
+        };
+    }
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('logDetailsModal'));
+    modal.show();
+}
+
+function formatDataForDisplay(data) {
+    if (!data || Object.keys(data).length === 0) {
+        return 'មិនមានទិន្នន័យ';
+    }
+    
+    // If data is already a string (might be JSON string), try to parse it
+    if (typeof data === 'string') {
+        try {
+            // Try to parse as JSON first
+            const parsed = JSON.parse(data);
+            return formatDataForDisplay(parsed);
+        } catch (e) {
+            // If not JSON, return as is
+            return data;
+        }
+    }
+    
+    // If data is an array, format each item
+    if (Array.isArray(data)) {
+        return data.map(item => formatDataForDisplay(item)).join('\n');
+    }
+    
+    // If data is a plain object, format key-value pairs
+    if (typeof data === 'object' && data !== null) {
+        const translations = {
+            'id': 'លេខសម្គាល់',
+            'timestamp': 'ពេលវេលា',
+            'observations': 'ការសង្កេត',
+            'expanded_obs': 'ការពង្រីកការសង្កេត',
+            'results': 'លទ្ធផល',
+            'user_id': 'លេខសម្គាល់អ្នកប្រើ',
+            'username': 'ឈ្មោះអ្នកប្រើប្រាស់',
+            'email': 'អ៊ីមែល',
+            'role': 'តួនាទី',
+            'is_active': 'ស្ថានភាព',
+            'created_by': 'បង្កើតដោយ',
+            'table_name': 'តារាង',
+            'action': 'សកម្មភាព',
+            'record_id': 'លេខសម្គាល់កំណត់ត្រា',
+            'old_value': 'តម្លៃចាស់',
+            'new_value': 'តម្លៃថ្មី',
+            'ip_address': 'អាសយដ្ឋាន IP',
+            'user_agent': 'ឧបករណ៍ប្រើប្រាស់'
+        };
+        
+        const formattedLines = [];
+        
+        for (const [key, value] of Object.entries(data)) {
+            const translatedKey = translations[key] || key;
+            
+            // Handle nested objects recursively
+            if (typeof value === 'object' && value !== null) {
+                formattedLines.push(`${translatedKey}:`);
+                formattedLines.push(formatDataForDisplay(value).split('\n').map(line => `  ${line}`).join('\n'));
+            } else {
+                // Special formatting for specific values
+                let formattedValue = value;
+                
+                if (key === 'is_active' || key === 'value') {
+                    formattedValue = value ? 'បាទ/ចាស៎' : 'ទេ';
+                } else if (key === 'timestamp' || key.includes('_at') || key.includes('date')) {
+                    // Try to format date
+                    try {
+                        const date = new Date(value);
+                        if (!isNaN(date.getTime())) {
+                            formattedValue = date.toLocaleDateString('km-KH', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: false
+                            });
+                        }
+                    } catch (e) {
+                        // Keep original value if can't parse as date
+                    }
+                } else if (value === null || value === undefined) {
+                    formattedValue = 'ទទេ';
+                }
+                
+                formattedLines.push(`${translatedKey}: ${formattedValue}`);
+            }
+        }
+        
+        return formattedLines.join('\n');
+    }
+    
+    // For any other type, convert to string
+    return String(data);
+}
 
     function formatDataForDisplay(data) {
         if (!data || Object.keys(data).length === 0) {
