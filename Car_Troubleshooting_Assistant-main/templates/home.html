@@ -13,8 +13,8 @@
     /* Hero Section with Parallax Effect */
     .hero-section {
         background: 
-            linear-gradient(rgba(93, 89, 89, 0.7), rgba(62, 54, 54, 0.8)),
-            url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=80https://www.spyne.ai/blogs/wp-content/uploads/2024/11/DALL%C2%B7E-2024-11-05-22.50.05-A-modern-dynamic-landscape-image-for-a-blog-titled-Custom-Automotive-Website-Design-Ideas-2024.-The-image-should-feature-a-sleek-futuristic-car-de.webp');
+            /* linear-gradient(rgba(93, 89, 89, 0.7), rgba(62, 54, 54, 0)), */
+            url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=80');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -49,12 +49,15 @@
         font-weight: 800;
         font-size: 4rem;
         line-height: 1.2;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2.5rem;
         background: linear-gradient(90deg, #fff, var(--accent-color));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        height: 100px;
+        
+       
     }
 
     .hero-subtitle {
@@ -157,7 +160,7 @@
     .how-it-works {
         padding: 6rem 0;
         background: 
-            linear-gradient(rgba(26, 26, 46, 0.9), rgba(26, 26, 46, 0.95)),
+            linear-gradient(rgba(58, 58, 63, 0.9), rgba(61, 61, 136, 0.95)),
             url('https://images.unsplash.com/photo-1568992687947-868a62a9f521?auto=format&fit=crop&w=1920&q=80');
         background-size: cover;
         background-position: center;
@@ -206,7 +209,7 @@
     /* Stats Section */
     .stats-section {
         padding: 5rem 0;
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
         color: white;
         position: relative;
         overflow: hidden;
@@ -234,12 +237,12 @@
         font-size: 3rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
-        color: var(--accent-color);
+        color: var(--light-bg);
     }
 
     .stat-label {
         font-size: 1.1rem;
-        opacity: 0.9;
+        opacity: 10;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
@@ -248,7 +251,7 @@
     .cta-section {
         padding: 6rem 0;
         background: 
-            linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9)),
+            linear-gradient(rgba(0, 0, 0, 0.8), rgba(57, 53, 53, 0.9)),
             url('https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1920&q=80');
         background-size: cover;
         background-position: center;
@@ -257,16 +260,15 @@
     }
 
     .cta-title {
+        height: 100px;
         font-size: 3rem;
         font-weight: 700;
         margin-bottom: 20px;
-        height: 80px;
         background: linear-gradient(90deg, #fff, var(--accent-color));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
-   
 
     .cta-subtitle {
         font-size: 1.2rem;
@@ -276,7 +278,6 @@
         margin-left: auto;
         margin-right: auto;
     }
-   
 
     .cta-button {
         padding: 1rem 3rem;
@@ -338,7 +339,7 @@
 <!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
-        <div class="row align-items-center">
+        <div class="row align-items-center p-2">
             <div class="col-lg-7">
                 <h1 class="hero-title">ជំនួយការវិនិច្ឆ័យរថយន្ត</h1>
                 <p class="hero-subtitle">
@@ -346,13 +347,18 @@
                     ជាមួយនឹងភាពត្រឹមត្រូវខ្ពស់ និងការផ្តល់ដំណោះស្រាយភ្លាមៗ។
                 </p>
                 <div class="d-flex flex-wrap gap-3">
+                    {% if current_user.is_authenticated %}
                     <a href="{{ url_for('infer') }}" class="btn btn-warning btn-lg px-5 rounded-pill pulse-element">
                         <i class="bi bi-lightning-charge-fill me-2"></i>ចាប់ផ្តើមវិនិច្ឆ័យ
                     </a>
-                    <a href="#features" class="btn btn-outline-light btn-lg px-4 rounded-pill">
+                    {% else %}
+                    <a href="{{ url_for('register') }}" class="btn btn-warning btn-lg px-5 rounded-pill pulse-element">
+                        <i class="bi bi-person-plus me-2"></i>ចុះឈ្មោះឥឡូវនេះ
+                    </a>
+                    {% endif %}
+                  <a href="{{ url_for('readme') }}" class="btn btn-outline-light btn-lg px-4 rounded-pill">
                         <i class="bi bi-info-circle me-2"></i>ស្វែងយល់បន្ថែម
                     </a>
-                  
                 </div>
             </div>
             <div class="col-lg-5 text-center">
@@ -366,7 +372,7 @@
 <section id="features" class="features-section">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-4 fw-bold mb-3">លក្ខណៈពិសេសនៃប្រព័ន្ធ</h2>
+            <h2 class="display-4 fw-bold mb-3 text-danger">លក្ខណៈពិសេសនៃប្រព័ន្ធ</h2>
             <p class="lead text-muted">ប្រព័ន្ធទំនើបសម្រាប់ការវិនិច្ឆ័យរថយន្តដែលមានប្រសិទ្ធភាព</p>
         </div>
         
@@ -513,8 +519,8 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-3 col-md-6">
-                <div class="stat-item">
-                    <div class="stat-number">{{ facts_count }}</div>
+                <div class="stat-item ">
+                    <div class="stat-number   ">{{ facts_count }}</div>
                     <div class="stat-label">ទិន្នន័យការពិត</div>
                 </div>
             </div>
@@ -543,14 +549,20 @@
 <!-- Call to Action Section -->
 <section class="cta-section">
     <div class="container">
-        <h2 class="cta-title   ">ត្រៀមខ្លួនធ្វើការវិនិច្ឆ័យ?</h2>
+        <h2 class="cta-title ">ត្រៀមខ្លួនធ្វើការវិនិច្ឆ័យ?</h2>
         <p class="cta-subtitle">
             ចាប់ផ្តើមការវិនិច្ឆ័យបញ្ហាម៉ាស៊ីនរថយន្តរបស់អ្នកឥឡូវនេះ 
             ជាមួយនឹងប្រព័ន្ធបញ្ញាសិក្សាដែលមានប្រសិទ្ធភាព។
         </p>
+        {% if current_user.is_authenticated %}
         <a href="{{ url_for('infer') }}" class="cta-button">
             <i class="bi bi-lightning-charge-fill"></i>ចាប់ផ្តើមវិនិច្ឆ័យឥឡូវនេះ
         </a>
+        {% else %}
+        <a href="{{ url_for('register') }}" class="cta-button">
+            <i class="bi bi-person-plus"></i>ចុះឈ្មោះដោយឥតគិតថ្លៃ
+        </a>
+        {% endif %}
     </div>
 </section>
 
@@ -595,18 +607,6 @@
     // Observe all feature cards
     document.querySelectorAll('.feature-card, .step-card').forEach(card => {
         observer.observe(card);
-    });
-    
-    // Add hover sound effect (optional)
-    const featureCards = document.querySelectorAll('.feature-card');
-    featureCards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-            card.style.transform = 'translateY(-15px)';
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'translateY(0)';
-        });
     });
 </script>
 {% endblock %}

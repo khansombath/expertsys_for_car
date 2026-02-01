@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoExpert - ប្រព័ន្ធវិនិច្ឆ័យរថយន្ត</title>
+    <title>ប្រព័ន្ធវិនិច្ឆ័យរថយន្ត </title>
+    <link rel="icon" href="//static/images/khan.jpg" type="">
     <!-- Bootstrap 5 with Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -17,11 +18,21 @@
             --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
         }
         
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+          body {
+            font-family: 'Kantumruy Pro', 'Segoe UI', system-ui, sans-serif;
+            background: 
+                /* linear-gradient(rgba(212, 215, 218, 0.85), rgba(172, 174, 178, 0.9)), */
+                url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             min-height: 100vh;
+            color: #f0f0f0;
+            position: relative;
+            overflow-x: hidden;
         }
+
         
         .color-change-brand {
             position: relative;
@@ -440,53 +451,74 @@
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{{ url_for('home') }}">
-                         <i class="bi bi-house-gear-fill me-1"></i>
-                          ទំព័រដំបូង
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{{ url_for('facts_list') }}">
-                            <i class="bi bi-list-check me-1"></i>
-                          បញ្ហារថយន្ត​ឬសញ្ញាមិនប្រក្រក្តី
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{{ url_for('rules_list') }}">
-                            <i class="bi bi-diagram-3 me-1"></i>
-                            ច្បាប់
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{{ url_for('infer') }}">
-                            <i class="bi bi-lightning-charge-fill me-1"></i>
-                            ម៉ាស៊ីនសន្និដ្ឋាន
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{{ url_for('history_list') }}">
-                            <i class="bi bi-clock-history me-1"></i> ប្រវត្តិ
-                        </a>
-                    </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{{ url_for('taxonomy_view') }}">
-                            <i class="bi bi-share me-1"></i>
-                            ចំណាត់ថ្នាក់
-                        </a>
-                    </li> -->
-                    {% if current_user.role == 'admin' %}
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center text-warning" href="{{ url_for('admin_users') }}">
-                            <i class="bi bi-shield-lock me-1"></i>
-                            ផ្ទាំងគ្រប់គ្រង​
-                        </a>
-                    </li>
-                    {% endif %}
-                    {% endif %}
-                </ul>
+               <!-- In base.html, inside the navbar -->
+<ul class="navbar-nav me-auto">
+    <!-- Home link always visible -->
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="{{ url_for('home') }}">
+            <i class="bi bi-house-gear-fill me-1"></i>
+            ទំព័រដំបូង
+        </a>
+    </li>
+    
+    <!-- Protected links that require login -->
+    {% if current_user.is_authenticated %}
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="{{ url_for('facts_list') }}">
+            <i class="bi bi-list-check me-1"></i>
+            បញ្ហារថយន្ត
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="{{ url_for('rules_list') }}">
+            <i class="bi bi-diagram-3 me-1"></i>
+            ច្បាប់
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="{{ url_for('infer') }}">
+            <i class="bi bi-lightning-charge-fill me-1"></i>
+            ម៉ាស៊ីនសន្និដ្ឋាន
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="{{ url_for('history_list') }}">
+            <i class="bi bi-clock-history me-1"></i> ប្រវត្តិ
+        </a>
+    </li>
+    {% if current_user.role == 'admin' %}
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center text-warning" href="{{ url_for('admin_users') }}">
+            <i class="bi bi-shield-lock me-1"></i>
+            ផ្ទាំងគ្រប់គ្រង
+        </a>
+    </li>
+    {% endif %}
+    {% else %}
+    <!-- Links that show login prompt for unauthenticated users -->
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="javascript:void(0)" onclick="showLoginAlert()">
+            <i class="bi bi-list-check me-1"></i>
+            បញ្ហារថយន្ត
+          
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="javascript:void(0)" onclick="showLoginAlert()">
+            <i class="bi bi-diagram-3 me-1"></i>
+            ច្បាប់
+          
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="javascript:void(0)" onclick="showLoginAlert()">
+            <i class="bi bi-lightning-charge-fill me-1"></i>
+            ម៉ាស៊ីនសន្និដ្ឋាន
+          
+        </a>
+    </li>
+    {% endif %}
+</ul>
                 
                 <!-- User Authentication Section -->
                 <ul class="navbar-nav">
@@ -621,9 +653,9 @@
                     
                     <!-- Column 3: Quick Links as Buttons -->
                     <div class="col-lg-4 text-center text-lg-end">
-                        <h6 class="mb-3 border-bottom pb-2">ចំណុចភ្ជាប់រហ័ស</h6>
+                        <h6 class="mb-3 border-bottom pb-2 text-center">ចំណុចភ្ជាប់រហ័ស</h6>
                         <div class="d-grid gap-2">
-                            <a href="{{ url_for('home') }}" class="btn btn-outline-light btn-sm">
+                            <a href="{{ url_for('admin_users') }}" class="btn btn-outline-light btn-sm">
                                 <i class="bi bi-speedometer2 me-1"></i>ផ្ទាំងគ្រប់គ្រង
                             </a>
                             <a href="{{ url_for('infer') }}" class="btn btn-outline-light btn-sm">
@@ -661,7 +693,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">
-                        <i class="bi bi-person-badge me-2"></i>ខាន់ សំបាត
+                        <i class="bi bi-person-badge me-2"></i>ខាន់ សម្បត្តិ
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -673,8 +705,8 @@
                              style="width: 300px; height: 300px; object-fit: cover;"
                              onerror="this.style.display='none';">
                     </div>
-                    <h6 class="text-primary">មេគម្រោង</h6>
-                    <p class="mb-3">អ្នកអភិវឌ្ឍន៍កម្មវិធីនិងស្ថាបត្យករប្រព័ន្ធ</p>
+                    <h6 class="text-primary">អ្នកគ្រប់គ្រង់គម្រោង</h6>
+                    <p class="mb-3 text-danger">អ្នកអភិវឌ្ឍន៍កម្មវិធីនិងស្ថាបត្យករប្រព័ន្ធ</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">បិទ</button>
@@ -689,7 +721,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title">
-                        <i class="bi bi-person-badge me-2"></i>ពេជ្រ ប៊ុតធារិទ្ធ
+                        <i class="bi bi-person-badge me-2"></i>ប៉ិច  ពុទ្ធារិទ្ធ
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -702,7 +734,7 @@
                              onerror="this.style.display='none';">
                     </div>
                     <h6 class="text-success">ស្ថាបត្យករប្រព័ន្ធ</h6>
-                    <p class="mb-3">ការអភិវឌ្ឍ Backend និងម៉ាស៊ីន AI</p>
+                    <p class="mb-3 text-danger">ការអភិវឌ្ឍ Backend និងម៉ាស៊ីន AI</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-bs-dismiss="modal">បិទ</button>
@@ -717,7 +749,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-warning text-dark">
                     <h5 class="modal-title">
-                        <i class="bi bi-person-badge me-2"></i>ជន ប៉ាញ់ណា
+                        <i class="bi bi-person-badge me-2"></i>ឆន​ បញ្ញា
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -730,7 +762,7 @@
                              onerror="this.style.display='none';">
                     </div>
                     <h6 class="text-warning">វិស្វករ AI</h6>
-                    <p class="mb-3">ប្រព័ន្ធអ្នកជំនាញនិងម៉ាស៊ីនសន្និដ្ឋាន</p>
+                    <p class="mb-3 text-danger">ប្រព័ន្ធអ្នកជំនាញនិងម៉ាស៊ីនសន្និដ្ឋាន</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-bs-dismiss="modal">បិទ</button>
@@ -745,7 +777,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
                     <h5 class="modal-title">
-                        <i class="bi bi-person-badge me-2"></i>និន ទីងហ៊ាង
+                        <i class="bi bi-person-badge me-2"></i>និន តេងហ៊ាង
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -758,7 +790,7 @@
                              onerror="this.style.display='none';">
                     </div>
                     <h6 class="text-info">អ្នកអភិវឌ្ឍ Frontend</h6>
-                    <p class="mb-3">ការរចនា UI/UX និងការអភិវឌ្ឍ Frontend</p>
+                    <p class="mb-3 text-danger">ការរចនា UI/UX និងការអភិវឌ្ឍ Frontend</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info" data-bs-dismiss="modal">បិទ</button>
@@ -771,6 +803,84 @@
     
     <!-- Hover effect for brand letters -->
     <script>
+        function showLoginAlert() {
+    // Create a custom alert/modal
+    const modalHtml = `
+        <div class="modal fade" id="loginAlertModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            ត្រូវការចូលប្រើ
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div class="mb-4">
+                            <i class="bi bi-shield-lock text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="text-warning">សូមចូលប្រើគណនីរបស់អ្នក</h5>
+                        <p class="text-muted">
+                            ដើម្បីប្រើប្រាស់លក្ខណៈពិសេសនេះ សូមចូលប្រើគណនីរបស់អ្នក។
+                            ប្រសិនបើអ្នកមិនទាន់មានគណនីទេ អ្នកអាចចុះឈ្មោះដោយឥតគិតថ្លៃ។
+                        </p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>ចូលប្រើ
+                        </a>
+                        <a href="{{ url_for('register') }}" class="btn btn-success">
+                            <i class="bi bi-person-plus me-2"></i>ចុះឈ្មោះថ្មី
+                        </a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-2"></i>បោះបង់
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('loginAlertModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show the modal
+    const loginModal = new bootstrap.Modal(document.getElementById('loginAlertModal'));
+    loginModal.show();
+}
+
+// Also intercept protected links if clicked directly
+document.addEventListener('DOMContentLoaded', function() {
+    // Check all links that might need authentication
+    const protectedLinks = [
+        '/facts',
+        '/rules', 
+        '/infer',
+        '/history',
+        '/taxonomy',
+        '/dashboard'
+    ];
+    
+    protectedLinks.forEach(path => {
+        const links = document.querySelectorAll(`a[href*="${path}"]`);
+        links.forEach(link => {
+            if (!link.hasAttribute('data-protected-handled')) {
+                // Check if user is authenticated (via data attribute or JavaScript check)
+                link.setAttribute('data-protected-handled', 'true');
+                
+                // For demo, we'll rely on the backend to redirect to login
+                // The Flask-Login will handle the redirect automatically
+            }
+        });
+    });
+});
         document.addEventListener('DOMContentLoaded', function() {
             const brand = document.querySelector('.color-change-brand');
             const letters = document.querySelectorAll('.letter');
@@ -792,6 +902,7 @@
                 });
             }
         });
+        
     </script>
 </body>
 </html>

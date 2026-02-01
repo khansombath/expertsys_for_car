@@ -3,45 +3,103 @@
 {% block title %}ចុះឈ្មោះ - ប្រព័ន្ធជំនួយជួសជុលរថយន្ត{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6">
-        <div class="card shadow-lg border-0" style="border-radius: 15px;">
-            <div class="card-header bg-success text-white text-center py-3" style="border-radius: 15px 15px 0 0;">
-                <h4 class="mb-0"><i class="bi bi-person-plus me-2"></i>បង្កើតគណនីថ្មី</h4>
-            </div>
-            <div class="card-body p-4">
-                <form method="POST" action="{{ url_for('register') }}">
-                    <div class="mb-3">
-                        <label for="username" class="form-label fw-bold">ឈ្មោះអ្នកប្រើប្រាស់ (Username)</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="ជ្រើសរើសឈ្មោះសម្គាល់ខ្លួន" required>
-                        <div class="form-text text-muted">សូមជ្រើសរើសឈ្មោះដែលមិនទាន់មានអ្នកប្រើ។</div>
-                    </div>
+<style>
+    /* Full-screen background image */
+    body {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                    url('https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=2070&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
 
-                    <div class="mb-3">
-                        <label for="email" class="form-label fw-bold">អាសយដ្ឋានអ៊ីមែល (មិនបង្ខំ)</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="ឧទាហរណ៍៖ name@example.com">
-                    </div>
+    /* Glassmorphism Card Effect */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: none;
+        border-radius: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-                    <div class="mb-3">
-                        <label for="password" class="form-label fw-bold">ពាក្យសម្ងាត់ (Password)</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="បញ្ចូលពាក្យសម្ងាត់របស់អ្នក" required>
-                        <div class="form-text text-muted">ត្រូវមានយ៉ាងតិច ៦ តួអក្សរ។</div>
-                    </div>
+    /* Hover Animation */
+    .glass-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
 
-                    <div class="mb-3">
-                        <label for="confirm_password" class="form-label fw-bold">បញ្ជាក់ពាក្យសម្ងាត់</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="បញ្ចូលពាក្យសម្ងាត់ម្តងទៀត" required>
-                    </div>
+    /* Modern Input Styling */
+    .form-control {
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+    }
 
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-success py-2 fw-bold">ចុះឈ្មោះប្រើប្រាស់</button>
-                    </div>
+    .form-control:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
 
-                    <div class="text-center mt-3">
-                        <span class="text-muted">មានគណនីរួចហើយមែនទេ?</span>
-                        <a href="{{ url_for('login') }}" class="btn btn-link fw-bold text-decoration-none">ចូលប្រើប្រាស់នៅទីនេះ</a>
-                    </div>
-                </form>
+    /* Button Animation */
+    .btn-register {
+        border-radius: 10px;
+        padding: 12px;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-register:hover {
+        filter: brightness(1.1);
+        transform: scale(1.02);
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 90vh;">
+        <div class="col-md-5">
+            <div class="card glass-card shadow">
+                <div class="card-header bg-success text-white text-center py-4" style="border-radius: 20px 20px 0 0;">
+                    <h3 class="mb-0 fw-bold">
+                        <i class="bi bi-person-plus-fill me-2"></i>បង្កើតគណនីថ្មី
+                    </h3>
+                </div>
+                <div class="card-body p-4 p-lg-5">
+                    <form method="POST" action="{{ url_for('register') }}">
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-bold text-dark">ឈ្មោះអ្នកប្រើប្រាស់</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="ឈ្មោះសម្គាល់ខ្លួន" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold text-dark">អាសយដ្ឋានអ៊ីមែល</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-bold text-dark">ពាក្យសម្ងាត់</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="យ៉ាងតិច ៦ តួអក្សរ" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="confirm_password" class="form-label fw-bold text-dark">បញ្ជាក់ពាក្យសម្ងាត់</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="បញ្ចូលម្តងទៀត" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-register fw-bold shadow-sm">
+                                ចុះឈ្មោះប្រើប្រាស់
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <p class="text-muted small">មានគណនីរួចហើយមែនទេ? 
+                                <a href="{{ url_for('login') }}" class="text-success fw-bold text-decoration-none">ចូលប្រើប្រាស់</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

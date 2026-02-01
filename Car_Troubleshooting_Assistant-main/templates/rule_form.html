@@ -9,21 +9,21 @@
                 <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, #4a6fa5, #166088);">
                     <i class="bi bi-diagram-3 text-white"></i>
                 </div>
-                <h2 class="h3 mb-2">
+                <h2 class="h3 mb-2 text-light">
                     {% if mode == 'new' %}
                         <i class="bi bi-plus-circle text-primary me-2"></i>បន្ថែមច្បាប់ថ្មី
                     {% else %}
                         <i class="bi bi-pencil-square text-warning me-2"></i>កែសម្រួលច្បាប់ {{ rule.id }}
                     {% endif %}
                 </h2>
-                <p class="text-muted">
+                <p class="text-light">
                     {% if mode == 'new' %}
                         បង្កើតច្បាប់ថ្មីសម្រាប់ប្រព័ន្ធអ្នកជំនាញ
                     {% else %}
                         កែប្រែច្បាប់ដែលមានស្រាប់
                     {% endif %}
                 </p>
-                <a href="{{ url_for('rules_list') }}" class="btn btn-outline-secondary btn-sm">
+                <a href="{{ url_for('rules_list') }}" class="btn btn-outline-danger btn-sm">
                     <i class="bi bi-arrow-left me-1"></i>ត្រឡប់ទៅច្បាប់ទាំងអស់
                 </a>
             </div>

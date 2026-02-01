@@ -577,10 +577,10 @@
 <!-- Admin Header -->
 <div class="admin-hero">
     <div class="container">
-        <div class="row align-items-center">
+        <div class="row align-items-center text-light">
             <div class="col-md-8">
                 <h1 class="display-5 mb-2">
-                    <i class="bi bi-shield-lock me-2"></i>ផ្ទាំងគ្រប់គ្រង
+                    <i class="bi bi-shield-lock me-2 text-light"></i>ផ្ទាំងគ្រប់គ្រង
                 </h1>
                 <p class="mb-0 opacity-90">
                     គ្រប់គ្រងអ្នកប្រើប្រាស់ និងតាមដានប្រសិទ្ធភាពប្រព័ន្ធ
@@ -599,21 +599,21 @@
 
 <div class="container">
     <!-- Navigation Tabs -->
-    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+    <ul class="nav nav-tabs mb-4 text-light" id="adminTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">
-                <i class="bi bi-speedometer2 me-1"></i> ផ្ទាំងគ្រប់គ្រង
+                <i class="bi bi-speedometer2 me-1 text-light"></i> ផ្ទាំងគ្រប់គ្រង
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">
-                <i class="bi bi-people me-1"></i> គ្រប់គ្រងអ្នកប្រើប្រាស់
-                <span class="badge bg-primary ms-1">{{ users|length }}</span>
+                <i class="bi bi-people me-1 text-light"></i> គ្រប់គ្រងអ្នកប្រើប្រាស់
+                <span class="badge bg-primary ms-1 ">{{ users|length }}</span>
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit" type="button" role="tab">
-                <i class="bi bi-journal-text me-1"></i> កំណត់ហេតុស្វែងរក
+                <i class="bi bi-journal-text me-1 text-light"></i> កំណត់ហេតុស្វែងរក
                 <span class="badge bg-danger ms-1">{{ audit_logs|length }}</span>
             </button>
         </li>
@@ -830,12 +830,12 @@
                         <h5 class="mb-0">
                             <i class="bi bi-shield-check me-2"></i>កំណត់ហេតុស្វែងរក
                         </h5>
-                        <p class="text-muted mb-0 small">
-                            <i class="bi bi-info-circle me-1"></i>កំណត់ហេតុសកម្មភាពអ្នកប្រើប្រាស់ទាំងអស់
+                        <p class="text-light mb-0 small">
+                            <i class="bi bi-info-circle me-1 text-light"></i>កំណត់ហេតុសកម្មភាពអ្នកប្រើប្រាស់ទាំងអស់
                         </p>
                     </div>
                     <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-sm btn-outline-primary" id="refreshAuditLogs">
+                        <button class="btn btn-sm btn-outline-info" id="refreshAuditLogs">
                             <i class="bi bi-arrow-clockwise me-1"></i>ផ្ទុកឡើងវិញ
                         </button>
                         <button class="btn btn-sm btn-outline-danger" id="clearAuditLogs" data-bs-toggle="modal" data-bs-target="#confirmClearLogs">
@@ -882,13 +882,13 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <!-- <div class="col-md-2">
                             <div class="d-grid">
                                 <button class="btn btn-sm btn-outline-success" id="exportAllLogs">
                                     <i class="bi bi-download me-1"></i>នាំចេញទាំងអស់
                                 </button>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     
                     <!-- Quick Stats -->
@@ -1142,7 +1142,7 @@
 <!-- Log Details Modal -->
 <div class="modal fade" id="logDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content text-dark">
             <div class="modal-header">
                 <h5 class="modal-title">
                     <i class="bi bi-journal-text me-2"></i>ព័ត៌មានលម្អិតកំណត់ហេតុ
@@ -1238,7 +1238,7 @@
 
 <!-- Confirm Delete Modal -->
 <div class="modal fade" id="confirmDeleteLogModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog text-dark">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title text-danger">
@@ -1299,11 +1299,11 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">បន្ថែមអ្នកប្រើប្រាស់ថ្មី</h5>
+                <h5 class="modal-title text-dark">បន្ថែមអ្នកប្រើប្រាស់ថ្មី</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="{{ url_for('admin_add_user') }}" id="addUserForm">
-                <div class="modal-body">
+                <div class="modal-body text-dark">
                     <div class="mb-3">
                         <label class="form-label">ឈ្មោះអ្នកប្រើប្រាស់ *</label>
                         <input type="text" name="username" class="form-control" required>
@@ -1343,12 +1343,12 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">កែសម្រួលអ្នកប្រើប្រាស់</h5>
+                <h5 class="modal-title text-dark">កែសម្រួលអ្នកប្រើប្រាស់</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="{{ url_for('admin_edit_user') }}" id="editUserForm">
                 <input type="hidden" id="edit_user_id" name="user_id">
-                <div class="modal-body">
+                <div class="modal-body text-dark">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">លេខសម្គាល់អ្នកប្រើ</label>
@@ -1386,17 +1386,17 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">លុបអ្នកប្រើប្រាស់</h5>
+                <h5 class="modal-title  text-dark">លុបអ្នកប្រើប្រាស់</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="{{ url_for('admin_delete_user') }}" id="deleteUserForm">
                 <input type="hidden" id="delete_user_id" name="user_id">
                 <div class="modal-body">
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger text-dark">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
                         <strong>ការព្រមាន: សកម្មភាពនេះមិនអាចត្រឡប់មកវិញបានទេ!</strong>
                     </div>
-                    <p>តើអ្នកប្រាកដជាចង់លុបអ្នកប្រើប្រាស់នេះទេ?</p>
+                    <p class="text-danger">តើអ្នកប្រាកដជាចង់លុបអ្នកប្រើប្រាស់នេះទេ?</p>
                     <div class="card mb-3">
                         <div class="card-body">
                             <p><strong>លេខសម្គាល់អ្នកប្រើ:</strong> #<span id="delete_user_id_display"></span></p>

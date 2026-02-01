@@ -5,12 +5,12 @@
         <h2 class="h4 mb-1">
             {% if mode == 'new' %}បន្ថែមការពិតថ្មី{% else %}កែសម្រួលការពិត {{ fact.id }}{% endif %}
         </h2>
-        <p class="text-muted mb-0">
+        <p class="text-light mb-0">
             {% if mode == 'new' %}បង្កើតការពិតថ្មីសម្រាប់ប្រព័ន្ធអ្នកជំនាញ{% else %}កែប្រែការពិតដែលមានស្រាប់{% endif %}
         </p>
     </div>
-    <a class="btn btn-outline-secondary" href="{{ url_for('facts_list') }}">
-        <i class="bi bi-arrow-left me-1"></i>ត្រឡប់ទៅការពិត
+    <a class="btn btn-outline-danger" href="{{ url_for('facts_list') }}">
+        <i class="bi bi-arrow-left me-1 text-dark"></i>ត្រឡប់ទៅការពិត
     </a>
 </div>
 

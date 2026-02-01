@@ -5,9 +5,9 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-2">Taxonomy Editor</h1>
+            <h1 class="h3 mb-2">កម្មវិធីកែសម្រួលតាក់សូណូមី</h1>
             <p class="text-muted mb-0">
-                Define hierarchical relationships between facts and categories for intelligent observation expansion.
+                កំណត់ទំនាក់ទំនងឋានានុក្រមរវាងការពិត និងប្រភេទសម្រាប់ការពង្រីកការសង្កេតដោយឡែកពីគ្នា។
             </p>
         </div>
     </div>
@@ -19,24 +19,24 @@
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <i class="bi bi-share-nodes me-2"></i>
-                        Taxonomy Structure
+                        រចនាសម្ព័ន្ធតាក់សូណូមី
                     </h5>
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-primary btn-sm" onclick="loadSampleStructure()">
-                            <i class="bi bi-file-earmark-text me-1"></i>Load Sample
+                            <i class="bi bi-file-earmark-text me-1"></i>ទាញយកគំរូ
                         </button>
                         <button type="button" class="btn btn-outline-secondary btn-sm" onclick="validateJSON()">
-                            <i class="bi bi-check-square me-1"></i>Validate JSON
+                            <i class="bi bi-check-square me-1"></i>ផ្ទៀងផ្ទាត់ JSON
                         </button>
                         <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearAllRelationships()">
-                            <i class="bi bi-trash me-1"></i>Clear All
+                            <i class="bi bi-trash me-1"></i>លុបទាំងអស់
                         </button>
                     </div>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('taxonomy_save') }}">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Parent Relationships</label>
+                            <label class="form-label fw-bold">ទំនាក់ទំនងឪពុកម្តាយ</label>
                             <textarea class="form-control font-monospace" 
                                       name="raw_json" 
                                       rows="8" 
@@ -48,19 +48,19 @@
     }
 }'>{{ raw_json }}</textarea>
                             <div class="form-text text-muted mt-2">
-                                Define hierarchical relationships using JSON format. Each line represents a child-to-parent relationship.
+                                កំណត់ទំនាក់ទំនងឋានានុក្រមដោយប្រើទម្រង់ JSON។ បន្ទាត់នីមួយៗតំណាងឱ្យទំនាក់ទំនងពីកូនទៅឪពុកម្តាយ។
                             </div>
                         </div>
                         
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-save me-1"></i>Save Taxonomy
+                                    <i class="bi bi-save me-1"></i>រក្សាទុកតាក់សូណូមី
                                 </button>
                             </div>
                             <div class="text-muted small">
                                 <i class="bi bi-info-circle me-1"></i>
-                                Use fact IDs (f1, f2...) as children, categories as parents
+                                ប្រើលេខសម្គាល់ការពិត (f1, f2...) ជាកូន និងប្រភេទជាឪពុកម្តាយ
                             </div>
                         </div>
                     </form>
@@ -77,12 +77,12 @@
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">
                         <i class="bi bi-book me-2"></i>
-                        Quick Guide & Structure
+                        ការណែនាំរហ័ស & រចនាសម្ព័ន្ធ
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-4">
-                        <h6 class="text-dark mb-2">Standard Format:</h6>
+                        <h6 class="text-dark mb-2">ទម្រង់ស្តង់ដារ:</h6>
                         <pre class="bg-light p-3 rounded small border" style="font-size: 0.75rem;">{
     "parent": {
         "child_id": "parent_id",
@@ -94,34 +94,34 @@
                     </div>
                     
                     <div class="mb-3">
-                        <h6 class="text-dark mb-2">Key Rules & Conventions:</h6>
+                        <h6 class="text-dark mb-2">ច្បាប់សំខាន់ៗ & ការប្រើប្រាស់:</h6>
                         <div class="rules-list">
                             <div class="rule-item d-flex align-items-center mb-2 p-2 bg-light rounded">
                                 <i class="bi bi-tag-fill text-primary me-2"></i>
                                 <div>
-                                    <strong>Fact IDs</strong>
-                                    <div class="small text-muted">Use f1, f2, f3... for individual facts</div>
+                                    <strong>លេខសម្គាល់ការពិត</strong>
+                                    <div class="small text-muted">ប្រើ f1, f2, f3... សម្រាប់ការពិតនីមួយៗ</div>
                                 </div>
                             </div>
                             <div class="rule-item d-flex align-items-center mb-2 p-2 bg-light rounded">
                                 <i class="bi bi-diagram-3-fill text-success me-2"></i>
                                 <div>
-                                    <strong>Categories</strong>
-                                    <div class="small text-muted">Use descriptive names like starting_symptom, electrical_issue</div>
+                                    <strong>ប្រភេទ</strong>
+                                    <div class="small text-muted">ប្រើឈ្មោះពណ៌នាដូចជា starting_symptom, electrical_issue</div>
                                 </div>
                             </div>
                             <div class="rule-item d-flex align-items-center mb-2 p-2 bg-light rounded">
                                 <i class="bi bi-code-slash text-warning me-2"></i>
                                 <div>
-                                    <strong>JSON Syntax</strong>
-                                    <div class="small text-muted">Maintain valid JSON structure with proper quotes and commas</div>
+                                    <strong>វាក្យសម្ព័ន្ធ JSON</strong>
+                                    <div class="small text-muted">រក្សាទម្រង់ JSON ត្រឹមត្រូវជាមួយសញ្ញាបញ្ចប់ និងក្បៀស</div>
                                 </div>
                             </div>
                             <div class="rule-item d-flex align-items-center p-2 bg-light rounded">
                                 <i class="bi bi-folder-fill text-info me-2"></i>
                                 <div>
-                                    <strong>Parent Key</strong>
-                                    <div class="small text-muted">All relationships must be under the "parent" object</div>
+                                    <strong>គន្លឹះឪពុកម្តាយ</strong>
+                                    <div class="small text-muted">ទំនាក់ទំនងទាំងអស់ត្រូវតែនៅក្រោមវត្ថុ "parent"</div>
                                 </div>
                             </div>
                         </div>
@@ -136,7 +136,7 @@
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">
                         <i class="bi bi-graph-up me-2"></i>
-                        Statistics & Actions
+                        ស្ថិតិ & សកម្មភាព
                     </h5>
                 </div>
                 <div class="card-body">
@@ -145,35 +145,35 @@
                         <div class="col-6">
                             <div class="stat-card text-center p-3 bg-primary text-white rounded">
                                 <div class="stat-number display-6 fw-bold">{{ stats.total_relationships if stats else 0 }}</div>
-                                <div class="stat-label">Total Relationships</div>
+                                <div class="stat-label">ទំនាក់ទំនងសរុប</div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="stat-card text-center p-3 bg-warning text-white rounded">
                                 <div class="stat-number display-6 fw-bold">{{ stats.facts_in_taxonomy if stats else 0 }}</div>
-                                <div class="stat-label">Facts in Taxonomy</div>
+                                <div class="stat-label">ការពិតក្នុងតាក់សូណូមី</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Detailed Stats -->
                     <div class="mb-4">
-                        <h6 class="text-dark mb-3">Taxonomy Health</h6>
+                        <h6 class="text-dark mb-3">សុខភាពតាក់សូណូមី</h6>
                         <div class="detailed-stats">
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                <span class="small">Missing Facts</span>
+                                <span class="small">ការពិតខ្វះ</span>
                                 <span class="badge bg-warning">{{ stats.missing_facts if stats else 0 }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                <span class="small">Orphaned Facts</span>
+                                <span class="small">ការពិតគ្មានឪពុកម្តាយ</span>
                                 <span class="badge bg-danger">{{ stats.orphaned_facts if stats else 0 }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                <span class="small">Categorized Facts</span>
+                                <span class="small">ការពិតដែលបានចាត់ថ្នាក់</span>
                                 <span class="badge bg-success">{{ stats.categorized_facts if stats else 0 }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center py-2">
-                                <span class="small">Uncategorized Facts</span>
+                                <span class="small">ការពិតដែលមិនទាន់ចាត់ថ្នាក់</span>
                                 <span class="badge bg-secondary">{{ stats.uncategorized_facts if stats else 0 }}</span>
                             </div>
                         </div>
@@ -181,25 +181,25 @@
 
                     <!-- Quick Actions -->
                     <div class="mt-4">
-                        <h6 class="text-dark mb-3">Quick Actions</h6>
+                        <h6 class="text-dark mb-3">សកម្មភាពរហ័ស</h6>
                         <div class="actions-grid">
                             <form method="POST" action="{{ url_for('taxonomy_add_missing_facts') }}" class="mb-2">
                                 <button type="submit" class="btn btn-outline-primary w-100">
                                     <i class="bi bi-plus-circle me-2"></i>
-                                    Add Missing Facts
+                                    បន្ថែមការពិតខ្វះ
                                 </button>
                             </form>
 
                             <form method="POST" action="{{ url_for('taxonomy_add_rule_conclusions') }}" class="mb-2">
                                 <button type="submit" class="btn btn-outline-info w-100">
                                     <i class="bi bi-diagram-3 me-2"></i>
-                                    Add Rule Conclusions
+                                    បន្ថែមការសន្និដ្ឋានច្បាប់
                                 </button>
                             </form>
 
                             <a href="{{ url_for('sync_all_categories') }}" class="btn btn-outline-success w-100 mb-2">
                                 <i class="bi bi-arrow-repeat me-2"></i>
-                                Sync All Categories
+                                ធ្វើសមកាលកម្មប្រភេទទាំងអស់
                             </a>
                         </div>
                     </div>
@@ -321,7 +321,7 @@ function loadSampleStructure() {
     textarea.value = sampleJSON;
     formatJSON();
     
-    showNotification('Sample structure loaded successfully!', 'success');
+    showNotification('ទាញយករចនាសម្ព័ន្ធគំរូបានជោគជ័យ!', 'success');
 }
 
 function validateJSON() {
@@ -331,12 +331,12 @@ function validateJSON() {
         
         // Additional validation for structure
         if (!parsed.parent || typeof parsed.parent !== 'object') {
-            throw new Error('Must have a "parent" object containing the relationships');
+            throw new Error('ត្រូវតែមានវត្ថុ "parent" ដែលមានទំនាក់ទំនង');
         }
         
-        showNotification('✅ JSON syntax is valid and structure is correct!', 'success');
+        showNotification('✅ វាក្យសម្ព័ន្ធ JSON ត្រឹមត្រូវ និងរចនាសម្ព័ន្ធត្រឹមត្រូវ!', 'success');
     } catch (e) {
-        showNotification('❌ JSON Error: ' + e.message, 'error');
+        showNotification('❌ កំហុស JSON: ' + e.message, 'error');
     }
 }
 
@@ -345,19 +345,19 @@ function formatJSON() {
     try {
         const parsed = JSON.parse(textarea.value);
         textarea.value = JSON.stringify(parsed, null, 4);
-        showNotification('JSON formatted successfully!', 'success');
+        showNotification('ទម្រង់ JSON បានជោគជ័យ!', 'success');
     } catch (error) {
-        showNotification('Cannot format - invalid JSON: ' + error.message, 'error');
+        showNotification('មិនអាចទម្រង់ - JSON មិនត្រឹមត្រូវ: ' + error.message, 'error');
     }
 }
 
 function clearAllRelationships() {
-    if (confirm('Are you sure you want to delete ALL relationships? This action cannot be undone.')) {
+    if (confirm('តើអ្នកពិតជាចង់លុបទំនាក់ទំនងទាំងអស់មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។')) {
         const emptyJSON = `{
     "parent": {}
 }`;
         document.querySelector('textarea[name="raw_json"]').value = emptyJSON;
-        showNotification('All relationships cleared!', 'info');
+        showNotification('ទំនាក់ទំនងទាំងអស់ត្រូវបានលុប!', 'info');
     }
 }
 

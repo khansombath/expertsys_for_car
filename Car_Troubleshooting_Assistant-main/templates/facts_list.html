@@ -9,14 +9,14 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-light table-hover align-middle mb-0">
+    <table class="table table-light table-hover align-middle mb-0 ">
         <thead>
             <tr>
-                <th scope="col" class="d-none d-md-table-cell" style="width: 10%;">លេខកូដ</th>
-                <th scope="col" style="width: 40%;">ការពិពណ៌នា</th>
-                <th scope="col" style="width: 15%;">តម្លៃ</th>
-                <th scope="col" class="d-none d-sm-table-cell" style="width: 25%;">ស្លាក</th>
-                <th scope="col" style="min-width: 130px;">សកម្មភាព</th>
+                <th scope="col" class="d-none d-md-table-cell text-center" style="width: 7%;">លេខកូដ</th>
+                <th scope="col" class="text-center" style="width: 35%;">ការពិពណ៌នា</th>
+                <th scope="col" class="text-center" style="width: 10%;">តម្លៃ</th>
+                <th scope="col" class="d-none d-sm-table-cell text-center" style="width: 25%;">ស្លាក</th>
+                <th scope="col" class="text-center" style="min-width: 200px;">សកម្មភាព</th>
             </tr>
         </thead>
         <tbody>
@@ -77,7 +77,7 @@
                 
                 <!-- Actions Column -->
                 <td>
-                    <div class="d-flex flex-nowrap gap-1">
+                    <div class="d-flex flex-nowrap gap-3 ">
                         <a href="{{ url_for('facts_edit', fid=fact.id) }}" 
                            class="btn btn-sm btn-outline-info d-flex align-items-center">
                             <i class="bi bi-pencil d-none d-sm-block me-1"></i>

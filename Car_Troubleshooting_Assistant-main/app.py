@@ -58,11 +58,20 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-this-in-production")
 
 # --- Flask-Login Setup ---
+# --- Flask-Login Setup ---
+# new updated at 1 february 2026
+# --- Flask-Login Setup ---
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'សូមចូលគណនីដើម្បីចូលទៅកាន់ទំព័រនេះ'
 login_manager.login_message_category = 'warning'
+
+# Custom unauthorized handler
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('សូមចូលគណនីដើម្បីចូលទៅកាន់ទំព័រនេះ', 'warning')
+    return redirect(url_for('login', next=request.endpoint))
 
 
 class User(UserMixin):
@@ -315,8 +324,12 @@ def utility_processor():
     return dict(b64encode=b64encode)
 
 # --- Authentication Routes ---
+# new updated at 1 february 2026
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+        
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
@@ -391,9 +404,9 @@ def dashboard():
     return render_template("dashboard.html", permissions=permissions)
 
 # --- Protected Routes ---
+# new updated at 1 february 2026
 @app.route("/")
-@login_required
-def home():
+def home():  # Remove @login_required
     stats = get_taxonomy_stats()
     facts_count = len(get_all_facts())
     rules_count = len(get_all_rules())
